@@ -1,0 +1,14 @@
+{
+  "vendorApiKey": "00ed5709-8420-49f5-bb43-faa3eea257e4",
+  "vendorTransactionId": "000000067",
+  "amount": 289.747,
+  "successUrl": "http:\/\/mage.test\/leanpay\/checkout\/success\/",
+  "errorUrl": "http:\/\/mage.test\/leanpay\/checkout\/failure\/",
+  "vendorPhoneNumber": "425421",
+  "vendorFirstName": "Davis",
+  "vendorLastName": "Magebit",
+  "vendorAddress": "Zigfrida Annas Meierovica 16",
+  "vendorZip": "88766",
+  "vendorCity": "Riga",
+  "language": "sl"
+}

@@ -1,0 +1,17 @@
+.leanpay img.payment-logo {
+    vertical-align: middle;
+    margin-right: 5px;
+    height: 35px;
+}
+
+.leanpay label.label {
+    display: inline-block;
+}
+
+.leanpay label.label span {
+    vertical-align: sub;
+}
+
+.leanpay .instructions {
+    margin: 20px 0 0;
+}

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="leanpay" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Leanpay</label>
+                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="title" translate="label comment" sortOrder="1" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                </field>
+
+                <field id="instructions" translate="label comment" sortOrder="1" type="textarea" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Instructions</label>
+                </field>
+
+                <field id="currency" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Base Currency rate</label>
+                    <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\Currency</frontend_model>
+                    <tooltip>
+                        <![CDATA[
+                            You can add currency rate at <b>General -> Currency Setup -> Allowed Currencies</b>
+                            <br>You can change currency rate at <b>STORES -> Currency Rates</b>
+                        ]]>
+                    </tooltip>
+                </field>
+
+                <field id="mode" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Environment Mode</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\Modes</source_model>
+                </field>
+
+                <field id="api_key" translate="label comment" sortOrder="1" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>API Key</label>
+                </field>
+
+                <field id="api_secret" translate="label comment" sortOrder="1" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>API Secret Word</label>
+                </field>
+
+                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+
+                <field id="min_order_total" translate="label" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum Order Total</label>
+                </field>
+
+                <field id="max_order_total" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Maximum Order Total</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

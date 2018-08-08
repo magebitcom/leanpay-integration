@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <leanpay>
+                <payment_action>authorize</payment_action>
+                <model>Leanpay\Payment\Model\Method\LeanPay</model>
+                <active>1</active>
+                <allowspecific>0</allowspecific>
+                <title>Leanpay</title>
+                <order_status>sale</order_status>
+                <allowspecific>0</allowspecific>
+                <mode>DEV_MODE</mode>
+                <instructions><![CDATA[LeanPay vam omogoča, da svoje nakupe plačate na 3, 6 i 12 obrokov, na hiter, enostaven in prijazen način.
+
+LeanPay ima dovoljenje za potrošniško kreditiranje Ministrstva za gospodarski razvoj in tehnologijo (številka dovoljenja: 323-8/2018/9).]]></instructions>
+            </leanpay>
+        </payment>
+    </default>
+</config>
