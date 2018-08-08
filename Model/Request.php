@@ -66,7 +66,6 @@ class Request implements RequestInterface
 
         $postData = array_merge($postData, $additionalData);
         $jsonData = json_encode($postData);
-        file_put_contents(__DIR__.'/test.json', $jsonData);
 
         try {
             $this->curl->post($this->helper->getTokenUrl(), $jsonData);
