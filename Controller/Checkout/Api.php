@@ -64,6 +64,8 @@ class Api extends AbstractAction
     }
 
     /**
+     * Set order to cancel
+     *
      * @param Order $order
      */
     protected function orderCancel(Order $order)
@@ -109,7 +111,11 @@ class Api extends AbstractAction
         $this->invoiceSender->send($invoice);
 
         $order->addStatusHistoryComment(__('Notified customer about invoice #%1.', $invoice->getId()))
-            ->setIsCustomerNotified(true)
-            ->save();
+            ->setIsCustomerNotified(true);
+
+        $order->setStatus(Order::STATE_PROCESSING);
+        $order->setState(Order::STATE_PROCESSING);
+
+        $this->orderRepository->save($order);
     }
 }

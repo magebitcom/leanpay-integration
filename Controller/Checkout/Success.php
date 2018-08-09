@@ -16,17 +16,6 @@ class Success extends AbstractAction
      */
     public function execute()
     {
-        $order = $this->checkoutSession->getLastRealOrder();
-
-        if ($order->getId() && $order->getStatus() == Order::STATE_NEW) {
-            $order->setStatus(Order::STATE_PENDING_PAYMENT);
-            $order->setState(Order::STATE_PENDING_PAYMENT);
-
-            $this->orderRepository->save($order);
-
-            return $this->resultPageFactory->create();
-        }
-
-        return $this->_redirect('/');
+        return $this->resultPageFactory->create();
     }
 }

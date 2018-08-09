@@ -16,10 +16,10 @@ class Currency extends Field
 
     /**
      * Currency constructor.
+     *
      * @param Context $context
      * @param CurrencyModel $currencyModel
      * @param array $data
-
      */
     public function __construct(
         Context $context,
@@ -33,6 +33,8 @@ class Currency extends Field
     }
 
     /**
+     * Configurations get EUR rate.
+     *
      * @param AbstractElement $element
      * @return string
      *

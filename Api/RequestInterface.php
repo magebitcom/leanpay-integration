@@ -2,7 +2,14 @@
 
 namespace Leanpay\Payment\Api;
 
+use Exception;
+
 interface RequestInterface
 {
-    public function getLeanpayToken($additionalData = []): array;
+    /**
+     * @param array $additionalData
+     * @return array
+     * @throws Exception
+     */
+    public function getLeanpayToken(array $additionalData = []): array;
 }

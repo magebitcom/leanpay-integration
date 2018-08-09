@@ -5,8 +5,8 @@ namespace Leanpay\Payment\Model;
 use Exception;
 use Leanpay\Payment\Api\RequestInterface;
 use Leanpay\Payment\Helper\Data;
+use Leanpay\Payment\Logger\PaymentLogger;
 use Magento\Framework\HTTP\Client\Curl;
-use Psr\Log\LoggerInterface;
 
 class Request implements RequestInterface
 {
@@ -21,17 +21,18 @@ class Request implements RequestInterface
     protected $helper;
 
     /**
-     * @var LoggerInterface
+     * @var PaymentLogger
      */
     protected $logger;
 
     /**
      * API constructor.
+     *
      * @param Curl $curl
      * @param Data $helper
-     * @param LoggerInterface $logger
+     * @param PaymentLogger $logger
      */
-    public function __construct(Curl $curl, Data $helper, LoggerInterface $logger)
+    public function __construct(Curl $curl, Data $helper, PaymentLogger $logger)
     {
         $this->curl = $curl;
         $this->helper = $helper;
@@ -39,11 +40,13 @@ class Request implements RequestInterface
     }
 
     /**
+     * Request leanpay token
+     *
      * @param array $additionalData
      * @return array
      * @throws Exception
      */
-    public function getLeanpayToken($additionalData = []): array
+    public function getLeanpayToken(array $additionalData = []): array
     {
         $postData = [
             'vendorApiKey' => $this->helper->getLeanpayApiKey(),
@@ -90,7 +93,7 @@ class Request implements RequestInterface
      * @param $data
      * @return int
      */
-    public function parseHeaders($ch, $data)
+    public function parseHeaders($ch, $data): int
     {
         return strlen($data);
     }

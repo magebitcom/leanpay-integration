@@ -188,6 +188,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get store url
+     *
      * @param $route
      * @param array $params
      *

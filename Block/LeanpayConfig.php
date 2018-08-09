@@ -20,6 +20,7 @@ class LeanpayConfig extends Template
 
     /**
      * LeanpayConfig constructor.
+     *
      * @param Context $context
      * @param Data $helper
      * @param array $data
@@ -32,6 +33,8 @@ class LeanpayConfig extends Template
     }
 
     /**
+     * Get leanpay configurations and store javascript config
+     *
      * @return string
      */
     public function getConfig(): string

@@ -18,7 +18,7 @@ class Failure extends AbstractAction
     public function execute()
     {
         try {
-            $order = $this->findOrder();
+            $order = $this->checkoutSession->getLastRealOrder();
 
             if ($order->getState() == Order::STATE_NEW) {
                 $order->cancel();

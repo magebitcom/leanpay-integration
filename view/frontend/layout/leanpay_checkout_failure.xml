@@ -8,5 +8,9 @@
                 <argument translate="true" name="title" xsi:type="string">Your order canceled!</argument>
             </action>
         </referenceBlock>
+
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" name="refreshCart" before="-" template="Leanpay_Payment::refresh.phtml"/>
+        </referenceContainer>
     </body>
 </page>

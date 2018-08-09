@@ -21,11 +21,6 @@ use Magento\Sales\Model\Service\InvoiceService;
 abstract class AbstractAction extends Action
 {
     /**
-     * @var string
-     */
-    protected $token = '694a3f25386c582c96fbec0a01f672ed';
-
-    /**
      * @var Session
      */
     protected $checkoutSession;
@@ -82,6 +77,7 @@ abstract class AbstractAction extends Action
 
     /**
      * PlaceOrder constructor.
+     *
      * @param Context $context
      * @param Session $checkoutSession
      * @param Data $helper
@@ -126,35 +122,18 @@ abstract class AbstractAction extends Action
     }
 
     /**
-     * @return string|null
-     */
-    public function getToken()
-    {
-        if (is_null($this->token)) {
-            $this->token = $this->checkoutSession->getToken();
-            $this->checkoutSession->unsToken();
-        }
-
-        return $this->token;
-    }
-
-    /**
      * Find order searching by leanpay token
      *
-     * @param null $token
+     * @param int $id
      * @return Order
      * @throws Exception
      */
-    public function findOrder($token = null)
+    public function findOrder(int $id)
     {
-        if (is_null($token)) {
-            $token = $this->getToken();
-        }
-
         $filters[] = $this->filterBuilder
-            ->setField('leanpay_token')
+            ->setField('increment_id')
             ->setConditionType('eq')
-            ->setValue($token)
+            ->setValue($id)
             ->create();
 
         $this->searchCriteriaBuilder->addFilters($filters);

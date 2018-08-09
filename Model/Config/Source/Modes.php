@@ -8,7 +8,7 @@ use Magento\Framework\Option\ArrayInterface;
 class Modes implements ArrayInterface
 {
     /**
-     * Return array of options as value-label pairs
+     * Return array of leanpay environment
      *
      * @return array
      */

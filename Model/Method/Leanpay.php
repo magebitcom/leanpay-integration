@@ -15,8 +15,9 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
 use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\Method\AbstractMethod;
-use \Magento\Payment\Model\Method\Logger;
+use Magento\Payment\Model\Method\Logger;
 use Magento\Directory\Model\Currency as CurrencyModel;
+use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Leanpay\Payment\Model\Request;
@@ -113,6 +114,7 @@ class Leanpay extends AbstractMethod
 
     /**
      * Leanpay constructor.
+     *
      * @param Context $context
      * @param Registry $registry
      * @param ExtensionAttributesFactory $extensionFactory
@@ -173,36 +175,34 @@ class Leanpay extends AbstractMethod
     }
 
     /**
-     * Get instructions text from config
+     * Check payment method enable. if true, then check has euro currency
      *
-     * @return string
+     * @param CartInterface|null $quote
+     * @return bool
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getInstructions()
+    public function isAvailable(CartInterface $quote = null)
     {
-        return trim($this->getConfigData('description'));
-    }
+        $isActive = parent::isAvailable($quote);
 
-    /**
-     * @return AbstractMethod|void
-     * @throws LocalizedException
-     * @throws \Exception
-     */
-    public function validate()
-    {
-        parent::validate();
+        if (!$isActive) {
+            return false;
+        }
 
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
 
         if (!array_key_exists('EUR', $rates)) {
-            throw new LocalizedException(
-                __('#001 Can\'t convert to EUR from %1', $baseCode)
-            );
+            return false;
         }
+
+        return true;
     }
 
     /**
+     * After place order get tokken from leanpay
+     *
      * @param string $paymentAction
      * @param object $stateObject
      * @return AbstractMethod
@@ -210,12 +210,11 @@ class Leanpay extends AbstractMethod
      */
     public function initialize($paymentAction, $stateObject)
     {
-        /** @var \Magento\Sales\Model\Order\Payment  $paymentInfo */
+        /** @var \Magento\Sales\Model\Order\Payment $paymentInfo */
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-
-        $amount = $this->priceCurrency->convert($order->getBaseGrandTotal(), $order->getBaseCurrencyCode(), 'EUR');
+        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
 
         $additionData = [
             'vendorTransactionId' => $order->getIncrementId(),
@@ -236,8 +235,6 @@ class Leanpay extends AbstractMethod
         if (!$leanpayTokenData['error']) {
             $state = Order::STATE_NEW;
             $this->checkoutSession->setToken($leanpayTokenData['token']);
-//            $order->setData('leanpay_token', $vendorTransactionId);
-//            $this->orderRepository->save($order);
         }
 
         $stateObject->setState($state);
