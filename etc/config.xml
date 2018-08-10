@@ -4,7 +4,7 @@
         <payment>
             <leanpay>
                 <payment_action>authorize</payment_action>
-                <model>Leanpay\Payment\Model\Method\LeanPay</model>
+                <model>Leanpay\Payment\Model\Method\Leanpay</model>
                 <active>1</active>
                 <allowspecific>0</allowspecific>
                 <title>Leanpay</title>
