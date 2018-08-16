@@ -199,4 +199,34 @@ class Data extends AbstractHelper
     {
         return $this->_getUrl($route, $params);
     }
+
+    /**
+     * @param string $value
+     *
+     * @return mixed
+     */
+    public function getConfigData(string $value)
+    {
+        return $this->scopeConfig->getValue("payment/leanpay/{$value}");
+    }
+
+    /**
+     * Check can I use
+     *
+     * @param string $country
+     *
+     * @return bool
+     */
+    public function canUseForCountry(string $country): bool
+    {
+        if ($this->getConfigData('billing_allowspecific') == 1) {
+            $availableCountries = explode(',', $this->getConfigData('billing_specificcountry'));
+
+            if (!in_array($country, $availableCountries)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

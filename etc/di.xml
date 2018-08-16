@@ -8,6 +8,14 @@
         </arguments>
     </type>
 
+    <type name="Magento\Payment\Model\Checks\TotalMinMax">
+        <plugin name="TotalMinMaxLeanpay" type="Leanpay\Payment\Plugin\TotalMinMaxPlugin" sortOrder="1" />
+    </type>
+
+    <type name="Magento\Payment\Model\Checks\CanUseForCountry">
+        <plugin name="CanUseForCountryLeanpay" type="Leanpay\Payment\Plugin\CanUseForCountryPlugin" sortOrder="1" />
+    </type>
+
     <type name="Leanpay\Payment\Logger\PaymentLogger">
         <arguments>
             <argument name="name" xsi:type="string">leanpay</argument>

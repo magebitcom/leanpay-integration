@@ -2,15 +2,39 @@
 define(
     [
         'jquery',
-        'Magento_Checkout/js/view/payment/default'
+        'ko',
+        'Magento_Checkout/js/view/payment/default',
+        'Magento_Checkout/js/model/quote'
     ],
-    function ($, Component) {
+    function ($, ko, Component, quote) {
         'use strict';
 
         return Component.extend({
+            isEnable: ko.observable(true),
+
             defaults: {
                 redirectAfterPlaceOrder: false,
-                template: 'Leanpay_Payment/payment/leanpay'
+                template: 'Leanpay_Payment/payment/leanpay',
+            },
+
+            initialize: function() {
+                this._super();
+                var self = this;
+
+                quote.billingAddress.subscribe(function (newAddress) {
+                    if (!newAddress) {
+                        self.isEnable(false);
+                        return;
+                    }
+
+                    if (window.leanpayConfig.allowspecific === '1') {
+                        self.isEnable(window.leanpayConfig.countries.includes(newAddress.countryId));
+
+                        return;
+                    }
+
+                    self.isEnable(true);
+                });
             },
 
             /**
@@ -22,8 +46,7 @@ define(
             },
 
             getLogo: function () {
-                return window.leanpayConfig.logo
-                    ;
+                return window.leanpayConfig.logo;
             },
 
             afterPlaceOrder: function () {

@@ -25,12 +25,14 @@ use Magento\Sales\Model\Order;
 
 class Leanpay extends AbstractMethod
 {
+    const CODE = 'leanpay';
+
     /**
      * Payment system code
      *
      * @var string
      */
-    protected $_code = 'leanpay';
+    protected $_code = self::CODE;
 
     /**
      * @var bool

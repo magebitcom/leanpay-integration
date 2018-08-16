@@ -40,8 +40,24 @@ class LeanpayConfig extends Template
     public function getConfig(): string
     {
         return json_encode([
+            'allowspecific' => $this->helper->getConfigData('allowspecific'),
+            'countries' => $this->getAllowedBillingCountries(),
             'instructions' => nl2br($this->helper->getInstructions()),
             'logo' => $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg')
         ]);
+    }
+    
+    /**
+     * get billing country is allowed for the payment method
+     *
+     * @return array
+     */
+    public function getAllowedBillingCountries(): array
+    {
+        if ($this->helper->getConfigData('billing_allowspecific') == 1) {
+            return explode(',', $this->helper->getConfigData('billing_specificcountry'));
+        }
+
+        return [];
     }
 }
