@@ -85,6 +85,11 @@ class Leanpay extends AbstractMethod
     protected $_isInitializeNeeded = true;
 
     /**
+     * @var \Leanpay\Payment\Helper\Data
+     */
+    protected $helper;
+
+    /**
      * @var CurrencyModel
      */
     protected $currencyModel;
@@ -143,6 +148,7 @@ class Leanpay extends AbstractMethod
         Data $paymentData,
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
+        \Leanpay\Payment\Helper\Data $helper,
         CurrencyModel $currencyModel,
         StoreManagerInterface $storeManager,
         PriceCurrencyInterface $priceCurrency,
@@ -168,6 +174,7 @@ class Leanpay extends AbstractMethod
             $directory
         );
 
+        $this->helper = $helper;
         $this->currencyModel = $currencyModel;
         $this->storeManager = $storeManager;
         $this->priceCurrency = $priceCurrency;
@@ -221,13 +228,13 @@ class Leanpay extends AbstractMethod
         $additionData = [
             'vendorTransactionId' => $order->getIncrementId(),
             'amount' => $amount,
-            'vendorFirstName' =>  $order->getCustomerFirstname(),
-            'vendorLastName' => $order->getCustomerLastname(),
+            'vendorFirstName' =>  $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
+            'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),
             'vendorAddress' => current($address->getStreet()),
             'vendorZip' => $address->getPostcode(),
             'vendorCity' => $address->getCity(),
             'vendorPhoneNumber' => $address->getTelephone(),
-            'language' => 'sl'
+            'language' => $this->helper->getLeanpayLanguage()
         ];
 
         $leanpayTokenData = $this->request->getLeanpayToken($additionData);

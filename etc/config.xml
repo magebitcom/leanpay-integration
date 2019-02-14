@@ -11,6 +11,7 @@
                 <order_status>sale</order_status>
                 <allowspecific>0</allowspecific>
                 <mode>DEV_MODE</mode>
+                <language>sl</language>
                 <instructions><![CDATA[LeanPay vam omogoča, da svoje nakupe plačate na 3, 6 i 12 obrokov, na hiter, enostaven in prijazen način.
 
 LeanPay ima dovoljenje za potrošniško kreditiranje Ministrstva za gospodarski razvoj in tehnologijo (številka dovoljenja: 323-8/2018/9).]]></instructions>

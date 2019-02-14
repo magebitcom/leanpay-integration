@@ -28,6 +28,11 @@
                     </tooltip>
                 </field>
 
+                <field id="language" translate="label" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Leanpay Language</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\Languages</source_model>
+                </field>
+
                 <field id="mode" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Environment Mode</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\Modes</source_model>

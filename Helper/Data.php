@@ -58,6 +58,11 @@ class Data extends AbstractHelper
     const LEANPAY_CONFIG_MODE_PATH = 'payment/leanpay/mode';
 
     /**
+     * Leanpay Language configuration path
+     */
+    const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
+
+    /**
      * Successful redirect url
      */
     const LEANPAY_SUCCESS_URL = 'leanpay/checkout/success';
@@ -165,6 +170,16 @@ class Data extends AbstractHelper
         }
 
         return self::LEANPAY_TOKEN_URL_DEV;
+    }
+
+    /**
+     * Get Leanpay Language
+     *
+     * @return string
+     */
+    public function getLeanpayLanguage(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_CONFIG_LANG_PATH);
     }
 
     /**
