@@ -16,6 +16,7 @@
 
 namespace Leanpay\Payment\Model\Config\Source;
 
+use Magento\Framework\Option\ArrayInterface;
 
 /**
  * Class Languages
