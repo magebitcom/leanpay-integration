@@ -26,12 +26,11 @@ class Failure extends AbstractAction
 
                 $this->checkoutSession->restoreQuote();
             }
-
             $this->checkoutSession->setErrorMessage('Your order closed, because not finished leanpay!');
 
-            return $this->resultPageFactory->create();
+            return $this->_redirect($this->helper->getMagentoCheckoutUrl());
         } catch (Exception $exception) {
-            $this->_redirect('/');
+            return $this->_redirect('/');
         }
     }
 }

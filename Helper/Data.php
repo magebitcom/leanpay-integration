@@ -73,6 +73,11 @@ class Data extends AbstractHelper
     const LEANPAY_ERROR_URL = 'leanpay/checkout/failure';
 
     /**
+     * Magento Checkout url for redirect after failure
+     */
+    const LEANPAY_MAGENTO_CHECKOUT_URL = 'payment/leanpay/checkout_url';
+
+    /**
      * Mode types
      */
     const LEANPAY_API_MODE_DEV = 'DEV_MODE';
@@ -200,6 +205,16 @@ class Data extends AbstractHelper
     private function getEnvironmentMode(): string
     {
         return (string) $this->scopeConfig->getValue(self::LEANPAY_CONFIG_MODE_PATH);
+    }
+
+    /**
+     * Get Magento Checkout URL
+     *
+     * @return string
+     */
+    public function getMagentoCheckoutUrl(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_MAGENTO_CHECKOUT_URL);
     }
 
     /**
