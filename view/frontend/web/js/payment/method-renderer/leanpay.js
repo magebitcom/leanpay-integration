@@ -3,10 +3,13 @@ define(
     [
         'jquery',
         'ko',
+        'mage/url',
         'Magento_Checkout/js/view/payment/default',
+        'Magento_Checkout/js/model/error-processor',
+        'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Checkout/js/model/quote'
     ],
-    function ($, ko, Component, quote) {
+    function ($, ko, url, Component, errorProcessor, fullScreenLoader, quote) {
         'use strict';
 
         return Component.extend({
@@ -50,7 +53,18 @@ define(
             },
 
             afterPlaceOrder: function () {
-                $.mage.redirect('/leanpay/checkout/placeorder');
+                //$.mage.redirect('/leanpay/checkout/placeorder');
+                var leanpay_checkout_redirect = url.build('/leanpay/checkout/placeorder'); //your custom controller url
+                $.post(leanpay_checkout_redirect, 'json')
+                    .done(function (response) {
+                        $.mage.dataPost().postData(response);
+                    })
+                    .fail(function (response) {
+                        errorProcessor.process(response, this.messageContainer);
+                    })
+                    .always(function () {
+                        fullScreenLoader.stopLoader();
+                    });
             }
         });
     }
