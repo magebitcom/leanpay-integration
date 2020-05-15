@@ -2,11 +2,11 @@
     "name": "leanpay/payment",
     "description": "N/A",
     "require": {
-        "php": "~7.0.13|~7.1.0",
-        "magento/framework": "101.0.*"
+        "php": ">=7.0.13",
+        "magento/framework": ">=101.0.1"
     },
     "type": "magento2-module",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "autoload": {
         "files": [
             "registration.php"
