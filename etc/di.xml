@@ -16,6 +16,10 @@
         <plugin name="CanUseForCountryLeanpay" type="Leanpay\Payment\Plugin\CanUseForCountryPlugin" sortOrder="1" />
     </type>
 
+    <type name="Magento\Framework\App\Request\CsrfValidator">
+        <plugin name="csrf_validator_skip" type="Leanpay\Payment\Plugin\CsrfValidatorSkip" />
+    </type>
+
     <type name="Leanpay\Payment\Logger\PaymentLogger">
         <arguments>
             <argument name="name" xsi:type="string">leanpay</argument>
