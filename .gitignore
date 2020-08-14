@@ -1,0 +1,7 @@
+
+
+!/.github
+/.github/*
+!/.github
+!/.github/CODEOWNERS
+!/.github/PULL_REQUEST_TEMPLATE.md
