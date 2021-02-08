@@ -53,6 +53,7 @@
                 </field>
 
                 <field id="api_secret" translate="label comment" sortOrder="20" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <label>API Secret Word</label>
                 </field>
 

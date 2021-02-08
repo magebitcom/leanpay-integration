@@ -4,16 +4,19 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Model;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
-use Leanpay\Payment\Model\ResourceModel\Installment\Collection;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 
 /**
- * @method ResourceModel\Installment getResource()
- * @method Collection getCollection()
+ * Class Installment
+ *
+ * @package Leanpay\Payment\Model
  */
 class Installment extends AbstractModel implements InstallmentInterface, IdentityInterface
 {
+    /**
+     * Cache key
+     */
     const CACHE_TAG = 'leanpay_payment_installment';
 
     /**
@@ -42,31 +45,49 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
+    /**
+     * @return string|null
+     */
     public function getGroupId()
     {
         return $this->getData(InstallmentInterface::GROUP_ID);
     }
 
+    /**
+     * @return string|null
+     */
     public function getGroupName()
     {
         return $this->getData(InstallmentInterface::GROUP_NAME);
     }
 
+    /**
+     * @return string|null
+     */
     public function getCurrencyCode()
     {
         return $this->getData(InstallmentInterface::CURRENCY_CODE);
     }
 
+    /**
+     * @return int|null
+     */
     public function getLoanAmount()
     {
         return $this->getData(InstallmentInterface::LOAN_AMOUNT);
     }
 
+    /**
+     * @return int|null
+     */
     public function getInstallmentPeriod()
     {
         return $this->getData(InstallmentInterface::INSTALLMENT_PERIOD);
     }
 
+    /**
+     * @return array|int|mixed|null
+     */
     public function getInstallmentAmount()
     {
         return $this->getData(InstallmentInterface::INSTALLMENT_AMOUNT);

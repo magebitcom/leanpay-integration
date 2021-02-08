@@ -1,0 +1,20 @@
+{
+    "leanpay_installment": {
+        "column": {
+            "entity_id": true,
+            "group_id": true,
+            "group_name": true,
+            "currency_code": true,
+            "loan_amount": true,
+            "installment_period": true,
+            "installment_amount": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        },
+        "index": {
+            "LEANPAY_INSTALLMENT_INSTALLMENT_AMOUNT_INSTALLMENT_PERIOD": true,
+            "LEANPAY_INSTALLMENT_GROUP_ID_GROUP_NAME_CURRENCY_CODE": true
+        }
+    }
+}

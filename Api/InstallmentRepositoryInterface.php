@@ -43,4 +43,9 @@ interface InstallmentRepositoryInterface
      * @return bool
      */
     public function deleteById($id);
+
+    /**
+     * @return InstallmentInterface
+     */
+    public function newModel();
 }

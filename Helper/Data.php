@@ -24,6 +24,13 @@ class Data extends AbstractHelper
     const LEANPAY_CHECKOUT_URL_DEV = 'https://lapp.leanpay.si/vendor/checkout';
 
     /**
+     * Leanpay installment URL
+     *
+     * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
+     */
+    const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
+
+    /**
      *  Post Token URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-request-token-post
@@ -36,6 +43,13 @@ class Data extends AbstractHelper
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
      */
     const LEANPAY_CHECKOUT_URL = 'https://app.leanpay.si/vendor/checkout';
+
+    /**
+     * Leanpay installment URL
+     *
+     * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
+     */
+    const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
 
     /**
      * Leanpay Magento 1 api key path in Database
@@ -215,6 +229,20 @@ class Data extends AbstractHelper
     public function getMagentoCheckoutUrl(): string
     {
         return (string) $this->scopeConfig->getValue(self::LEANPAY_MAGENTO_CHECKOUT_URL);
+    }
+
+    /**
+     * Get installment URL
+     *
+     * @return string
+     */
+    public function getInstallmentURL(): string
+    {
+        if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
+            return self::LEANPAY_INSTALLMENT_URL;
+        }
+
+        return self::LEANPAY_INSTALLMENT_URL_DEV;
     }
 
     /**
