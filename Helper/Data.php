@@ -52,14 +52,49 @@ class Data extends AbstractHelper
     const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
 
     /**
-     * Leanpay Magento 1 api key path in Database
+     * Leanpay Magento 2 api key path in Database
      */
     const LEANPAY_API_CONFIG_API_KEY_PATH = 'payment/leanpay/api_key';
 
     /**
-     * Leanpay Magento 1 secret word path in Database
+     * Leanpay Magento 2 secret word path in Database
      */
     const LEANPAY_API_CONFIG_SECRET_WORD_PATH = 'payment/leanpay/api_secret';
+
+    /**
+     * Leanpay Installment color
+     */
+    const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
+
+    /**
+     * Leanpay Installment homepage
+     */
+    const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
+
+    /**
+     * Leanpay Installment product page
+     */
+    const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
+
+    /**
+     * Leanpay Installment font category page
+     */
+    const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
+
+    /**
+     * Leanpay Installment more info
+     */
+    const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
+
+    /**
+     * Leanpay Installment check yout limits URL
+     */
+    const LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT = 'payment/leanpay_installment/check_your_limit';
+
+    /**
+     * Leanpay Installment allowed views
+     */
+    const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
 
     /**
      * Leanpay Magento 1 description path in Database
@@ -96,6 +131,13 @@ class Data extends AbstractHelper
      */
     const LEANPAY_API_MODE_DEV = 'DEV_MODE';
     const LEANPAY_API_MODE_LIVE = 'LIVE_MODE';
+
+    /**
+     * Installment view options
+     */
+    const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE ='HOMEPAGE';
+    const LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE = 'PRODUCT_PAGE';
+    const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
 
     /**
      * Leanpay responses from api

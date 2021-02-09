@@ -3,9 +3,9 @@
 namespace Leanpay\Payment\Model\Config\Source;
 
 use Leanpay\Payment\Helper\Data;
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 
-class Modes implements ArrayInterface
+class Modes implements OptionSourceInterface
 {
     /**
      * Return array of leanpay environment

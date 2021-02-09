@@ -1,0 +1,8 @@
+<?php
+use Leanpay\Payment\Block\System\Config\RefreshButton;
+/** @var RefreshButton $block */
+
+$controller = $block->getCustomUrl();
+?>
+
+<?= $block->getButtonHtml(); ?>

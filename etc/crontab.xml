@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
         <job name="leanpay_sync_installment" instance="Leanpay\Payment\Cron\SyncInstallments" method="execute">
-            <config_path>crontab/default/jobs/leanpay_sync_installment/schedule/cron_expr</config_path>
+            <config_path>payment/leanpay/installment_cron</config_path>
         </job>
     </group>
 </config>
