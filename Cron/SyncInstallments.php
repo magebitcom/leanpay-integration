@@ -6,6 +6,7 @@ namespace Leanpay\Payment\Cron;
 use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Api\InstallmentRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\HTTP\Client\Curl;
@@ -44,6 +45,11 @@ class SyncInstallments
     private $repository;
 
     /**
+     * @var ResourceConnection
+     */
+    private $resource;
+
+    /**
      * SyncInstallments constructor.
      *
      * @param Curl $curl
@@ -51,19 +57,22 @@ class SyncInstallments
      * @param ManagerInterface $eventManager
      * @param LoggerInterface $logger
      * @param InstallmentRepositoryInterface $repository
+     * @param ResourceConnection $resource
      */
     public function __construct(
         Curl $curl,
         Data $helper,
         ManagerInterface $eventManager,
         LoggerInterface $logger,
-        InstallmentRepositoryInterface $repository
+        InstallmentRepositoryInterface $repository,
+        ResourceConnection $resource
     ) {
         $this->logger = $logger;
         $this->curlClient = $curl;
         $this->helper = $helper;
         $this->eventManager = $eventManager;
         $this->repository = $repository;
+        $this->resource = $resource;
     }
 
     /**
@@ -80,6 +89,14 @@ class SyncInstallments
                 $curl->post($url, json_encode(['vendorApiKey' => $apiKey]));
                 $data = $curl->getBody();
                 if ($data) {
+                    $connection = $this->resource->getConnection();
+                    if (!$connection->isTableExists(InstallmentInterface::TABLE_NAME)) {
+                        return;
+                    }
+
+                    $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+                    $connection->truncateTable($table);
+
                     $parse = json_decode($data);
                     if ($parse->groups) {
                         $models = [];
@@ -89,7 +106,6 @@ class SyncInstallments
                                 foreach ($group->loanAmounts as $amount) {
                                     if (is_object($amount) && is_array($amount->possibleInstallments)) {
                                         foreach ($amount->possibleInstallments as $installment) {
-                                            $models[$index][InstallmentInterface::ENTITY_ID] = $index;
                                             $models[$index][InstallmentInterface::GROUP_ID] = $group->groupId;
                                             $models[$index][InstallmentInterface::GROUP_NAME] = $group->groupName;
                                             $models[$index][InstallmentInterface::CURRENCY_CODE] = $group->currencyCode;

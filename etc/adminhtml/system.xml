@@ -48,13 +48,17 @@
                     <source_model>Leanpay\Payment\Model\Config\Source\Modes</source_model>
                 </field>
 
-                <field id="api_key" translate="label comment" sortOrder="10" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="api_key" translate="label comment" sortOrder="10" type="obscure" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API Key</label>
                 </field>
 
                 <field id="api_secret" translate="label comment" sortOrder="20" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <label>API Secret Word</label>
+                </field>
+
+                <field id="installment_cron" translate="label comment" sortOrder="1000" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Installment Cron</label>
+                    <comment>Please follow cron schema * * * * *</comment>
                 </field>
 
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">

@@ -13,6 +13,7 @@
                 <allowspecific>0</allowspecific>
                 <mode>DEV_MODE</mode>
                 <language>sl</language>
+                <installment_cron>0 2 * * *</installment_cron>
                 <checkout_url>checkout/index/index</checkout_url>
                 <instructions><![CDATA[LeanPay vam omogoča, da svoje nakupe plačate na 3, 6 i 12 obrokov, na hiter, enostaven in prijazen način.
 
