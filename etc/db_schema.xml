@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="leanpay_installment" resource="default" engine="innodb" comment="Leanpay base table">
+        <column xsi:type="smallint" name="entity_id" padding="6" unsigned="false" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="varchar" name="group_id" default="0" nullable="false" comment="Group ID"/>
+        <column xsi:type="varchar" name="group_name" nullable="false" length="255" comment="Group name"/>
+        <column xsi:type="varchar" name="currency_code" nullable="false" length="3" comment="Currency Code"/>
+        <column xsi:type="int" name="loan_amount" default="0" nullable="false" unsigned="true" comment="Loan Amount"/>
+        <column xsi:type="int" name="installment_period" default="0" nullable="false" unsigned="true"
+                comment="Installment Period"/>
+        <column xsi:type="int" name="installment_amount" default="0" nullable="false" unsigned="true"
+                comment="Installment Amount"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="LEANPAY_INSTALLMENT_INSTALLMENT_PERIOD_INSTALLMENT_AMOUNT" indexType="btree">
+            <column name="installment_amount"/>
+            <column name="installment_period"/>
+        </index>
+        <index referenceId="LEANPAY_INSTALLMENT_GROUP_ID_GROUP_NAME_CURRENCY_CODE" indexType="fulltext">
+            <column name="group_id"/>
+            <column name="group_name"/>
+            <column name="currency_code"/>
+        </index>
+    </table>
+</schema>
