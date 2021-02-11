@@ -25,8 +25,7 @@ class Currency extends Field
         Context $context,
         CurrencyModel $currencyModel,
         array $data = []
-    )
-    {
+    ) {
         $this->currencyModel = $currencyModel;
 
         parent::__construct($context, $data);

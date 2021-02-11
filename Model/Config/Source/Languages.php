@@ -16,13 +16,13 @@
 
 namespace Leanpay\Payment\Model\Config\Source;
 
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Class Languages
  * @package Leanpay\Payment\Model\Config\Source
  */
-class Languages implements ArrayInterface
+class Languages implements OptionSourceInterface
 {
     /**
      * Return array of leanpay languages
