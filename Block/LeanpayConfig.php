@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Block;
 
@@ -6,6 +7,11 @@ use Leanpay\Payment\Helper\Data;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
+/**
+ * Class LeanpayConfig
+ *
+ * @package Leanpay\Payment\Block
+ */
 class LeanpayConfig extends Template
 {
     /**
@@ -46,7 +52,7 @@ class LeanpayConfig extends Template
             'logo' => $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg')
         ]);
     }
-    
+
     /**
      * get billing country is allowed for the payment method
      *

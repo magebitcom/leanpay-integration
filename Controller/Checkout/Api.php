@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Controller\Checkout;
 
@@ -8,6 +9,11 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 
+/**
+ * Class Api
+ *
+ * @package Leanpay\Payment\Controller\Checkout
+ */
 class Api extends AbstractAction
 {
     const ORDER_STATUS_SUCCESS = 'SUCCESS';
@@ -40,9 +46,9 @@ class Api extends AbstractAction
             $leanpayData['status']
         );
 
-        if($leanpayData['md5Signature'] != $md5Secret) {
-            $this->logger->addError('Response: '.$responseBody);
-            $this->logger->addError('My md5: '.$md5Secret);
+        if ($leanpayData['md5Signature'] != $md5Secret) {
+            $this->logger->addError('Response: ' . $responseBody);
+            $this->logger->addError('My md5: ' . $md5Secret);
             return;
         }
 
@@ -59,7 +65,7 @@ class Api extends AbstractAction
                     break;
             }
         } catch (Exception $exception) {
-            $this->logger->addError('There was error while trying to parse Leanpay API data: '.$exception->getMessage());
+            $this->logger->addError('There was error while trying to parse Leanpay API data: ' . $exception->getMessage());
         }
     }
 
@@ -84,7 +90,7 @@ class Api extends AbstractAction
     protected function orderSuccess(Order $order)
     {
         if (!$order->canInvoice()) {
-            $this->logger->error("Can't Create invoice, order id: ".$order->getId());
+            $this->logger->error("Can't Create invoice, order id: " . $order->getId());
 
             return;
         }
@@ -92,7 +98,7 @@ class Api extends AbstractAction
         $invoice = $this->invoiceService->prepareInvoice($order);
 
         if (!$invoice->getTotalQty()) {
-            $this->logger->error("You can't create an invoice without products order id: ".$order->getId());
+            $this->logger->error("You can't create an invoice without products order id: " . $order->getId());
 
             return;
         }

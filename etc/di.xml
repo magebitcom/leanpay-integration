@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Virtual type -->
+    <virtualType name="Magento\Framework\Pricing\Price\Pool">
+        <arguments>
+            <argument name="prices" xsi:type="array">
+                <item name="installment_price" xsi:type="string">Leanpay\Payment\Pricing\Price\Installment</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
     <!-- DI Injections -->
     <type name="Leanpay\Payment\Logger\Handler">
         <arguments>

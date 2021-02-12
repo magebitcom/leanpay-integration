@@ -1,11 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Controller\Checkout;
 
 use Exception;
 use Leanpay\Payment\Controller\AbstractAction;
+use Magento\Framework\View\Result\Page;
 use Magento\Sales\Model\Order;
 
+/**
+ * Class Failure
+ *
+ * @package Leanpay\Payment\Controller\Checkout
+ */
 class Failure extends AbstractAction
 {
     /**
@@ -13,7 +20,7 @@ class Failure extends AbstractAction
      *
      * Note: Request will be added as operation argument in future
      *
-     * @return \Magento\Framework\View\Result\Page
+     * @return Page
      */
     public function execute()
     {

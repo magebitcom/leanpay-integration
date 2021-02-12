@@ -1,12 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Helper;
 
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 
+/**
+ * Class Data
+ *
+ * @package Leanpay\Payment\Helper
+ */
 class Data extends AbstractHelper
 {
     /**
@@ -62,41 +70,6 @@ class Data extends AbstractHelper
     const LEANPAY_API_CONFIG_SECRET_WORD_PATH = 'payment/leanpay/api_secret';
 
     /**
-     * Leanpay Installment color
-     */
-    const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
-
-    /**
-     * Leanpay Installment homepage
-     */
-    const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
-
-    /**
-     * Leanpay Installment product page
-     */
-    const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
-
-    /**
-     * Leanpay Installment font category page
-     */
-    const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
-
-    /**
-     * Leanpay Installment more info
-     */
-    const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
-
-    /**
-     * Leanpay Installment check yout limits URL
-     */
-    const LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT = 'payment/leanpay_installment/check_your_limit';
-
-    /**
-     * Leanpay Installment allowed views
-     */
-    const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
-
-    /**
      * Leanpay Magento 1 description path in Database
      */
     const LEANPAY_CONFIG_INSTRUCTIONS_PATH = 'payment/leanpay/instructions';
@@ -110,6 +83,11 @@ class Data extends AbstractHelper
      * Leanpay Language configuration path
      */
     const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
+
+    /**
+     * Leanpay is active configuration path
+     */
+    const LEANPAY_IS_ACTIVE_PATH = 'payment/leanpay/active';
 
     /**
      * Successful redirect url
@@ -133,13 +111,6 @@ class Data extends AbstractHelper
     const LEANPAY_API_MODE_LIVE = 'LIVE_MODE';
 
     /**
-     * Installment view options
-     */
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE ='HOMEPAGE';
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE = 'PRODUCT_PAGE';
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
-
-    /**
      * Leanpay responses from api
      */
     protected $responseMap = [
@@ -148,6 +119,30 @@ class Data extends AbstractHelper
         'CANCELED' => Order::STATE_CANCELED,
         'EXPIRED' => Order::STATE_CANCELED
     ];
+    /**
+     * @var EncryptorInterface
+     */
+    private EncryptorInterface $encryptor;
+
+    /**
+     * Data constructor.
+     *
+     * @param Context $context
+     * @param EncryptorInterface $encryptor
+     */
+    public function __construct(Context $context, EncryptorInterface $encryptor)
+    {
+        $this->encryptor = $encryptor;
+        parent::__construct($context);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(self::LEANPAY_IS_ACTIVE_PATH);
+    }
 
     /**
      * Get Leanpay api key
@@ -156,7 +151,9 @@ class Data extends AbstractHelper
      */
     public function getLeanpayApiKey(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_API_KEY_PATH);
+        return (string)$this->encryptor->decrypt(
+            $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_API_KEY_PATH)
+        );
     }
 
     /**
@@ -250,7 +247,9 @@ class Data extends AbstractHelper
      */
     private function getSecretWord(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_SECRET_WORD_PATH);
+        return (string)$this->encryptor->decrypt(
+            $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_SECRET_WORD_PATH)
+        );
     }
 
     /**

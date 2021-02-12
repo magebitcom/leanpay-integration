@@ -1,10 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Model\Config\Source;
 
 use Leanpay\Payment\Helper\Data;
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * Class Modes
+ *
+ * @package Leanpay\Payment\Model\Config\Source
+ */
 class Modes implements OptionSourceInterface
 {
     /**

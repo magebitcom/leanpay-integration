@@ -1,10 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Model\Config\Source;
 
-use Leanpay\Payment\Helper\Data;
+use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * Class ViewBlockConfig
+ *
+ * @package Leanpay\Payment\Model\Config\Source
+ */
 class ViewBlockConfig implements OptionSourceInterface
 {
     /**
@@ -16,15 +22,15 @@ class ViewBlockConfig implements OptionSourceInterface
     {
         return [
             [
-                'value' => Data::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE,
+                'value' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE,
                 'label' => __('Homepage')
             ],
             [
-                'value' => Data::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE,
+                'value' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE,
                 'label' => __('Product')
             ],
             [
-                'value' => Data::LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE,
+                'value' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE,
                 'label' => __('Category')
             ],
         ];

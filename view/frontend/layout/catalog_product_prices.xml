@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <referenceBlock name="render.product.prices">
+        <arguments>
+            <argument name="default" xsi:type="array">
+               <item name="prices" xsi:type="array">
+                   <item name="installment_price" xsi:type="array">
+                       <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox</item>
+                       <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
+                   </item>
+                </item>
+            </argument>
+            <argument name="bundle" xsi:type="array">
+                <item name="prices" xsi:type="array">
+                    <item name="installment_price" xsi:type="array">
+                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\BundlePriceBox</item>
+                        <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
+                    </item>
+                </item>
+            </argument>
+            <argument name="configurable" xsi:type="array">
+            <item name="prices" xsi:type="array">
+                <item name="installment_price" xsi:type="array">
+                    <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\ConfigurablePriceBox</item>
+                    <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
+                </item>
+            </item>
+            </argument>
+            <argument name="grouped" xsi:type="array">
+                <item name="prices" xsi:type="array">
+                    <item name="installment_price" xsi:type="array">
+                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\GroupedPriceBox</item>
+                        <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </referenceBlock>
+</layout>
