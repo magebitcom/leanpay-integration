@@ -122,7 +122,7 @@ class Data extends AbstractHelper
     /**
      * @var EncryptorInterface
      */
-    private EncryptorInterface $encryptor;
+    private $encryptor;
 
     /**
      * Data constructor.

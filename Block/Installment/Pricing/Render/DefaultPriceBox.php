@@ -23,12 +23,12 @@ class DefaultPriceBox extends FinalPriceBox
     /**
      * @var InstallmentHelper
      */
-    private InstallmentHelper $installmentHelper;
+    private $installmentHelper;
 
     /**
      * @var Data
      */
-    private Data $helper;
+    private $helper;
 
     /**
      * DefaultPriceBox constructor.
@@ -68,17 +68,23 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getLowestInstallmentPrice(): string
+    public function getAmount(): float
     {
-        $amount = $this->getSaleableItem()
+        return $this->getSaleableItem()
             ->getPriceInfo()
             ->getPrice(FinalPrice::PRICE_CODE)
             ->getAmount()
             ->getValue();
+    }
 
-        return $this->installmentHelper->getLowestInstallmentPrice($amount);
+    /**
+     * @return string
+     */
+    public function getLowestInstallmentPrice(): string
+    {
+        return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount());
     }
 
     /**
@@ -96,4 +102,23 @@ class DefaultPriceBox extends FinalPriceBox
     {
         return $this->helper;
     }
+
+    /**
+     * @return string
+     */
+    public function getLogo(): string
+    {
+        return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
+    }
+
+    /**
+     * Get Key for caching block content
+     *
+     * @return string
+     */
+    public function getCacheKey()
+    {
+        return parent::getCacheKey() . ($this->getData('view_key'));
+    }
+
 }

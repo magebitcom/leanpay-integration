@@ -15,3 +15,63 @@
 .leanpay .instructions {
     margin: 20px 0 0;
 }
+
+.installment-additional-wrapper .installment-tooltip.hidden {
+    display: none;
+}
+
+.installment-additional-wrapper .installment-plans,
+.installment-additional-wrapper .installment-tooltip,
+.installment-additional-wrapper .installment-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.installment-additional-wrapper .installment-tooltip {
+    box-shadow: -2px -3px 10px -3px #a7a7a7;
+    background: #FFFFFF;
+    position: absolute;
+    z-index: 1000;
+    padding: 15px;
+}
+
+.installment-wrapper {
+    position: relative;
+    border-top: 1px solid #e4e4e4;
+    padding-top: 10px;
+}
+
+.installment-additional-wrapper .installment-title {
+    font-weight: bold;
+}
+
+.installment-additional-wrapper .installment-title .title-block,
+.installment-additional-wrapper .installment-quick-information{
+    margin: 5px 0;
+}
+
+.installment-wrapper-start {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    padding: 0 10px;
+    background: #FFFFFF;
+}
+
+.installment-deposit {
+    color: #a7a7a7;
+}
+
+.installment-links a:last-child{
+    border-left: 1px solid #a7a7a7;
+    padding-left: 5px;
+}
+
+.installment-info img {
+    cursor: pointer;
+}
+
+.installment-additional-wrapper .installment-tooltip img {
+    height: 30px;
+}
