@@ -25,37 +25,37 @@ class SyncInstallments
     /**
      * @var Curl
      */
-    private Curl $curlClient;
+    private $curlClient;
 
     /**
      * @var Data
      */
-    private Data $helper;
+    private $helper;
 
     /**
      * @var ManagerInterface
      */
-    private ManagerInterface $eventManager;
+    private $eventManager;
 
     /**
      * @var LoggerInterface
      */
-    private LoggerInterface $logger;
+    private $logger;
 
     /**
      * @var InstallmentRepositoryInterface
      */
-    private InstallmentRepositoryInterface $repository;
+    private $repository;
 
     /**
      * @var ResourceConnection
      */
-    private ResourceConnection $resource;
+    private $resource;
 
     /**
      * @var Manager
      */
-    private Manager $cacheManager;
+    private $cacheManager;
 
     /**
      * SyncInstallments constructor.
