@@ -14,7 +14,7 @@
             <argument name="bundle" xsi:type="array">
                 <item name="prices" xsi:type="array">
                     <item name="installment_price" xsi:type="array">
-                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\BundlePriceBox</item>
+                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox</item>
                         <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
                     </item>
                 </item>
@@ -22,7 +22,7 @@
             <argument name="configurable" xsi:type="array">
             <item name="prices" xsi:type="array">
                 <item name="installment_price" xsi:type="array">
-                    <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\ConfigurablePriceBox</item>
+                    <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox</item>
                     <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
                 </item>
             </item>
@@ -30,7 +30,7 @@
             <argument name="grouped" xsi:type="array">
                 <item name="prices" xsi:type="array">
                     <item name="installment_price" xsi:type="array">
-                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\GroupedPriceBox</item>
+                        <item name="render_class" xsi:type="string">Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox</item>
                         <item name="render_template" xsi:type="string">Leanpay_Payment::pricing/render/installment.phtml</item>
                     </item>
                 </item>

@@ -1,5 +1,6 @@
 <?php
 
+use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox;
 use Leanpay\Payment\Helper\InstallmentHelper;
 
@@ -9,12 +10,78 @@ $price = $block->getLowestInstallmentPrice();
 $viewKey = $block->getData('view_key') ?? InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
 $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
-$helper->getInstallmentList($price);
 $fontSize = $helper->getFontSize($viewKey);
 $color = $helper->getInstallmentColor();
 ?>
-<?php if ($price && $canShow): ?>
-    <div class="installment-price" style="color: <?= $color ?>; font-size: <?= $fontSize ?>px;">
-        <?= __('starting from %1 € /month', $price); ?>
-    </div>
+<?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
+    <?php if ($price && $canShow): ?>
+        <div class="installment-price" style="color: <?= $color ?>; font-size: <?= $fontSize ?>px;">
+            <?= __('ali od %1 € / mesec', $price); ?>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php if ($price && $canShow): ?>
+        <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
+            <span class="installment-wrapper-start"><?= __('ali'); ?></span>
+            <div class="installment-additional-wrapper">
+                <div class="installment-plans" style="color: <?= $color ?>; font-size: <?= $fontSize ?>px;">
+                    <?php
+                    $list = $helper->getInstallmentList($block->getAmount());
+                    foreach ($list as $key => $item):?>
+                        <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
+                            <span class="installment-plan-option"><?= __(
+                                    '%1 € * %2',
+                                    $item[InstallmentInterface::INSTALLMENT_AMOUNT],
+                                    $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                ) ?></span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <div class="installment-info">
+                    <div class="installment-deposit">
+                        <span class="deposit"><?= __('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))?></span>
+                    </div>
+                    <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
+                </div>
+                <div class="installment-tooltip hidden">
+                    <div class="installment-title">
+                        <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
+                        <span class="title-block"><?= __('Obrestno financiravje'); ?></span>
+                    </div>
+                    <div class="installment-plans">
+                        <?php foreach ($list as $key => $item): ?>
+                            <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
+                                <span class="installment-plan-option">
+                                    <?php if ($item[InstallmentInterface::INSTALLMENT_PERIOD] == 3): ?>
+                                        <?= __(
+                                            '%1 € * %2 meseci',
+                                            $item[InstallmentInterface::INSTALLMENT_AMOUNT],
+                                            $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                        ) ?>
+                                    <?php else: ?>
+                                        <?= __(
+                                            '%1 € * %2 mesecev',
+                                            $item[InstallmentInterface::INSTALLMENT_AMOUNT],
+                                            $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                        ) ?>
+                                    <?php endif; ?>
+                                </span>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="installment-quick-information">
+                        <?= __('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.'); ?>
+                    </div>
+                    <div class="installment-links">
+                        <a href="<?= $helper->getMoreInfoURL(); ?>">
+                            <span class="link-option"><?= __('Preveri svoj limit'); ?></span>
+                        </a>
+                        <a href="<?= $helper->getCheckYourLimitURL(); ?>">
+                            <span class="link-option"><?= __('Več informacij'); ?></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 <?php endif; ?>

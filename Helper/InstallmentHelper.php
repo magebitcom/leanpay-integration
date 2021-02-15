@@ -181,7 +181,7 @@ class InstallmentHelper extends AbstractHelper
      * @param $price
      * @return string
      */
-    public function getInstallmentList($price): string
+    public function getInstallmentList($price)
     {
         return $this->resourceModel->getInstallmentList($price);
     }
@@ -207,5 +207,34 @@ class InstallmentHelper extends AbstractHelper
         }
 
         return (string) $result;
+    }
+
+    /**
+     * Down payment is calculated manually and rules are as follow:
+     *
+     * 0 EUR for purchases up to 999.99
+     * EUR100 EUR for purchases from 1000 EUR to 1999.99
+     * EUR150 EUR for purchases from 2000 EUR to 2999.99
+     * EUR200 EUR for purchases from 3000 EUR
+     * @param $price
+     * @return mixed
+     */
+    public function getDownPaymentRule($price): int
+    {
+        switch ($price) {
+            case ($price >= 1000 && $price <= 1999.99):
+                $result = 100;
+                break;
+            case ($price >= 2000 && $price <= 2999.99):
+                $result = 150;
+                break;
+            case ($price >= 3000):
+                $result = 200;
+                break;
+            default:
+                $result = 0;
+        }
+
+        return $result;
     }
 }

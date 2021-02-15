@@ -44,10 +44,10 @@ class Installment extends AbstractDb
         return $this->getConnection()->fetchOne($select);
     }
 
-    public function getInstallmentList($price): array
+    public function getInstallmentList($price)
     {
         if (!$price) {
-            return '';
+            return [];
         }
 
         $orderStatement = sprintf('%s %s', InstallmentInterface::LOAN_AMOUNT, Zend_Db_Select::SQL_ASC);
