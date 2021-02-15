@@ -57,6 +57,6 @@ class Currency extends Field
             return _('<span style="color: red;"><b>Please set up Currency rate for EUR</b></span>');
         }
 
-        return sprintf(__('1 %1$s equals %3$s %2$f'), $baseCode, number_format($rates['EUR'], 4), 'EUR');
+        return sprintf(__('1 %1$s equals %3$s %2$f'), $baseCode, number_format((float)$rates['EUR'], 4), 'EUR');
     }
 }
