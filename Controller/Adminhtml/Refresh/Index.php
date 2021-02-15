@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Controller\Adminhtml\Refresh;
 
@@ -65,7 +66,7 @@ class Index extends Action
         $schedule->setStatus(ScheduleModel::STATUS_PENDING);
         $schedule->setJobCode('leanpay_sync_installment');
         $schedule->setCronExpr('* * * * *');
-        $schedule->setScheduledAt($this->dataTime->gmtTimestamp());
+        $schedule->setScheduledAt((string)$this->dataTime->gmtTimestamp());
 
         $resultFactory = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $resultFactory->setUrl($this->_redirect->getRefererUrl());

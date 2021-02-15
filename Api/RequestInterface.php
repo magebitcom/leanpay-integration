@@ -4,6 +4,11 @@ namespace Leanpay\Payment\Api;
 
 use Exception;
 
+/**
+ * Interface RequestInterface
+ *
+ * @package Leanpay\Payment\Api
+ */
 interface RequestInterface
 {
     /**

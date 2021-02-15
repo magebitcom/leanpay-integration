@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Block\Adminhtml\Form\Field;
 
@@ -6,7 +7,14 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Directory\Model\Currency as CurrencyModel;
 use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 
+/**
+ * Class Currency
+ *
+ * @package Leanpay\Payment\Block\Adminhtml\Form\Field
+ */
 class Currency extends Field
 {
     /**
@@ -37,7 +45,7 @@ class Currency extends Field
      * @param AbstractElement $element
      * @return string
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException|LocalizedException
      */
     protected function _getElementHtml(AbstractElement $element): string
     {

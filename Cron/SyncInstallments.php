@@ -6,10 +6,13 @@ namespace Leanpay\Payment\Cron;
 use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Api\InstallmentRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
+use Magento\Framework\App\Cache\Manager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\Profiler;
+use Magento\PageCache\Model\Cache\Type;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,32 +25,37 @@ class SyncInstallments
     /**
      * @var Curl
      */
-    private $curlClient;
+    private Curl $curlClient;
 
     /**
      * @var Data
      */
-    private $helper;
+    private Data $helper;
 
     /**
      * @var ManagerInterface
      */
-    private $eventManager;
+    private ManagerInterface $eventManager;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @var InstallmentRepositoryInterface
      */
-    private $repository;
+    private InstallmentRepositoryInterface $repository;
 
     /**
      * @var ResourceConnection
      */
-    private $resource;
+    private ResourceConnection $resource;
+
+    /**
+     * @var Manager
+     */
+    private Manager $cacheManager;
 
     /**
      * SyncInstallments constructor.
@@ -58,6 +66,7 @@ class SyncInstallments
      * @param LoggerInterface $logger
      * @param InstallmentRepositoryInterface $repository
      * @param ResourceConnection $resource
+     * @param Manager $manager
      */
     public function __construct(
         Curl $curl,
@@ -65,7 +74,8 @@ class SyncInstallments
         ManagerInterface $eventManager,
         LoggerInterface $logger,
         InstallmentRepositoryInterface $repository,
-        ResourceConnection $resource
+        ResourceConnection $resource,
+        Manager $manager
     ) {
         $this->logger = $logger;
         $this->curlClient = $curl;
@@ -73,6 +83,7 @@ class SyncInstallments
         $this->eventManager = $eventManager;
         $this->repository = $repository;
         $this->resource = $resource;
+        $this->cacheManager = $manager;
     }
 
     /**
@@ -80,11 +91,14 @@ class SyncInstallments
      */
     public function execute()
     {
+        Profiler::start('leanpay_sync_installment');
+
         $url = $this->helper->getInstallmentURL();
         $apiKey = $this->helper->getLeanpayApiKey();
+        $enabled = $this->helper->isActive();
 
         try {
-            if ($apiKey) {
+            if ($apiKey && $enabled) {
                 $curl = $this->addHeaders($this->curlClient);
                 $curl->post($url, json_encode(['vendorApiKey' => $apiKey]));
                 $data = $curl->getBody();
@@ -120,12 +134,15 @@ class SyncInstallments
                         }
 
                         $this->saveAllModels($models);
+                        $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
                 }
             }
         } catch (\Exception $exception) {
             $this->logger->critical($exception);
         }
+
+        Profiler::stop('leanpay_sync_installment');
     }
 
     /**

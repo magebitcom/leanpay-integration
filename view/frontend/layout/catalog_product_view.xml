@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.info.price">
+            <block class="Magento\Catalog\Pricing\Render" name="product.price.installment_price">
+                <arguments>
+                    <argument name="price_render" xsi:type="string">product.price.render.default</argument>
+                    <argument name="price_type_code" xsi:type="string">installment_price</argument>
+                    <argument name="zone" xsi:type="string">item_view</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

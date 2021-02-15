@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin;
 
@@ -7,6 +8,11 @@ use Magento\Payment\Model\Checks\TotalMinMax;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Model\Quote;
 
+/**
+ * Class TotalMinMaxPlugin
+ *
+ * @package Leanpay\Payment\Plugin
+ */
 class TotalMinMaxPlugin
 {
     /**

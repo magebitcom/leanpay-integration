@@ -1,15 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin;
 
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Model\Method\Leanpay;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Payment\Model\Checks\CanUseForCountry;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Model\Quote;
-use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Quote\Model\Quote\Address;
 
+/**
+ * Class CanUseForCountryPlugin
+ *
+ * @package Leanpay\Payment\Plugin
+ */
 class CanUseForCountryPlugin
 {
     /**

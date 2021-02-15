@@ -1,0 +1,20 @@
+<?php
+
+use Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox;
+use Leanpay\Payment\Helper\InstallmentHelper;
+
+/** @var DefaultPriceBox $block */
+
+$price = $block->getLowestInstallmentPrice();
+$viewKey = $block->getData('view_key') ?? InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
+$helper = $block->getInstallmentHelper();
+$canShow = $helper->canShowInstallment($viewKey);
+$helper->getInstallmentList($price);
+$fontSize = $helper->getFontSize($viewKey);
+$color = $helper->getInstallmentColor();
+?>
+<?php if ($price && $canShow): ?>
+    <div class="installment-price" style="color: <?= $color ?>; font-size: <?= $fontSize ?>px;">
+        <?= __('starting from %1 € /month', $price); ?>
+    </div>
+<?php endif; ?>

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace Leanpay\Payment\Api;
 
@@ -9,6 +8,11 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
+/**
+ * Interface InstallmentRepositoryInterface
+ *
+ * @package Leanpay\Payment\Api
+ */
 interface InstallmentRepositoryInterface
 {
     /**

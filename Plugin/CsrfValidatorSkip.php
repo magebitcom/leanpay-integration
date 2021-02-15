@@ -1,14 +1,24 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin;
 
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\Request\CsrfValidator;
+use Magento\Framework\App\RequestInterface;
+
+/**
+ * Class CsrfValidatorSkip
+ *
+ * @package Leanpay\Payment\Plugin
+ */
 class CsrfValidatorSkip
 {
     /**
-     * @param \Magento\Framework\App\Request\CsrfValidator $subject
+     * @param CsrfValidator $subject
      * @param \Closure $proceed
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @param \Magento\Framework\App\ActionInterface $action
+     * @param RequestInterface $request
+     * @param ActionInterface $action
      */
     public function aroundValidate(
         $subject,

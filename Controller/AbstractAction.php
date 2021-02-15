@@ -1,14 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace Leanpay\Payment\Controller;
 
 use Exception;
+use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Logger\PaymentLogger;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Action;
-use Magento\Checkout\Model\Session;
-use Leanpay\Payment\Helper\Data;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\View\Result\PageFactory;
@@ -18,6 +19,11 @@ use Magento\Sales\Model\Order\Payment\Repository as PaymentRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Service\InvoiceService;
 
+/**
+ * Class AbstractAction
+ *
+ * @package Leanpay\Payment\Controller
+ */
 abstract class AbstractAction extends Action
 {
     /**
@@ -104,8 +110,7 @@ abstract class AbstractAction extends Action
         InvoiceService $invoiceService,
         Transaction $transaction,
         InvoiceSender $invoiceSender
-    )
-    {
+    ) {
         parent::__construct($context);
 
         $this->checkoutSession = $checkoutSession;
@@ -140,7 +145,7 @@ abstract class AbstractAction extends Action
 
         $searchCriteria = $this->searchCriteriaBuilder->create();
         $order = $this->orderRepository->getList($searchCriteria)->getItems();
-        /** @var \Magento\Sales\Model\Order $order */
+        /** @var Order $order */
         $order = current($order);
 
         if (!$order || $order && !$order->getId()) {
