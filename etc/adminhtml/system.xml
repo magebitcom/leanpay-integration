@@ -144,7 +144,12 @@
                        showInWebsite="1" showInStore="1">
                     <label>Check your limit</label>
                 </field>
-                <field id="refresh" translate="label" type="button" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="use_dark_logo" translate="label comment" sortOrder="50" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Use dark theme logo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="refresh" translate="label" type="button" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Refresh</label>
                     <frontend_model>Leanpay\Payment\Block\System\Config\RefreshButton</frontend_model>
                 </field>

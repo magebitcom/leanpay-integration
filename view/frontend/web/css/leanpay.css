@@ -34,6 +34,7 @@
     position: absolute;
     z-index: 1000;
     padding: 15px;
+    max-width: 75%;
 }
 
 .installment-wrapper {
@@ -60,7 +61,7 @@
 }
 
 .installment-deposit {
-    color: #a7a7a7;
+    color: #9c9b9b;
 }
 
 .installment-links a:last-child{

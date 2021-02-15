@@ -51,6 +51,11 @@ class InstallmentHelper extends AbstractHelper
     const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
 
     /**
+     * Leanpay Installment allowed views
+     */
+    const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay/use_dark_logo';
+
+    /**
      * Installment view options
      */
     const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE = 'HOMEPAGE';
@@ -179,11 +184,19 @@ class InstallmentHelper extends AbstractHelper
 
     /**
      * @param $price
-     * @return string
+     * @return array
      */
     public function getInstallmentList($price)
     {
         return $this->resourceModel->getInstallmentList($price);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isDarkThemeLogo()
+    {
+        return $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH);
     }
 
     /**

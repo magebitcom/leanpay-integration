@@ -108,7 +108,11 @@ class DefaultPriceBox extends FinalPriceBox
      */
     public function getLogo(): string
     {
-        return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
+        if (!$this->installmentHelper->isDarkThemeLogo()) {
+            return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
+        }
+
+        return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
     }
 
     /**
@@ -120,5 +124,4 @@ class DefaultPriceBox extends FinalPriceBox
     {
         return parent::getCacheKey() . ($this->getData('view_key'));
     }
-
 }

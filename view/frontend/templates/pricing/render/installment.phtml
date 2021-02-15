@@ -30,7 +30,7 @@ $color = $helper->getInstallmentColor();
                     foreach ($list as $key => $item):?>
                         <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
                             <span class="installment-plan-option"><?= __(
-                                    '%1 € * %2',
+                                    '%1 € X %2',
                                     $item[InstallmentInterface::INSTALLMENT_AMOUNT],
                                     $item[InstallmentInterface::INSTALLMENT_PERIOD]
                                 ) ?></span>
@@ -54,13 +54,13 @@ $color = $helper->getInstallmentColor();
                                 <span class="installment-plan-option">
                                     <?php if ($item[InstallmentInterface::INSTALLMENT_PERIOD] == 3): ?>
                                         <?= __(
-                                            '%1 € * %2 meseci',
+                                            '%1 € X %2 meseci',
                                             $item[InstallmentInterface::INSTALLMENT_AMOUNT],
                                             $item[InstallmentInterface::INSTALLMENT_PERIOD]
                                         ) ?>
                                     <?php else: ?>
                                         <?= __(
-                                            '%1 € * %2 mesecev',
+                                            '%1 € X %2 mesecev',
                                             $item[InstallmentInterface::INSTALLMENT_AMOUNT],
                                             $item[InstallmentInterface::INSTALLMENT_PERIOD]
                                         ) ?>
