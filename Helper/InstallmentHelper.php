@@ -159,11 +159,9 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
-        foreach ($this->blockConfig->toOptionArray() as $option) {
-            if (isset($option['value']) && $option['value'] == $view) {
-                $result = true;
-                break;
-            }
+        $config = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
+        if (count($config) && strpos($config, $view) !== false) {
+            $result = true;
         }
 
         return $result;
@@ -219,7 +217,7 @@ class InstallmentHelper extends AbstractHelper
                 break;
         }
 
-        return (string) $result;
+        return (string)$result;
     }
 
     /**
