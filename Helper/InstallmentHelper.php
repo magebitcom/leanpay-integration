@@ -159,8 +159,9 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
-        $config = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
-        if (count($config) && strpos($config, $view) !== false) {
+        $config = $this->getAllowedViews();
+
+        if (strlen($config) > 0 && strpos($config, $view) !== false) {
             $result = true;
         }
 
