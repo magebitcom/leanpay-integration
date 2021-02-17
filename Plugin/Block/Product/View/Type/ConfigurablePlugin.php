@@ -45,8 +45,7 @@ class ConfigurablePlugin
     public function __construct(
         SerializerInterface $serializer,
         TemplatePriceBox $templatePriceBox
-    )
-    {
+    ) {
         $this->template = $templatePriceBox;
         $this->serializer = $serializer;
     }
