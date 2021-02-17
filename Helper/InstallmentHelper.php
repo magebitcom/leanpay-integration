@@ -53,7 +53,7 @@ class InstallmentHelper extends AbstractHelper
     /**
      * Leanpay Installment allowed views
      */
-    const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay/use_dark_logo';
+    const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
      * Installment view options
