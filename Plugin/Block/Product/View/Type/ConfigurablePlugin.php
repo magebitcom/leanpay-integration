@@ -32,6 +32,11 @@ class ConfigurablePlugin
     private $template;
 
     /**
+     * @var array
+     */
+    private $templateCache = [];
+
+    /**
      * ConfigurablePlugin constructor.
      *
      * @param SerializerInterface $serializer
@@ -40,7 +45,8 @@ class ConfigurablePlugin
     public function __construct(
         SerializerInterface $serializer,
         TemplatePriceBox $templatePriceBox
-    ) {
+    )
+    {
         $this->template = $templatePriceBox;
         $this->serializer = $serializer;
     }
@@ -63,12 +69,25 @@ class ConfigurablePlugin
             foreach ($prices as $key => $price) {
                 if (isset($price['finalPrice'], $price['finalPrice']['amount'])) {
                     $amount = $price['finalPrice']['amount'];
-                    $prices[$key]['instalment_html'] = $this->template->setData('amount', $amount)->toHtml();
+                    $prices[$key]['instalment_html'] = $this->getHtmlFromCache($amount);
                 }
             }
             $json['optionPrices'] = $prices;
         }
 
         return $this->serializer->serialize($json);
+    }
+
+    /**
+     * @param $amount
+     * @return mixed|string
+     */
+    private function getHtmlFromCache($amount): string
+    {
+        if (!isset($this->templateCache[$amount])) {
+            $this->templateCache[$amount] = $this->template->setData('amount', $amount)->toHtml();
+        }
+
+        return $this->templateCache[$amount];
     }
 }

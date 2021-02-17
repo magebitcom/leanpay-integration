@@ -1,4 +1,3 @@
-/* global define */
 define(
     [
         'jquery',
@@ -6,10 +5,12 @@ define(
     function ($) {
         'use strict';
 
-        $(document).ready(function (){
-            $('.installment-info .installment-logo').on('click',function (){
+        $(document).on('ready', handleToolTip());
+
+        function handleToolTip() {
+            $('.price-installment_price').on('click', '.installment-info .installment-logo', function () {
                 $('.installment-tooltip').toggleClass('hidden');
             });
-        });
+        }
     }
-);
+);j
