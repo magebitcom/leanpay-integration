@@ -25,6 +25,7 @@ define(['jquery'],function ($) {
                     var newHtml = $widget.options.jsonConfig.optionPrices[optionId].instalment_html;
                     if (installmentPrice !== newHtml) {
                         $('.price-installment_price').html(newHtml);
+                        $('.price-installment_price').trigger('contentUpdated');
                     }
                 }
 
