@@ -29,7 +29,8 @@
 }
 
 .installment-additional-wrapper .installment-tooltip {
-    box-shadow: -2px -3px 10px -3px #a7a7a7;
+    box-shadow: -2px -1px 10px 3px #a7a7a7;
+    border-radius: 3px;
     background: #FFFFFF;
     position: absolute;
     z-index: 1000;
