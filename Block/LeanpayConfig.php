@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Block;
 
 use Leanpay\Payment\Helper\Data;
+use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
@@ -25,17 +26,27 @@ class LeanpayConfig extends Template
     protected $helper;
 
     /**
+     * @var InstallmentHelper
+     */
+    private $installmentHelper;
+
+    /**
      * LeanpayConfig constructor.
      *
      * @param Context $context
      * @param Data $helper
+     * @param InstallmentHelper $installmentHelper
      * @param array $data
      */
-    public function __construct(Context $context, Data $helper, array $data = [])
-    {
-        parent::__construct($context, $data);
-
+    public function __construct(
+        Context $context,
+        Data $helper,
+        InstallmentHelper  $installmentHelper,
+        array $data = []
+    ) {
+        $this->installmentHelper = $installmentHelper;
         $this->helper = $helper;
+        parent::__construct($context, $data);
     }
 
     /**
@@ -49,7 +60,8 @@ class LeanpayConfig extends Template
             'allowspecific' => $this->helper->getConfigData('allowspecific'),
             'countries' => $this->getAllowedBillingCountries(),
             'instructions' => nl2br($this->helper->getInstructions()),
-            'logo' => $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg')
+            'logo' => $this->getLogo(),
+            'url' => $this->getUrl('/leanpay/installment/index')
         ]);
     }
 
@@ -65,5 +77,17 @@ class LeanpayConfig extends Template
         }
 
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogo(): string
+    {
+        if (!$this->installmentHelper->isDarkThemeLogo()) {
+            return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
+        }
+
+        return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
     }
 }

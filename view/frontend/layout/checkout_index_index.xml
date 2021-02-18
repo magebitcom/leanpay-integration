@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="Leanpay_Payment::css/leanpay.css" />
+        <css src="Leanpay_Payment::css/leanpay.css"/>
     </head>
 
     <body>
         <referenceBlock name="head.additional">
-            <block class="Leanpay\Payment\Block\LeanpayConfig" name="leanpay_config" />
+            <block class="Leanpay\Payment\Block\LeanpayConfig" name="leanpay_config"/>
         </referenceBlock>
 
         <referenceBlock name="checkout.root">
@@ -25,10 +26,14 @@
                                                         <item name="renders" xsi:type="array">
                                                             <item name="children" xsi:type="array">
                                                                 <item name="lean_payment" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Leanpay_Payment/js/payment/method-renderer</item>
+                                                                    <item name="component" xsi:type="string">
+                                                                        Leanpay_Payment/js/payment/method-renderer
+                                                                    </item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="leanpay" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
                                                                     </item>
                                                                 </item>
