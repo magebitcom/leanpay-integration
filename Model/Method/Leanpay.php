@@ -10,6 +10,7 @@ use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -189,7 +190,7 @@ class Leanpay extends AbstractMethod
      *
      * @param CartInterface|null $quote
      * @return bool
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException|LocalizedException
      */
     public function isAvailable(CartInterface $quote = null)
     {

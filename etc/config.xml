@@ -21,6 +21,7 @@
 LeanPay ima dovoljenje za potrošniško kreditiranje Ministrstva za gospodarski razvoj in tehnologijo (številka dovoljenja: 323-8/2018/9).]]></instructions>
             </leanpay>
             <leanpay_installment>
+                <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>
                 <color>#F58466</color>
                 <font_size_homepage>20</font_size_homepage>
                 <font_size_product_page>20</font_size_product_page>
