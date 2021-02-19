@@ -151,6 +151,11 @@
                     <label>Use dark theme logo</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="group" translate="label comment" sortOrder="50" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Group</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\GroupOptions</source_model>
+                </field>
                 <field id="refresh" translate="label" type="button" sortOrder="100" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Refresh</label>

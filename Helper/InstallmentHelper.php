@@ -51,6 +51,11 @@ class InstallmentHelper extends AbstractHelper
     const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
 
     /**
+     * Leanpay Installment group
+     */
+    const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
+
+    /**
      * Leanpay Installment allowed views
      */
     const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
@@ -93,6 +98,14 @@ class InstallmentHelper extends AbstractHelper
         $this->resourceModel = $resourceModel;
         $this->blockConfig = $blockConfig;
         parent::__construct($context);
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string
+    {
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP);
     }
 
     /**
@@ -178,7 +191,7 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        return $this->resourceModel->getLowestInstallment($price);
+        return $this->resourceModel->getLowestInstallment($price, $this->getGroup());
     }
 
     /**
@@ -187,7 +200,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getInstallmentList($price)
     {
-        return $this->resourceModel->getInstallmentList($price);
+        return $this->resourceModel->getInstallmentList($price, $this->getGroup());
     }
 
     /**
