@@ -27,4 +27,20 @@ class Collection extends AbstractCollection
     {
         $this->_init(Model::class, ResourceModel::class);
     }
+
+    /**
+     * @return array
+     */
+    public function getAllGroups()
+    {
+        $orderStatement = sprintf('%s %s', InstallmentInterface::LOAN_AMOUNT, \Zend_Db_Select::SQL_ASC);
+        $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
+        $select = $this->getConnection()
+            ->select()
+            ->from(InstallmentInterface::TABLE_NAME, [InstallmentInterface::GROUP_NAME])
+            ->distinct(true)
+            ->order($orderStatement);
+
+        return $this->getConnection()->fetchAssoc($select);
+    }
 }

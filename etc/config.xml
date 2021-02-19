@@ -29,6 +29,7 @@ LeanPay ima dovoljenje za potrošniško kreditiranje Ministrstva za gospodarski 
                 <more_info>https://www.leanpay.si/</more_info>
                 <check_your_limit>https://app.leanpay.si/vendor/pre-qualified</check_your_limit>
                 <use_dark_logo>0</use_dark_logo>
+                <group>SPLET - REDNA PONUDBA</group>
             </leanpay_installment>
         </payment>
     </default>
