@@ -108,9 +108,6 @@ class SyncInstallments
                         return;
                     }
 
-                    $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
-                    $connection->truncateTable($table);
-
                     $parse = json_decode($data);
                     if ($parse->groups) {
                         $models = [];
@@ -132,6 +129,8 @@ class SyncInstallments
                                 }
                             }
                         }
+                        $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+                        $connection->truncateTable($table);
 
                         $this->saveAllModels($models);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);

@@ -8,9 +8,19 @@ define(
         $(document).on('ready', handleToolTip());
 
         function handleToolTip() {
-            $('.price-installment_price').on('click', '.installment-info .installment-logo', function () {
-                $('.installment-tooltip').toggleClass('hidden');
-            });
+            $('.price-installment_price').on(
+                'mouseenter touchstart',
+                '.installment-info .installment-logo',
+                function () {
+                    $('.installment-tooltip').removeClass('hidden');
+                }
+            ).on(
+                'mouseleave',
+                '.installment-mouse',
+                function () {
+                    $('.installment-tooltip').addClass('hidden');
+                }
+            );
         }
     }
 );
