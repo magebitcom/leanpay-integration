@@ -37,6 +37,7 @@ $color = $helper->getInstallmentColor();
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
+                <div class="installment-mouse">
                 <div class="installment-info">
                     <div class="installment-deposit">
                         <span class="deposit"><?= __('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))?></span>
@@ -80,6 +81,7 @@ $color = $helper->getInstallmentColor();
                             <span class="link-option"><?= __('Več informacij'); ?></span>
                         </a>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
