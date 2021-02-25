@@ -29,14 +29,19 @@
     padding: 5px;
 }
 
+.installment-block-wrapper .installment-block {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
 .installment-min-price .installment-price,
 .installment-min-price .installment-message {
     line-height: 40px;
     padding: 7px;
 }
 
-.installment-min-price .installment-message{
-    padding: 6px;
+.installment-min-price .installment-message {
+    padding: 5px;
 }
 
 .installment-additional-wrapper .installment-plans,
