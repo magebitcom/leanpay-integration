@@ -37,7 +37,7 @@ $color = $helper->getInstallmentColor();
                                 <?= $block->escapeHtml(__('%1 €', $block->getLowestInstallmentPrice())); ?>
                             </strong>
                         </span>
-                        <span class="installment-message"><?= $block->escapeHtml(__('Vaš mesečni obrok')); ?></span>
+                        <span class="installment-message" style="border: 1px solid <?= $helper->getBackgroundColor()?>;"><?= $block->escapeHtml(__('Vaš mesečni obrok')); ?></span>
                         </span>
                     </div>
                 </div>

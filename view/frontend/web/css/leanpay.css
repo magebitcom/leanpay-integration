@@ -26,14 +26,17 @@
 
 .installment-block-wrapper {
     font-size: 14px;
-    background: #f2f2f2;
-    padding: 2px 2px 0 2px;
+    padding: 5px;
 }
 
 .installment-min-price .installment-price,
 .installment-min-price .installment-message {
     line-height: 40px;
     padding: 7px;
+}
+
+.installment-min-price .installment-message{
+    padding: 6px;
 }
 
 .installment-additional-wrapper .installment-plans,
