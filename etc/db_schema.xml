@@ -10,7 +10,8 @@
         <column xsi:type="int" name="loan_amount" default="0" nullable="false" unsigned="true" comment="Loan Amount"/>
         <column xsi:type="int" name="installment_period" default="0" nullable="false" unsigned="true"
                 comment="Installment Period"/>
-        <column xsi:type="int" name="installment_amount" default="0" nullable="false" unsigned="true"
+        <column xsi:type="decimal" scale="2" precision="12" name="installment_amount" default="0" nullable="false"
+                unsigned="true"
                 comment="Installment Amount"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>

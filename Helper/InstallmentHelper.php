@@ -16,9 +16,14 @@ use Magento\Framework\App\Helper\Context;
 class InstallmentHelper extends AbstractHelper
 {
     /**
-     * Leanpay Installment color
+     * Leanpay Installment Color
      */
     const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
+
+    /**
+     * Leanpay Installment Backgroundcolor
+     */
+    const LEANPAY_INSTALLMENT_BACKGROUND_COLOR = 'payment/leanpay_installment/background_color';
 
     /**
      * Leanpay Installment homepage
@@ -162,6 +167,14 @@ class InstallmentHelper extends AbstractHelper
     public function getAllowedViews()
     {
         return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBackgroundColor()
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
     }
 
     /**

@@ -22,66 +22,74 @@ $color = $helper->getInstallmentColor();
 <?php else: ?>
     <?php if ($price && $canShow): ?>
         <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
-            <span class="installment-wrapper-start"><?= __('ali'); ?></span>
+            <span class="installment-wrapper-start"><?= $block->escapeHtml(__('ali')); ?></span>
             <div class="installment-additional-wrapper">
-                <div class="installment-plans" style="color: <?= $color ?>; font-size: <?= $fontSize ?>px;">
-                    <?php
-                    $list = $helper->getInstallmentList($block->getAmount());
-                    foreach ($list as $key => $item):?>
-                        <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
-                            <span class="installment-plan-option"><?= __(
-                                    '%1 € X %2',
-                                    $item[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                    $item[InstallmentInterface::INSTALLMENT_PERIOD]
-                                ) ?></span>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                <div class="installment-plans" style="font-size: <?= $fontSize ?>px;">
+                    <div class="installment-block-wrapper">
+                        <?php $list = $helper->getInstallmentList($block->getAmount()); ?>
+                        <span class="installment-block">
+                            <?= $block->escapeHtml(__('Hito in enostavno obročno odplačevanje')); ?>
+                        </span>
+                        <span class="installment-min-price">
+                        <span class="installment-price" style="background-color:<?= $helper->getBackgroundColor(); ?>;">
+                            <?= $block->escapeHtml(__('Že od')); ?>
+                            <strong>
+                                <?= $block->escapeHtml(__('%1 €', $block->getLowestInstallmentPrice())); ?>
+                            </strong>
+                        </span>
+                        <span class="installment-message"><?= $block->escapeHtml(__('Vaš mesečni obrok')); ?></span>
+                        </span>
+                    </div>
                 </div>
                 <div class="installment-mouse">
-                <div class="installment-info">
-                    <div class="installment-deposit">
-                        <span class="deposit"><?= __('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))?></span>
-                    </div>
-                    <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
-                </div>
-                <div class="installment-tooltip hidden">
-                    <div class="installment-title">
+                    <div class="installment-info">
+                        <div class="installment-deposit">
+                            <span
+                                class="deposit"><?= $block->escapeHtml(__('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))) ?></span>
+                        </div>
                         <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
-                        <span class="title-block"><?= __('Obrestno financiravje'); ?></span>
                     </div>
-                    <div class="installment-plans">
-                        <?php foreach ($list as $key => $item): ?>
-                            <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
-                                <span class="installment-plan-option">
+                    <div class="installment-tooltip hidden">
+                        <div class="installment-title">
+                            <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
+                            <span class="title-block"><?= $block->escapeHtml(__('Obrestno financiravje')); ?></span>
+                        </div>
+                        <div class="installment-plans">
+                            <?php foreach ($list as $key => $item): ?>
+                                <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
+                                    <span class="installment-plan-option">
                                     <?php if ($item[InstallmentInterface::INSTALLMENT_PERIOD] == 3): ?>
-                                        <?= __(
-                                            '%1 € X %2 meseci',
-                                            $item[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                            $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                        <?= $block->escapeHtml(
+                                            __(
+                                                '%1 € X %2 meseci',
+                                                $item[InstallmentInterface::INSTALLMENT_AMOUNT],
+                                                $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                            )
                                         ) ?>
                                     <?php else: ?>
-                                        <?= __(
-                                            '%1 € X %2 mesecev',
-                                            $item[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                            $item[InstallmentInterface::INSTALLMENT_PERIOD]
-                                        ) ?>
+                                        <?= $block->escapeHtml(
+                                            __(
+                                                '%1 € X %2 mesecev',
+                                                $item[InstallmentInterface::INSTALLMENT_AMOUNT],
+                                                $item[InstallmentInterface::INSTALLMENT_PERIOD]
+                                            )) ?>
                                     <?php endif; ?>
                                 </span>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="installment-quick-information">
+                            <?= $block->escapeHtml(__('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.')); ?>
+                        </div>
+                        <div class="installment-links">
+                            <a href="<?= $helper->getMoreInfoURL(); ?>" target="_blank" rel="noopener noreferrer">
+                                <span class="link-option"><?= $block->escapeHtml(__('Preveri svoj limit')); ?></span>
+                            </a>
+                            <a href="<?= $helper->getCheckYourLimitURL(); ?>" target="_blank" rel="noopener noreferrer">
+                                <span class="link-option"><?= $block->escapeHtml(__('Več informacij')); ?></span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="installment-quick-information">
-                        <?= __('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.'); ?>
-                    </div>
-                    <div class="installment-links">
-                        <a href="<?= $helper->getMoreInfoURL(); ?>" target="_blank" rel="noopener noreferrer">
-                            <span class="link-option"><?= __('Preveri svoj limit'); ?></span>
-                        </a>
-                        <a href="<?= $helper->getCheckYourLimitURL(); ?>" target="_blank" rel="noopener noreferrer">
-                            <span class="link-option"><?= __('Več informacij'); ?></span>
-                        </a>
-                    </div>
-                </div>
                 </div>
             </div>
         </div>
