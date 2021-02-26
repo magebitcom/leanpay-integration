@@ -4,6 +4,24 @@
     height: 35px;
 }
 
+.installment-logo-wrapper {
+    cursor: pointer;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+}
+
+.installment-logo-wrapper span {
+    line-height: 30px;
+    vertical-align: center;
+    margin-right: 5px;
+}
+
+.installment-logo-wrapper .installment-logo{
+    height: 25px;
+}
+
 .leanpay label.label {
     display: inline-block;
 }
