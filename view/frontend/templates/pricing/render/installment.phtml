@@ -65,7 +65,7 @@ $color = $helper->getInstallmentColor();
                                     ?>
                                     <span class="installment-lowest-message">
                                      <?= $block->escapeHtml(__('Želim čim nižji obrok')); ?>
-                                    <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $price)); ?></strong>
+                                    <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $amount)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -78,7 +78,7 @@ $color = $helper->getInstallmentColor();
                                     ?>
                                     <span class="installment-lowest-message">
                                         <?= $block->escapeHtml(__('Odplačati želim čim prej')); ?>
-                                        <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $price)); ?></strong>
+                                        <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $amount)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
