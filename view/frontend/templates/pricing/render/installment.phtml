@@ -48,7 +48,10 @@ $color = $helper->getInstallmentColor();
                             <span
                                 class="deposit"><?= $block->escapeHtml(__('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))) ?></span>
                         </div>
-                        <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
+                        <div class="installment-logo-wrapper">
+                            <span><?= $block->escapeHtml(__('Izračun obroko'));?></span>
+                            <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
+                        </div>
                     </div>
                     <div class="installment-tooltip hidden">
                         <div class="installment-title">
