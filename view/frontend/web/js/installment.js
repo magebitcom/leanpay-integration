@@ -10,7 +10,7 @@ define(
         function handleToolTip() {
             $('.price-installment_price').on(
                 'mouseenter touchstart',
-                '.installment-info .installment-logo',
+                '.installment-info .installment-logo-wrapper',
                 function () {
                     $('.installment-tooltip').removeClass('hidden');
                 }
