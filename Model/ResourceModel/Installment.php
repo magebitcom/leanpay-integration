@@ -50,6 +50,42 @@ class Installment extends AbstractDb
     /**
      * @param $price
      * @param $group
+     * @param bool $useAmount
+     * @return string
+     */
+    public function getToolTipData($price, $group, $useAmount = true)
+    {
+        if (!$price) {
+            return '';
+        }
+
+        if ($useAmount) {
+            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_ASC);
+        } else {
+            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_PERIOD, Zend_Db_Select::SQL_ASC);
+        }
+        $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
+        $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
+
+        $select = $this->getConnection()
+            ->select()
+            ->from(
+                InstallmentInterface::TABLE_NAME,
+                [
+                    InstallmentInterface::INSTALLMENT_AMOUNT,
+                    InstallmentInterface::INSTALLMENT_PERIOD
+                ]
+            )
+            ->where($whereStatement, round($price))
+            ->where($whereStatementGroup, $group)
+            ->order($orderStatement);
+
+        return $this->getConnection()->fetchRow($select);
+    }
+
+    /**
+     * @param $price
+     * @param $group
      * @return array
      */
     public function getInstallmentList($price, $group)

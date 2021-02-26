@@ -37,7 +37,8 @@ $color = $helper->getInstallmentColor();
                                 <?= $block->escapeHtml(__('%1 €', $block->getLowestInstallmentPrice())); ?>
                             </strong>
                         </span>
-                        <span class="installment-message" style="border: 1px solid <?= $helper->getBackgroundColor()?>;"><?= $block->escapeHtml(__('Vaš mesečni obrok')); ?></span>
+                        <span class="installment-message"
+                              style="border: 1px solid <?= $helper->getBackgroundColor() ?>;"><?= $block->escapeHtml(__('Vaš mesečni obrok')); ?></span>
                         </span>
                     </div>
                 </div>
@@ -55,28 +56,32 @@ $color = $helper->getInstallmentColor();
                             <span class="title-block"><?= $block->escapeHtml(__('Obrestno financiravje')); ?></span>
                         </div>
                         <div class="installment-plans">
-                            <?php foreach ($list as $key => $item): ?>
-                                <?php if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD], $item[InstallmentInterface::INSTALLMENT_AMOUNT])): ?>
-                                    <span class="installment-plan-option">
-                                    <?php if ($item[InstallmentInterface::INSTALLMENT_PERIOD] == 3): ?>
-                                        <?= $block->escapeHtml(
-                                            __(
-                                                '%1 € X %2 meseci',
-                                                $item[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                                $item[InstallmentInterface::INSTALLMENT_PERIOD]
-                                            )
-                                        ) ?>
-                                    <?php else: ?>
-                                        <?= $block->escapeHtml(
-                                            __(
-                                                '%1 € X %2 mesecev',
-                                                $item[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                                $item[InstallmentInterface::INSTALLMENT_PERIOD]
-                                            )) ?>
-                                    <?php endif; ?>
-                                </span>
+                            <div class="installment-lowest-amount">
+                                <?php $data = $helper->getToolTipData($block->getAmount(), true); ?>
+                                <?php if (isset($data[InstallmentInterface::INSTALLMENT_AMOUNT], $data[InstallmentInterface::INSTALLMENT_PERIOD])): ?>
+                                    <?php
+                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
+                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
+                                    ?>
+                                    <span class="installment-lowest-message">
+                                     <?= $block->escapeHtml(__('Želim čim nižji obrok')); ?>
+                                    <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $price)); ?></strong>
+                                    </span>
                                 <?php endif; ?>
-                            <?php endforeach; ?>
+                            </div>
+                            <div class="installment-lowest-term">
+                                <?php $data = $helper->getToolTipData($block->getAmount(), false); ?>
+                                <?php if (isset($data[InstallmentInterface::INSTALLMENT_AMOUNT], $data[InstallmentInterface::INSTALLMENT_PERIOD])): ?>
+                                    <?php
+                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
+                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
+                                    ?>
+                                    <span class="installment-lowest-message">
+                                        <?= $block->escapeHtml(__('Odplačati želim čim prej')); ?>
+                                        <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $price)); ?></strong>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="installment-quick-information">
                             <?= $block->escapeHtml(__('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.')); ?>

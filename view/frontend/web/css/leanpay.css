@@ -47,10 +47,15 @@
 .installment-additional-wrapper .installment-plans,
 .installment-additional-wrapper .installment-tooltip,
 .installment-additional-wrapper .installment-title,
-.installment-block-wrapper {
+.installment-block-wrapper,
+.installment-lowest-message {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+.installment-lowest-message {
+    margin: 5px 0;
 }
 
 .installment-additional-wrapper .installment-tooltip {

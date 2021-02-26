@@ -217,6 +217,20 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * @param $price
+     * @param $useTerm
+     * @return string
+     */
+    public function getToolTipData($price, $useTerm)
+    {
+        if (!$price) {
+            return '';
+        }
+
+        return $this->resourceModel->getToolTipData($price, $this->getGroup(), $useTerm);
+    }
+
+    /**
      * @return mixed
      */
     public function isDarkThemeLogo()
