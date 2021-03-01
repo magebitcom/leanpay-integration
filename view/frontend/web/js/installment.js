@@ -7,7 +7,7 @@ define(
 
         $(document).on('ready', handleToolTip());
         $(document).on('ready', handleSlider());
-        $(document).on('installmentSlider', function (){
+        $(document).on('installmentSlider', function () {
             handleSlider()
         });
 
@@ -16,7 +16,7 @@ define(
 
             $('.installment-slider').slider({
                 animate: true,
-                range: "min",
+                range: 'min',
                 max: data.max,
                 create: function (event, ui) {
                     sliderUpdate();
@@ -28,12 +28,12 @@ define(
 
             function sliderUpdate(id = 0) {
                 var data = JSON.parse($('.installment-slider-data').html()).data[id];
-                $('.term-html .installment_period').html(data.installment_period);
-                $('.term-html .installment_amount').html(data.installment_amount);
+                $('.term-html .installment_period').html(data.installment_period + ' x');
+                $('.term-html .installment_amount').html(data.installment_amount + '€');
                 $('.installment-slider-term .total')
-                    .html((data.installment_period * data.installment_amount).toFixed(2));
+                    .html((data.installment_period * data.installment_amount).toFixed(2) + '€');
             }
-        };
+        }
 
         function handleToolTip() {
             $('.price-installment_price').on(
