@@ -26,6 +26,7 @@ define(['jquery'], function ($) {
                     if (installmentPrice !== newHtml) {
                         $('.price-installment_price').html(newHtml);
                         $('.price-installment_price').trigger('contentUpdated');
+                        $(document).trigger('installmentSlider');
                     }
                 }
 

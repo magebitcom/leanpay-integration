@@ -18,7 +18,7 @@
     margin-right: 5px;
 }
 
-.installment-logo-wrapper .installment-logo{
+.installment-logo-wrapper .installment-logo {
     height: 25px;
 }
 
@@ -62,6 +62,10 @@
     padding: 6px;
 }
 
+.installment-additional-wrapper .installment-plans {
+    width: 100%;
+}
+
 .installment-additional-wrapper .installment-plans,
 .installment-additional-wrapper .installment-tooltip,
 .installment-additional-wrapper .installment-title,
@@ -92,7 +96,9 @@
     padding-top: 10px;
 }
 
-.installment-additional-wrapper .installment-title {
+.installment-additional-wrapper .installment-title,
+.installment-slider-term .term-html,
+.installment-slider-term .total {
     font-weight: bold;
 }
 
@@ -122,6 +128,36 @@
     cursor: pointer;
 }
 
+.installment-slider-term {
+    width: 100%;
+}
+
 .installment-additional-wrapper .installment-tooltip img {
     height: 30px;
+}
+
+.installment-slider-term .installment-slider {
+    margin: 10px;
+}
+
+.installment-slider-term .total-html {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.installment-slider-term {
+    margin: 5px 0;
+}
+
+.installment-slider .ui-slider-handle.ui-state-default.ui-corner-all {
+    height: 20px;
+    width: 20px;
+    top: -5px;
+    background: #F58466;
+}
+
+.installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
+    height: 10px;
+    background: #F58466;
 }

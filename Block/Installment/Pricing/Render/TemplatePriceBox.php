@@ -5,6 +5,7 @@ namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Class TemplatePriceBox
@@ -29,21 +30,29 @@ class TemplatePriceBox extends Template
     protected $_template = 'Leanpay_Payment::pricing/render/installment.phtml';
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * TemplatePriceBox constructor.
      *
      * @param Template\Context $context
      * @param InstallmentHelper $installmentHelper
      * @param Data $helper
+     * @param SerializerInterface $serializer
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
         InstallmentHelper  $installmentHelper,
         Data $helper,
+        SerializerInterface $serializer,
         array $data = []
     ) {
         $this->installmentHelper = $installmentHelper;
         $this->helper = $helper;
+        $this->serializer = $serializer;
         $data['view_key'] = InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
         parent::__construct($context, $data);
     }
@@ -98,5 +107,28 @@ class TemplatePriceBox extends Template
         }
 
         return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsonConfig()
+    {
+        $list = $this->installmentHelper->getInstallmentList($this->getAmount());
+        $list = array_values($list);
+        $values = [];
+
+        for ($index = 0; $index < count($list); $index++){
+            $values[] = $index;
+        }
+
+        $data = [
+            'min' => array_key_first($list),
+            'max' => array_key_last($list),
+            'data' => $list,
+            'value' => $values
+        ];
+
+        return (string) $this->serializer->serialize($data);
     }
 }

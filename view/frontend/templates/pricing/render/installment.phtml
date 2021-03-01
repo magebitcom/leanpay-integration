@@ -49,7 +49,7 @@ $color = $helper->getInstallmentColor();
                                 class="deposit"><?= $block->escapeHtml(__('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))) ?></span>
                         </div>
                         <div class="installment-logo-wrapper">
-                            <span><?= $block->escapeHtml(__('Izračun obroko'));?></span>
+                            <?= $block->escapeHtml(__('Izračun obroko')); ?>
                             <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
                         </div>
                     </div>
@@ -85,6 +85,21 @@ $color = $helper->getInstallmentColor();
                                     </span>
                                 <?php endif; ?>
                             </div>
+                            <div class="installment-slider-term">
+                                <div class="term-text">
+                                    <?= $block->escapeHtml(__('Želim si izbrati svoje obroke')); ?>
+                                </div>
+                                <div class="term-html">
+                                    <span class="installment_period">
+                                    </span>
+                                    <span class="installment_amount"></span>
+                                </div>
+                                <div class="installment-slider"></div>
+                                <div class="total-html">
+                                    <span><?= $block->escapeHtml(__('Znesek za plačilo')); ?></span>
+                                    <span class="total"></span>
+                                </div>
+                            </div>
                         </div>
                         <div class="installment-quick-information">
                             <?= $block->escapeHtml(__('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.')); ?>
@@ -100,6 +115,9 @@ $color = $helper->getInstallmentColor();
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="installment-slider-data" style="display: none; visibility: hidden;">
+            <?= $block->getJsonConfig() ?: ''; ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>
