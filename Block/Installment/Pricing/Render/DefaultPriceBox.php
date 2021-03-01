@@ -11,6 +11,7 @@ use Magento\Catalog\Pricing\Render\FinalPriceBox;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\Render\RendererPool;
 use Magento\Framework\Pricing\SaleableInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template\Context;
 
 /**
@@ -31,6 +32,11 @@ class DefaultPriceBox extends FinalPriceBox
     private $helper;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * DefaultPriceBox constructor.
      *
      * @param Context $context
@@ -39,6 +45,7 @@ class DefaultPriceBox extends FinalPriceBox
      * @param RendererPool $rendererPool
      * @param Data $helper
      * @param InstallmentHelper $installmentHelper
+     * @param SerializerInterface $serializer
      * @param array $data
      * @param SalableResolverInterface|null $salableResolver
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
@@ -50,12 +57,15 @@ class DefaultPriceBox extends FinalPriceBox
         RendererPool $rendererPool,
         Data $helper,
         InstallmentHelper $installmentHelper,
+        SerializerInterface $serializer,
         array $data = [],
         SalableResolverInterface $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
-    ) {
+    )
+    {
         $this->helper = $helper;
         $this->installmentHelper = $installmentHelper;
+        $this->serializer = $serializer;
         parent::__construct(
             $context,
             $saleableItem,
@@ -113,6 +123,29 @@ class DefaultPriceBox extends FinalPriceBox
         }
 
         return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsonConfig()
+    {
+        $list = $this->installmentHelper->getInstallmentList($this->getAmount());
+        $list = array_values($list);
+        $values = [];
+
+        for ($index = 0; $index < count($list); $index++){
+            $values[] = $index;
+        }
+
+        $data = [
+            'min' => array_key_first($list),
+            'max' => array_key_last($list),
+            'data' => $list,
+            'value' => $values
+        ];
+
+        return (string) $this->serializer->serialize($data);
     }
 
     /**

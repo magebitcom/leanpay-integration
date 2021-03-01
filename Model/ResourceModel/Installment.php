@@ -94,7 +94,7 @@ class Installment extends AbstractDb
             return [];
         }
 
-        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_ASC);
+        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_DESC);
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
         $select = $this->getConnection()

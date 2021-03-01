@@ -18,7 +18,7 @@
     margin-right: 5px;
 }
 
-.installment-logo-wrapper .installment-logo{
+.installment-logo-wrapper .installment-logo {
     height: 25px;
 }
 
@@ -60,6 +60,10 @@
 
 .installment-min-price .installment-message {
     padding: 6px;
+}
+
+.installment-additional-wrapper .installment-plans {
+    width: 100%;
 }
 
 .installment-additional-wrapper .installment-plans,
@@ -120,6 +124,10 @@
 
 .installment-info img {
     cursor: pointer;
+}
+
+.installment-slider-term {
+    width: 100%;
 }
 
 .installment-additional-wrapper .installment-tooltip img {
