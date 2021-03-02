@@ -1,6 +1,7 @@
 define(
     [
         'jquery',
+        'Leanpay_Payment/js/vendor/jquery.ui.touch-punch.min'
     ],
     function ($) {
         'use strict';
@@ -15,14 +16,19 @@ define(
             var data = JSON.parse($('.installment-slider-data').html())
 
             $('.installment-slider').slider({
-                animate: true,
                 range: 'min',
+                step: .0001,
+                orientation: 'horizontal',
+                animate: 'slow',
                 max: data.max,
                 create: function (event, ui) {
                     sliderUpdate();
                 },
                 slide: function (event, ui) {
-                    sliderUpdate(ui.value);
+                    sliderUpdate(Math.round(ui.value));
+                },
+                stop: function (event, ui) {
+                    $(".installment-slider").slider('value', Math.round(ui.value));
                 }
             });
 
