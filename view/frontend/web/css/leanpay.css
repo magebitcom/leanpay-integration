@@ -1,3 +1,4 @@
+/** General Purpose **/
 .leanpay img.payment-logo {
     vertical-align: middle;
     margin-right: 5px;
@@ -165,3 +166,47 @@
     height: 10px;
     background: #F58466;
 }
+
+/** Checkout **/
+.checkout-index-index .installment-deposit,
+.checkout-index-index .installment-wrapper-start,
+.checkout-index-index .installment-block,
+.checkout-index-index .installment-quick-information,
+.checkout-index-index .installment-links {
+    display: none;
+}
+
+.checkout-index-index .installment-wrapper {
+    border: none;
+}
+
+.checkout-index-index .installment-plans,
+.checkout-index-index .installment-mouse {
+    flex: 1;
+}
+
+.checkout-index-index .leanpay {
+    position: relative;
+}
+
+.checkout-index-index .installment-wrapper {
+    width: 70%;
+}
+
+.checkout-index-index .installment-additional-wrapper {
+    flex-direction: column;
+    display: flex;
+}
+
+@media screen and (min-width: 1025px) {
+    .checkout-index-index .installment-wrapper {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .checkout-index-index .installment-additional-wrapper {
+        flex-direction: row;
+    }
+}
+
