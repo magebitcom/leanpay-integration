@@ -52,7 +52,9 @@ define(
                 'mouseleave',
                 '.installment-mouse',
                 function (e) {
-                    if (!e.target.classList.contains('ui-slider-handle')) {
+                    if (!e.target.classList.contains('ui-slider-handle') ||
+                        !e.target.classList.contains('installment-slider')
+                    ) {
                         $('.installment-tooltip').addClass('hidden');
                     }
                 }
