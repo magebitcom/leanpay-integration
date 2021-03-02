@@ -20,6 +20,9 @@
 
 .installment-logo-wrapper .installment-logo {
     height: 25px;
+    position: relative;
+    top: -2px;
+    margin-left: 5px;
 }
 
 .leanpay label.label {
@@ -155,6 +158,7 @@
     width: 20px;
     top: -5px;
     background: #F58466;
+    cursor: pointer;
 }
 
 .installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
