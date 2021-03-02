@@ -51,8 +51,10 @@ define(
             ).on(
                 'mouseleave',
                 '.installment-mouse',
-                function () {
-                    $('.installment-tooltip').addClass('hidden');
+                function (e) {
+                    if (!e.target.classList.contains('ui-slider-handle')) {
+                        $('.installment-tooltip').addClass('hidden');
+                    }
                 }
             );
         }

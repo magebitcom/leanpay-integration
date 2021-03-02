@@ -67,6 +67,7 @@ define(
                                 if (currentHtml !== newHtml) {
                                     wrapper.html(newHtml);
                                     wrapper.trigger('contentUpdated');
+                                    $(document).trigger('installmentSlider');
                                 }
                             }
                         },
