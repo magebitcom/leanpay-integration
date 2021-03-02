@@ -14,6 +14,7 @@ define(
 
         return Component.extend({
             isEnable: ko.observable(true),
+            installmentHtml: ko.observable(''),
 
             defaults: {
                 redirectAfterPlaceOrder: false,
@@ -38,6 +39,7 @@ define(
 
                     self.isEnable(true);
                 });
+                this.getInstallmentData();
             },
 
             /**
@@ -50,6 +52,25 @@ define(
 
             getLogo: function () {
                 return window.leanpayConfig.logo;
+            },
+
+            getInstallmentData: function (){
+                var self = this;
+                $.ajax({
+                    type: 'get',
+                    url: '/leanpay/installment/index/',
+                    data: {"amount": quote.totals().grand_total},
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (typeof response.installment_html !== 'undefined') {
+                            self.installmentHtml(response.installment_html);
+                            $('.installment-wrapper').trigger('contentUpdated');
+                            $(document).trigger('installmentReInit');
+                        }
+                    },
+                    cache: true,
+                    dataType: 'html'
+                });
             },
 
             afterPlaceOrder: function () {

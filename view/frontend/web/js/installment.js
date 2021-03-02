@@ -12,6 +12,11 @@ define(
             handleSlider()
         });
 
+        $(document).on('installmentReInit', function () {
+            handleToolTipCheckout();
+            handleSlider();
+        });
+
         function handleSlider() {
             var data = JSON.parse($('.installment-slider-data').html())
 
@@ -41,6 +46,28 @@ define(
             }
         }
 
+        function handleToolTipCheckout() {
+            $('.payment-method.leanpay').on(
+                'mouseenter touchstart',
+                '.installment-mouse',
+                function () {
+                    $('.installment-tooltip').removeClass('hidden');
+                }
+            ).on(
+                'mouseleave',
+                '.installment-mouse',
+                function (e) {
+                    if (
+                        !e.target.classList.contains('ui-slider-handle') &&
+                        !e.target.classList.contains('installment-slider') &&
+                        !e.target.classList.contains('ui-slider-range')
+                    ) {
+                        $('.installment-tooltip').addClass('hidden');
+                    }
+                }
+            );
+        }
+
         function handleToolTip() {
             $('.price-installment_price').on(
                 'mouseenter touchstart',
@@ -52,7 +79,8 @@ define(
                 'mouseleave',
                 '.installment-mouse',
                 function (e) {
-                    if (!e.target.classList.contains('ui-slider-handle') &&
+                    if (
+                        !e.target.classList.contains('ui-slider-handle') &&
                         !e.target.classList.contains('installment-slider') &&
                         !e.target.classList.contains('ui-slider-range')
                     ) {
