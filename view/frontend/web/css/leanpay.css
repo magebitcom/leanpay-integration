@@ -15,7 +15,6 @@
 
 .installment-logo-wrapper span {
     line-height: 30px;
-    vertical-align: center;
     margin-right: 5px;
 }
 
@@ -196,6 +195,14 @@
 .checkout-index-index .installment-additional-wrapper {
     flex-direction: column;
     display: flex;
+}
+
+.checkout-index-index .installment-logo-wrapper span{
+    line-height: 40px;
+}
+
+.checkout-index-index .installment-logo-span{
+    display: none;
 }
 
 @media screen and (min-width: 1025px) {

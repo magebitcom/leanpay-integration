@@ -8,7 +8,9 @@
         <label data-bind="attr: {'for': getCode()}" class="label">
             <img data-bind="attr:{ src: getLogo() }" class="payment-logo" src="" />
         </label>
-        <span data-bind="html: installmentHtml()"></span>
+        <span class="installment-checkout-wrapper">
+            <span data-bind="html: installmentHtml()"></span>
+        </span>
 
         <p class="instructions" data-bind="html: getInstructions()"></p>
     </div>
