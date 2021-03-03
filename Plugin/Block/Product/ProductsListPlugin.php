@@ -45,7 +45,9 @@ class ProductsListPlugin
         $price = $priceRender->render(
             Installment::PRICE_CODE,
             $product,
-            ['view_key' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE]
+            [
+                'view_key' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE
+            ]
         );
 
         return join('', [$result, $price]);

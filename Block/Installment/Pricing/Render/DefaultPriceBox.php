@@ -61,8 +61,7 @@ class DefaultPriceBox extends FinalPriceBox
         array $data = [],
         SalableResolverInterface $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
-    )
-    {
+    ) {
         $this->helper = $helper;
         $this->installmentHelper = $installmentHelper;
         $this->serializer = $serializer;
@@ -134,7 +133,7 @@ class DefaultPriceBox extends FinalPriceBox
         $list = array_values($list);
         $values = [];
 
-        for ($index = 0; $index < count($list); $index++){
+        for ($index = 0; $index < count($list); $index++) {
             $values[] = $index;
         }
 

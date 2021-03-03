@@ -4,8 +4,8 @@ namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
-use Magento\Framework\View\Element\Template;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\View\Element\Template;
 
 /**
  * Class TemplatePriceBox
@@ -100,8 +100,12 @@ class TemplatePriceBox extends Template
     /**
      * @return string
      */
-    public function getLogo(): string
+    public function getLogo()
     {
+        if ($this->getData('is_checkout')) {
+            return $this->getViewFileUrl('Leanpay_Payment::images/checkout.svg');
+        }
+
         if (!$this->installmentHelper->isDarkThemeLogo()) {
             return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
         }
@@ -118,7 +122,7 @@ class TemplatePriceBox extends Template
         $list = array_values($list);
         $values = [];
 
-        for ($index = 0; $index < count($list); $index++){
+        for ($index = 0; $index < count($list); $index++) {
             $values[] = $index;
         }
 

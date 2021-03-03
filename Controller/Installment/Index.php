@@ -73,24 +73,33 @@ class Index extends Action
         }
 
         $amount = $this->getRequest()->getParam('amount');
+        $isCheckout = (bool)$this->getRequest()->getParam('checkout');
         $enabled = $this->helper->isActive();
         $response = $this->jsonFactory->create();
 
         if ($amount && $enabled) {
-            $response->setData(['installment_html' => $this->getHtmlFromCache($amount)]);
+            $response->setData(
+                [
+                    'installment_html' => $this->getHtmlFromCache($amount, $isCheckout),
+                ]
+            );
         }
 
         return $response;
     }
 
     /**
-     * @param $amount
-     * @return mixed|string
+     * @param float $amount
+     * @param bool $isCheckout
+     * @return string
      */
-    private function getHtmlFromCache($amount): string
+    private function getHtmlFromCache($amount, $isCheckout)
     {
         if (!isset($this->templateCache[$amount])) {
-            $this->templateCache[$amount] = $this->template->setData('amount', $amount)->toHtml();
+            $this->templateCache[$amount] = $this->template
+                ->setData('amount', $amount)
+                ->setData('is_checkout', $isCheckout)
+                ->toHtml();
         }
 
         return $this->templateCache[$amount];
