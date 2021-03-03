@@ -210,10 +210,6 @@
     position: relative;
 }
 
-.checkout-index-index .installment-wrapper {
-    width: 70%;
-}
-
 .checkout-index-index .installment-additional-wrapper {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -240,13 +236,15 @@
 
 .checkout-index-index .installment-logo{
     top: 0;
+    height: 30px;
 }
 
-@media screen and (min-width: 1025px) {
+@media screen and (min-width: 1200px) {
     .checkout-index-index .installment-wrapper {
         position: absolute;
         top: 0;
-        right: 0;
+        left: 150px;
+        width: 70%;
     }
 
     .checkout-index-index .installment-additional-wrapper {
@@ -254,5 +252,6 @@
         -webkit-box-direction: normal;
         -ms-flex-direction: row;
         flex-direction: row;
+        max-width: 520px;
     }
 }
