@@ -18,36 +18,38 @@ define(
         });
 
         function handleSlider() {
-            var data = JSON.parse($('.installment-slider-data').html())
+            if ($('.installment-slider-data').length > 0) {
+                var data = JSON.parse($('.installment-slider-data').html())
 
-            $('.installment-slider').slider({
-                range: 'min',
-                step: .0001,
-                orientation: 'horizontal',
-                animate: 'slow',
-                max: data.max,
-                create: function (event, ui) {
-                    sliderUpdate();
-                },
-                slide: function (event, ui) {
-                    sliderUpdate(Math.round(ui.value));
-                },
-                stop: function (event, ui) {
-                    $(".installment-slider").slider('value', Math.round(ui.value));
+                $('.installment-slider').slider({
+                    range: 'min',
+                    step: .0001,
+                    orientation: 'horizontal',
+                    animate: 'slow',
+                    max: data.max,
+                    create: function (event, ui) {
+                        sliderUpdate();
+                    },
+                    slide: function (event, ui) {
+                        sliderUpdate(Math.round(ui.value));
+                    },
+                    stop: function (event, ui) {
+                        $(".installment-slider").slider('value', Math.round(ui.value));
+                    }
+                });
+
+                function sliderUpdate(id = 0) {
+                    var data = JSON.parse($('.installment-slider-data').html()).data[id];
+                    $('.term-html .installment_period').html(data.installment_period + ' x');
+                    $('.term-html .installment_amount').html(data.installment_amount + '€');
+                    $('.installment-slider-term .total')
+                        .html((data.installment_period * data.installment_amount).toFixed(2) + '€');
                 }
-            });
-
-            function sliderUpdate(id = 0) {
-                var data = JSON.parse($('.installment-slider-data').html()).data[id];
-                $('.term-html .installment_period').html(data.installment_period + ' x');
-                $('.term-html .installment_amount').html(data.installment_amount + '€');
-                $('.installment-slider-term .total')
-                    .html((data.installment_period * data.installment_amount).toFixed(2) + '€');
             }
         }
 
         function handleToolTipCheckout() {
-            $('.payment-method.leanpay').on(
+            $('.checkout-index-index').on(
                 'mouseenter touchstart',
                 '.installment-mouse',
                 function () {

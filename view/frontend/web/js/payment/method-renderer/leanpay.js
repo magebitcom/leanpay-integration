@@ -7,7 +7,8 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/model/error-processor',
         'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Leanpay_Payment/js/installment'
     ],
     function ($, ko, url, Component, errorProcessor, fullScreenLoader, quote) {
         'use strict';
@@ -64,7 +65,6 @@ define(
                         response = JSON.parse(response);
                         if (typeof response.installment_html !== 'undefined') {
                             self.installmentHtml(response.installment_html);
-                            $('.installment-wrapper').trigger('contentUpdated');
                             $(document).trigger('installmentReInit');
                         }
                     },
