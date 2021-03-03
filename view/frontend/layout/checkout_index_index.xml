@@ -9,7 +9,6 @@
         <referenceBlock name="head.additional">
             <block class="Leanpay\Payment\Block\LeanpayConfig" name="leanpay_config"/>
         </referenceBlock>
-
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">
