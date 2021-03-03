@@ -2,7 +2,7 @@
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="leanpay_installment" resource="default" engine="innodb" comment="Leanpay base table">
-        <column xsi:type="smallint" name="entity_id" padding="6" unsigned="false" nullable="false" identity="true"
+        <column xsi:type="bigint" name="entity_id" padding="6" unsigned="false" nullable="false" identity="true"
                 comment="Entity ID"/>
         <column xsi:type="varchar" name="group_id" default="0" nullable="false" comment="Group ID"/>
         <column xsi:type="varchar" name="group_name" nullable="false" length="255" comment="Group name"/>
