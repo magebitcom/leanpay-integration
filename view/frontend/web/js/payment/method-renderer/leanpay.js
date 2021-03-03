@@ -60,7 +60,10 @@ define(
                 $.ajax({
                     type: 'get',
                     url: '/leanpay/installment/index/',
-                    data: {"amount": quote.totals().grand_total},
+                    data: {
+                        'amount': quote.totals().grand_total,
+                        'checkout': true
+                    },
                     success: function (response) {
                         response = JSON.parse(response);
                         if (typeof response.installment_html !== 'undefined') {

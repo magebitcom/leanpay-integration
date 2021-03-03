@@ -8,7 +8,12 @@
 .installment-logo-wrapper {
     cursor: pointer;
     height: 30px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
     margin-top: 5px;
 }
@@ -74,8 +79,15 @@
 .installment-additional-wrapper .installment-title,
 .installment-block-wrapper,
 .installment-lowest-message {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
     align-items: flex-start;
 }
 
@@ -84,6 +96,7 @@
 }
 
 .installment-additional-wrapper .installment-tooltip {
+    -webkit-box-shadow: -2px -1px 10px 3px #a7a7a7;
     box-shadow: -2px -1px 10px 3px #a7a7a7;
     border-radius: 3px;
     background: #ffffff;
@@ -144,8 +157,15 @@
 }
 
 .installment-slider-term .total-html {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
 }
 
@@ -181,6 +201,8 @@
 
 .checkout-index-index .installment-plans,
 .checkout-index-index .installment-mouse {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
 }
 
@@ -193,16 +215,31 @@
 }
 
 .checkout-index-index .installment-additional-wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 
-.checkout-index-index .installment-logo-wrapper span{
+.checkout-index-index .installment-logo-wrapper span {
     line-height: 40px;
 }
 
-.checkout-index-index .installment-logo-span{
+.checkout-index-index .installment-additional-wrapper .installment-tooltip img {
     display: none;
+}
+
+.checkout-index-index .installment-logo-text {
+    -webkit-box-ordinal-group: 3;
+    -ms-flex-order: 2;
+    order: 2;
+}
+
+.checkout-index-index .installment-logo{
+    top: 0;
 }
 
 @media screen and (min-width: 1025px) {
@@ -213,7 +250,9 @@
     }
 
     .checkout-index-index .installment-additional-wrapper {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
         flex-direction: row;
     }
 }
-
