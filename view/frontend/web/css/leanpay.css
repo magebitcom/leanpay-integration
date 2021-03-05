@@ -187,7 +187,6 @@
 }
 
 /** Checkout **/
-.checkout-index-index .installment-deposit,
 .checkout-index-index .installment-wrapper-start,
 .checkout-index-index .installment-block,
 .checkout-index-index .installment-quick-information,
@@ -240,6 +239,25 @@
 }
 
 @media screen and (min-width: 1200px) {
+    .checkout-index-index .installment-info{
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+
+    .checkout-index-index .installment-deposit{
+        -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+        order: 2;
+        -ms-flex-item-align: end;
+        align-self: flex-end;
+        margin-left: 10px;
+    }
+
     .checkout-index-index .installment-wrapper {
         position: absolute;
         top: 0;
