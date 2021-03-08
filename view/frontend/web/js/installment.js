@@ -50,7 +50,7 @@ define(
 
         function handleToolTipCheckout() {
             $('.checkout-index-index').on(
-                'mouseenter touchstart',
+                'mouseenter',
                 '.installment-mouse',
                 function () {
                     $('.installment-tooltip').removeClass('hidden');
@@ -72,7 +72,7 @@ define(
 
         function handleToolTip() {
             $('.price-installment_price').on(
-                'mouseenter touchstart',
+                'mouseenter',
                 '.installment-info .installment-logo',
                 function () {
                     $('.installment-tooltip').removeClass('hidden');
