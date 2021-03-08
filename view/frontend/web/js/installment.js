@@ -73,7 +73,7 @@ define(
         function handleToolTip() {
             $('.price-installment_price').on(
                 'mouseenter',
-                '.installment-info .installment-logo',
+                '.installment-mouse',
                 function () {
                     $('.installment-tooltip').removeClass('hidden');
                 }
