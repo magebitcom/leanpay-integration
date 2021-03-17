@@ -187,6 +187,10 @@ class InstallmentHelper extends AbstractHelper
 
         $config = $this->getAllowedViews();
 
+        if (strlen($config) > 0 && strpos($config, 'DISABLED') !== false) {
+            return $result;
+        }
+
         if (strlen($config) > 0 && strpos($config, $view) !== false) {
             $result = true;
         }

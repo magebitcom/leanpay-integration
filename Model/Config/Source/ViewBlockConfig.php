@@ -22,6 +22,10 @@ class ViewBlockConfig implements OptionSourceInterface
     {
         return [
             [
+                'value' => 'DISABLED',
+                'label' => __('Disabled in all views')
+            ],
+            [
                 'value' => InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE,
                 'label' => __('Homepage')
             ],
