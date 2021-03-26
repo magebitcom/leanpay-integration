@@ -21,6 +21,7 @@ use Magento\Payment\Model\Method\Logger;
 use Magento\Directory\Model\Currency as CurrencyModel;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Store\Model\StoreManagerInterface;
 use Leanpay\Payment\Model\Request;
 use Magento\Sales\Model\Order;
@@ -221,16 +222,17 @@ class Leanpay extends AbstractMethod
      */
     public function initialize($paymentAction, $stateObject)
     {
-        /** @var \Magento\Sales\Model\Order\Payment $paymentInfo */
+        /** @var Payment $paymentInfo */
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
         $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
+        $orderItems = $order->getAllVisibleItems();
 
         $additionData = [
             'vendorTransactionId' => $order->getIncrementId(),
             'amount' => $amount,
-            'vendorFirstName' =>  $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
+            'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),
             'vendorAddress' => current($address->getStreet()),
             'vendorZip' => $address->getPostcode(),
@@ -238,6 +240,22 @@ class Leanpay extends AbstractMethod
             'vendorPhoneNumber' => $address->getTelephone(),
             'language' => $this->helper->getLeanpayLanguage()
         ];
+
+        if ($orderItems) {
+            foreach ($orderItems as $item) {
+                $price = $item->getRowTotal() / $item->getQtyOrdered();
+
+                if ($price){
+                    $additionData['CartItems'][] = [
+                        'name' => $item->getName(),
+                        'sku' => $item->getSku(),
+                        'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
+                        'qty' => $item->getQtyOrdered()
+                    ];
+                }
+            }
+        }
+
 
         $leanpayTokenData = $this->request->getLeanpayToken($additionData);
 
