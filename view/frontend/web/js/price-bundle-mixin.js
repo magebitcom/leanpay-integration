@@ -7,7 +7,7 @@ define(
         'priceBox',
         'mage/url'
     ],
-    function ($, _, mageTemplate, utils, url) {
+    function ($, _, mageTemplate, utils, priceBox, url) {
         'use strict';
 
         return function (widget) {
