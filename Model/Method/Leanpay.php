@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Model\Method;
 
+use Leanpay\Payment\Helper\Data as PaymentData;
 use Magento\Checkout\Model\Session;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -88,7 +89,7 @@ class Leanpay extends AbstractMethod
     protected $_isInitializeNeeded = true;
 
     /**
-     * @var \Leanpay\Payment\Helper\Data
+     * @var PaymentData
      */
     protected $helper;
 
@@ -132,6 +133,7 @@ class Leanpay extends AbstractMethod
      * @param Data $paymentData
      * @param ScopeConfigInterface $scopeConfig
      * @param Logger $logger
+     * @param PaymentData $helper
      * @param CurrencyModel $currencyModel
      * @param StoreManagerInterface $storeManager
      * @param PriceCurrencyInterface $priceCurrency
@@ -151,7 +153,7 @@ class Leanpay extends AbstractMethod
         Data $paymentData,
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
-        \Leanpay\Payment\Helper\Data $helper,
+        PaymentData $helper,
         CurrencyModel $currencyModel,
         StoreManagerInterface $storeManager,
         PriceCurrencyInterface $priceCurrency,
@@ -162,8 +164,7 @@ class Leanpay extends AbstractMethod
         AbstractDb $resourceCollection = null,
         array $data = [],
         DirectoryHelper $directory = null
-    )
-    {
+    ) {
         parent::__construct($context,
             $registry,
             $extensionFactory,
@@ -246,7 +247,7 @@ class Leanpay extends AbstractMethod
                 $price = $item->getRowTotal() / $item->getQtyOrdered();
 
                 if ($price){
-                    $additionData['CartItems'][] = [
+                    $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
                         'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),

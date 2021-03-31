@@ -59,7 +59,7 @@ define(
                 var self = this;
                 $.ajax({
                     type: 'get',
-                    url: '/leanpay/installment/index/',
+                    url: url.build('/leanpay/installment/index/'),
                     data: {
                         'amount': quote.totals().grand_total,
                         'checkout': true

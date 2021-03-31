@@ -4,9 +4,10 @@ define(
         'underscore',
         'mage/template',
         'priceUtils',
-        'priceBox'
+        'priceBox',
+        'mage/url'
     ],
-    function ($, _, mageTemplate, utils) {
+    function ($, _, mageTemplate, utils, url) {
         'use strict';
 
         return function (widget) {
@@ -50,7 +51,7 @@ define(
 
                     self.options.ajax = $.ajax({
                         type: 'get',
-                        url: '/leanpay/installment/index/',
+                        url: url.build('/leanpay/installment/index/'),
                         data: {"amount": amount},
                         beforeSend: function () {
                             if (typeof self.options.ajax !== 'undefined') {
