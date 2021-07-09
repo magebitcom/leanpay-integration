@@ -61,7 +61,7 @@ define(
                     type: 'get',
                     url: url.build('/leanpay/installment/index/'),
                     data: {
-                        'amount': quote.totals().grand_total,
+                        'amount': quote.totals().base_grand_total,
                         'checkout': true
                     },
                     success: function (response) {
