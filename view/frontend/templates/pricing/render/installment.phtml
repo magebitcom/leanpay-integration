@@ -28,7 +28,7 @@ $color = $helper->getInstallmentColor();
                     <div class="installment-block-wrapper">
                         <?php $list = $helper->getInstallmentList($block->getAmount()); ?>
                         <span class="installment-block">
-                            <?= $block->escapeHtml(__('Hito in enostavno obročno odplačevanje')); ?>
+                            <?= $block->escapeHtml(__('Hitro in enostavno obročno odplačevanje')); ?>
                         </span>
                         <span class="installment-min-price">
                         <span class="installment-price" style="background-color:<?= $helper->getBackgroundColor(); ?>;">
@@ -49,7 +49,7 @@ $color = $helper->getInstallmentColor();
                                 class="deposit"><?= $block->escapeHtml(__('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))) ?></span>
                         </div>
                         <div class="installment-logo-wrapper">
-                            <span class="installment-logo-text"><?= $block->escapeHtml(__('Izračun obroko')); ?></span>
+                            <span class="installment-logo-text"><?= $block->escapeHtml(__('Izračun obrokov')); ?></span>
                             <span class="installment-logo-span">
                                 <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
                             </span>
@@ -58,7 +58,6 @@ $color = $helper->getInstallmentColor();
                     <div class="installment-tooltip hidden">
                         <div class="installment-title">
                             <img class="installment-logo" src="<?= $block->getLogo(); ?>" alt="leapay-logo"/>
-                            <span class="title-block"><?= $block->escapeHtml(__('Obrestno financiravje')); ?></span>
                         </div>
                         <div class="installment-plans">
                             <div class="installment-lowest-amount">
@@ -98,13 +97,13 @@ $color = $helper->getInstallmentColor();
                                 </div>
                                 <div class="installment-slider"></div>
                                 <div class="total-html">
-                                    <span><?= $block->escapeHtml(__('Znesek za plačilo')); ?></span>
+                                    <span><?= $block->escapeHtml(__('Informativni znesek za plačilo')); ?></span>
                                     <span class="total"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="installment-quick-information">
-                            <?= $block->escapeHtml(__('Leanpay omogoča enostavne obročne nakupe preko spleta. Za obročnoplačilo v košarici izberi Leanpay. Informativni izračunne vključuje stroškov ocene tveganja.')); ?>
+                            <?= $block->escapeHtml(__('Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. Za obročno plačilo v košarici izberi Leanpay. Informativni izračun ne vključuje stroškov ocene tveganja.')); ?>
                         </div>
                         <div class="installment-links">
                             <a href="<?= $helper->getCheckYourLimitURL(); ?>" target="_blank" rel="noopener noreferrer">

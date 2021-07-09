@@ -16,9 +16,7 @@
                 <installment_cron>0 2 * * *</installment_cron>
                 <installment_allowed_views>HOMEPAGE,PRODUCT_PAGE,CATEGORY_PAGE</installment_allowed_views>
                 <checkout_url>checkout/index/index</checkout_url>
-                <instructions><![CDATA[LeanPay vam omogoča, da svoje nakupe plačate na 3, 6 i 12 obrokov, na hiter, enostaven in prijazen način.
-
-LeanPay ima dovoljenje za potrošniško kreditiranje Ministrstva za gospodarski razvoj in tehnologijo (številka dovoljenja: 323-8/2018/9).]]></instructions>
+                <instructions><![CDATA[Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta.]]></instructions>
             </leanpay>
             <leanpay_installment>
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>
