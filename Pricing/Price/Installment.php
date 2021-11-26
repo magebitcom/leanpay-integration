@@ -5,16 +5,13 @@ namespace Leanpay\Payment\Pricing\Price;
 
 use Magento\Framework\Pricing\Price\AbstractPrice;
 
-/**
- * Class Installment
- *
- * @package Leanpay\Payment\Pricing\Price
- */
 class Installment extends AbstractPrice
 {
-    const PRICE_CODE = 'installment_price';
+    public const PRICE_CODE = 'installment_price';
 
     /**
+     * Function get to get value
+     *
      * @return void
      */
     public function getValue()

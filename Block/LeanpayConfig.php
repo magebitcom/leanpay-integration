@@ -8,11 +8,6 @@ use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
-/**
- * Class LeanpayConfig
- *
- * @package Leanpay\Payment\Block
- */
 class LeanpayConfig extends Template
 {
     /**
@@ -66,7 +61,7 @@ class LeanpayConfig extends Template
     }
 
     /**
-     * get billing country is allowed for the payment method
+     * Get billing country is allowed for the payment method
      *
      * @return array
      */
@@ -80,6 +75,8 @@ class LeanpayConfig extends Template
     }
 
     /**
+     * Returns logo
+     *
      * @return string
      */
     public function getLogo(): string

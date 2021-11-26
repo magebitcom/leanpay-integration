@@ -8,11 +8,6 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\View\Result\Page;
 use Magento\Sales\Model\Order;
 
-/**
- * Class Success
- *
- * @package Leanpay\Payment\Controller\Checkout
- */
 class Success extends AbstractAction
 {
     /**

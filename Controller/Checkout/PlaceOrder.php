@@ -21,66 +21,8 @@ use Magento\Sales\Model\Order\Payment\Repository as PaymentRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Service\InvoiceService;
 
-/**
- * Class PlaceOrder
- *
- * @package Leanpay\Payment\Controller\Checkout
- */
 class PlaceOrder extends AbstractAction
 {
-    /**
-     * @var JsonFactory
-     */
-    protected $resultJsonFactory;
-
-    /**
-     * PlaceOrder constructor.
-     *
-     * @param Context $context
-     * @param Session $checkoutSession
-     * @param Data $helper
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param FilterBuilder $filterBuilder
-     * @param OrderRepository $orderRepository
-     * @param PageFactory $resultPageFactory
-     * @param PaymentLogger $logger
-     * @param PaymentRepository $payment
-     * @param InvoiceService $invoiceService
-     * @param Transaction $transaction
-     * @param InvoiceSender $invoiceSender
-     * @param JsonFactory $resultJsonFactory
-     */
-    public function __construct(
-        Context $context,
-        Session $checkoutSession,
-        Data $helper,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        FilterBuilder $filterBuilder,
-        OrderRepository $orderRepository,
-        PageFactory $resultPageFactory,
-        PaymentLogger $logger,
-        PaymentRepository $payment,
-        InvoiceService $invoiceService,
-        Transaction $transaction,
-        InvoiceSender $invoiceSender,
-        JsonFactory $resultJsonFactory
-    ) {
-        parent::__construct(
-            $context,
-            $checkoutSession,
-            $helper,
-            $searchCriteriaBuilder,
-            $filterBuilder,
-            $orderRepository,
-            $resultPageFactory,
-            $logger,
-            $payment,
-            $invoiceService,
-            $transaction,
-            $invoiceSender
-        );
-        $this->resultJsonFactory = $resultJsonFactory;
-    }
 
     /**
      * Execute action based on request and return result

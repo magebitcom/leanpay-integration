@@ -29,7 +29,7 @@ use Magento\Sales\Model\Order;
 
 class Leanpay extends AbstractMethod
 {
-    const CODE = 'leanpay';
+    public const CODE = 'leanpay';
 
     /**
      * Payment system code
@@ -165,7 +165,8 @@ class Leanpay extends AbstractMethod
         array $data = [],
         DirectoryHelper $directory = null
     ) {
-        parent::__construct($context,
+        parent::__construct(
+            $context,
             $registry,
             $extensionFactory,
             $customAttributeFactory,
@@ -246,7 +247,7 @@ class Leanpay extends AbstractMethod
             foreach ($orderItems as $item) {
                 $price = $item->getRowTotal() / $item->getQtyOrdered();
 
-                if ($price){
+                if ($price) {
                     $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
@@ -256,7 +257,6 @@ class Leanpay extends AbstractMethod
                 }
             }
         }
-
 
         $leanpayTokenData = $this->request->getLeanpayToken($additionData);
 

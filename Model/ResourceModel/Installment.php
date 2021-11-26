@@ -5,16 +5,12 @@ namespace Leanpay\Payment\Model\ResourceModel;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
-use Zend_Db_Select;
 
-/**
- * Class Installment
- *
- * @package Leanpay\Payment\Model\ResourceModel
- */
 class Installment extends AbstractDb
 {
     /**
+     * Resource initialization
+     *
      * @inheridoc
      */
     protected function _construct()
@@ -23,8 +19,10 @@ class Installment extends AbstractDb
     }
 
     /**
-     * @param $price
-     * @param $group
+     * Get lowest installment
+     *
+     * @param string $price
+     * @param string $group
      * @return string
      */
     public function getLowestInstallment($price, $group)
@@ -33,7 +31,7 @@ class Installment extends AbstractDb
             return '';
         }
 
-        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_ASC);
+        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'ASC');
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
 
@@ -48,8 +46,10 @@ class Installment extends AbstractDb
     }
 
     /**
-     * @param $price
-     * @param $group
+     * Get tooltip data
+     *
+     * @param float $price
+     * @param string $group
      * @param bool $useAmount
      * @return string
      */
@@ -60,9 +60,9 @@ class Installment extends AbstractDb
         }
 
         if ($useAmount) {
-            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_ASC);
+            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'ASC');
         } else {
-            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_PERIOD, Zend_Db_Select::SQL_ASC);
+            $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_PERIOD, 'ASC');
         }
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
@@ -84,8 +84,10 @@ class Installment extends AbstractDb
     }
 
     /**
-     * @param $price
-     * @param $group
+     * Get installment list
+     *
+     * @param float $price
+     * @param string $group
      * @return array
      */
     public function getInstallmentList($price, $group)
@@ -94,7 +96,7 @@ class Installment extends AbstractDb
             return [];
         }
 
-        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, Zend_Db_Select::SQL_DESC);
+        $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'DESC');
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
         $select = $this->getConnection()

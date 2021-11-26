@@ -7,14 +7,11 @@ use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Request\CsrfValidator;
 use Magento\Framework\App\RequestInterface;
 
-/**
- * Class CsrfValidatorSkip
- *
- * @package Leanpay\Payment\Plugin
- */
 class CsrfValidatorSkip
 {
     /**
+     * Skip validation for leanpay module
+     *
      * @param CsrfValidator $subject
      * @param \Closure $proceed
      * @param RequestInterface $request

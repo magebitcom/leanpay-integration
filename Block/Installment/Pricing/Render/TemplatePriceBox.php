@@ -7,11 +7,6 @@ use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template;
 
-/**
- * Class TemplatePriceBox
- *
- * @package Leanpay\Payment\Block\Installment\Pricing\Render
- */
 class TemplatePriceBox extends Template
 {
     /**
@@ -58,6 +53,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns amount
+     *
      * @return float
      */
     public function getAmount()
@@ -66,6 +63,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns cache key
+     *
      * @return string
      */
     public function getCacheKey()
@@ -74,6 +73,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns lowest installment price
+     *
      * @return string
      */
     public function getLowestInstallmentPrice(): string
@@ -82,6 +83,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns installment helper
+     *
      * @return InstallmentHelper
      */
     public function getInstallmentHelper(): InstallmentHelper
@@ -90,6 +93,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns price box helper
+     *
      * @return Data
      */
     public function getHelper(): Data
@@ -98,6 +103,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns logo
+     *
      * @return string
      */
     public function getLogo()
@@ -114,6 +121,8 @@ class TemplatePriceBox extends Template
     }
 
     /**
+     * Returns Json config
+     *
      * @return string
      */
     public function getJsonConfig()
@@ -121,8 +130,8 @@ class TemplatePriceBox extends Template
         $list = $this->installmentHelper->getInstallmentList($this->getAmount());
         $list = array_values($list);
         $values = [];
-
-        for ($index = 0; $index < count($list); $index++) {
+        $listLength = count($list);
+        for ($index = 0; $index < $listLength; $index++) {
             $values[] = $index;
         }
 

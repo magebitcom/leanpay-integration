@@ -5,14 +5,9 @@ namespace Leanpay\Payment\Controller\Checkout;
 
 use Exception;
 use Leanpay\Payment\Controller\AbstractAction;
-use Magento\Framework\View\Result\Page;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Sales\Model\Order;
 
-/**
- * Class Failure
- *
- * @package Leanpay\Payment\Controller\Checkout
- */
 class Failure extends AbstractAction
 {
     /**
@@ -20,7 +15,7 @@ class Failure extends AbstractAction
      *
      * Note: Request will be added as operation argument in future
      *
-     * @return Page
+     * @return Redirect
      */
     public function execute()
     {
@@ -34,10 +29,9 @@ class Failure extends AbstractAction
                 $this->checkoutSession->restoreQuote();
             }
             $this->checkoutSession->setErrorMessage('Your order closed, because not finished leanpay!');
-
-            return $this->_redirect($this->helper->getMagentoCheckoutUrl());
+            return $this->resultRedirectFactory->create()->setPath($this->helper->getMagentoCheckoutUrl());
         } catch (Exception $exception) {
-            return $this->_redirect('/');
+            return $this->resultRedirectFactory->create()->setPath('/');
         }
     }
 }

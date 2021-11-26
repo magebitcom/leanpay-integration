@@ -5,14 +5,16 @@ namespace Leanpay\Payment\Controller\Installment;
 
 use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
 use Leanpay\Payment\Helper\Data;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 
-class Index extends Action
+class Index implements ActionInterface
 {
     /**
      * @var SerializerInterface
@@ -40,36 +42,41 @@ class Index extends Action
     private $helper;
 
     /**
+     * @var ResultRedirectFactory
+     */
+    private $resultRedirectFactory;
+
+    /**
      * Index constructor.
-     *
-     * @param Context $context
      * @param JsonFactory $jsonFactory
      * @param Data $helper
      * @param TemplatePriceBox $template
      * @param SerializerInterface $serializer
+     * @param ResultRedirectFactory $resultRedirectFactory
      */
     public function __construct(
-        Context $context,
         JsonFactory $jsonFactory,
         Data $helper,
         TemplatePriceBox $template,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ResultRedirectFactory $resultRedirectFactory
     ) {
         $this->jsonFactory = $jsonFactory;
         $this->helper = $helper;
         $this->template = $template;
         $this->serializer = $serializer;
-
-        parent::__construct($context);
+        $this->resultRedirectFactory = $resultRedirectFactory;
     }
 
     /**
-     * @return ResponseInterface|ResultInterface|void
+     * Execute action based on request and return result
+     *
+     * @return ResponseInterface|Json|Redirect|ResultInterface
      */
     public function execute()
     {
         if (!$this->getRequest()->isAjax()) {
-            return $this->_redirect('');
+            return $this->resultRedirectFactory->create()->setPath('');
         }
 
         $amount = $this->getRequest()->getParam('amount');
@@ -89,6 +96,8 @@ class Index extends Action
     }
 
     /**
+     * Retreives HTML from cache
+     *
      * @param float $amount
      * @param bool $isCheckout
      * @return string

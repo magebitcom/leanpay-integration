@@ -5,5 +5,5 @@ namespace Leanpay\Payment\Model\Method;
 
 class LeanpayInstallment extends Leanpay
 {
-    const CODE = 'leanpay_installment';
+    public const CODE = 'leanpay_installment';
 }

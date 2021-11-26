@@ -8,8 +8,6 @@ use Magento\Framework\Logger\Monolog;
 
 /**
  * Class Handler
- *
- * @package Leanpay\Payment\Logger
  */
 class InstallmentSync extends Base
 {

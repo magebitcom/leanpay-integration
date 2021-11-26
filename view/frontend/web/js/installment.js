@@ -17,7 +17,8 @@ define(
             handleSlider();
         });
 
-        function handleSlider() {
+        function handleSlider()
+        {
             if ($('.installment-slider-data').length > 0) {
                 var data = JSON.parse($('.installment-slider-data').html())
 
@@ -38,7 +39,8 @@ define(
                     }
                 });
 
-                function sliderUpdate(id = 0) {
+                function sliderUpdate(id = 0)
+                {
                     var data = JSON.parse($('.installment-slider-data').html()).data[id];
                     $('.term-html .installment_period').html(data.installment_period + ' x');
                     $('.term-html .installment_amount').html(data.installment_amount + '€');
@@ -48,7 +50,8 @@ define(
             }
         }
 
-        function handleToolTipCheckout() {
+        function handleToolTipCheckout()
+        {
             $('.checkout-index-index').on(
                 'mouseenter',
                 '.installment-mouse',
@@ -70,7 +73,8 @@ define(
             );
         }
 
-        function handleToolTip() {
+        function handleToolTip()
+        {
             $('.price-installment_price').on(
                 'mouseenter',
                 '.installment-mouse',

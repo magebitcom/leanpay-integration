@@ -4,14 +4,11 @@ namespace Leanpay\Payment\Api;
 
 use Exception;
 
-/**
- * Interface RequestInterface
- *
- * @package Leanpay\Payment\Api
- */
 interface RequestInterface
 {
     /**
+     * Get leanpay token
+     *
      * @param array $additionalData
      * @return array
      * @throws Exception

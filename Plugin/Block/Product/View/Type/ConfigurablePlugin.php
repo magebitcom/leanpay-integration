@@ -14,11 +14,6 @@ use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
 use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
 use Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class ConfigurablePlugin
- *
- * @package Leanpay\Payment\Plugin\Block\Product\View\Type
- */
 class ConfigurablePlugin
 {
     /**
@@ -51,16 +46,17 @@ class ConfigurablePlugin
     }
 
     /**
+     * Add installment price
+     *
      * @param Configurable $subject
-     * @param $result
+     * @param string $result
      * @return string
      */
     public function afterGetJsonConfig(Configurable $subject, $result)
     {
         $json = $this->serializer->unserialize($result);
 
-        if (
-            isset($json['optionPrices']) &&
+        if (isset($json['optionPrices']) &&
             $subject->getRequest()->getControllerName() === 'product'
         ) {
             $prices = $json['optionPrices'];
@@ -78,7 +74,9 @@ class ConfigurablePlugin
     }
 
     /**
-     * @param $amount
+     * Get installment html amount from cache
+     *
+     * @param float $amount
      * @return mixed|string
      */
     private function getHtmlFromCache($amount): string

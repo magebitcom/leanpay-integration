@@ -3,28 +3,30 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Controller;
 
-use Exception;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Logger\PaymentLogger;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DB\Transaction;
+use Magento\Framework\Exception\NotFoundException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Order\Payment\Repository as PaymentRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
 
 /**
  * Class AbstractAction
  *
  * @package Leanpay\Payment\Controller
  */
-abstract class AbstractAction extends Action
+abstract class AbstractAction implements ActionInterface
 {
     /**
      * @var Session
@@ -82,9 +84,25 @@ abstract class AbstractAction extends Action
     protected $invoiceSender;
 
     /**
-     * PlaceOrder constructor.
-     *
-     * @param Context $context
+     * @var DriverInterface
+     */
+    protected $driver;
+
+    /**
+     * @var ResultRedirectFactory
+     */
+    protected $resultRedirectFactory;
+
+    /**
+     * @var JsonFactory
+     */
+    protected $resultJsonFactory;
+
+    /**
+     * AbstractAction constructor.
+     * @param JsonFactory $resultJsonFactory
+     * @param ResultRedirectFactory $resultRedirectFactory
+     * @param DriverInterface $driver
      * @param Session $checkoutSession
      * @param Data $helper
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
@@ -98,7 +116,9 @@ abstract class AbstractAction extends Action
      * @param InvoiceSender $invoiceSender
      */
     public function __construct(
-        Context $context,
+        JsonFactory $resultJsonFactory,
+        ResultRedirectFactory $resultRedirectFactory,
+        DriverInterface $driver,
         Session $checkoutSession,
         Data $helper,
         SearchCriteriaBuilder $searchCriteriaBuilder,
@@ -111,8 +131,9 @@ abstract class AbstractAction extends Action
         Transaction $transaction,
         InvoiceSender $invoiceSender
     ) {
-        parent::__construct($context);
-
+        $this->resultJsonFactory = $resultJsonFactory;
+        $this->resultRedirectFactory = $resultRedirectFactory;
+        $this->driver = $driver;
         $this->checkoutSession = $checkoutSession;
         $this->helper = $helper;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
@@ -131,7 +152,7 @@ abstract class AbstractAction extends Action
      *
      * @param int $id
      * @return Order
-     * @throws Exception
+     * @throws NotFoundException
      */
     public function findOrder(int $id)
     {
@@ -149,7 +170,7 @@ abstract class AbstractAction extends Action
         $order = current($order);
 
         if (!$order || $order && !$order->getId()) {
-            throw new Exception("Can't find order");
+            throw new NotFoundException(__('Can\'t find order'));
         }
 
         return $order;

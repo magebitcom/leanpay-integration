@@ -9,15 +9,10 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 
-/**
- * Class Api
- *
- * @package Leanpay\Payment\Controller\Checkout
- */
 class Api extends AbstractAction
 {
-    const ORDER_STATUS_SUCCESS = 'SUCCESS';
-    const ORDER_STATUS_CANCEL = [
+    public const ORDER_STATUS_SUCCESS = 'SUCCESS';
+    public const ORDER_STATUS_CANCEL = [
         'FAILED', 'CANCELED', 'EXPIRED'
     ];
 
@@ -31,7 +26,7 @@ class Api extends AbstractAction
      */
     public function execute()
     {
-        $responseBody = file_get_contents('php://input');
+        $responseBody = $this->driver->fileGetContents('php://input');
 
         if (empty($responseBody)) {
             return;
@@ -65,7 +60,9 @@ class Api extends AbstractAction
                     break;
             }
         } catch (Exception $exception) {
-            $this->logger->addError('There was error while trying to parse Leanpay API data: ' . $exception->getMessage());
+            $this->logger->addError(
+                'There was error while trying to parse Leanpay API data: ' . $exception->getMessage()
+            );
         }
     }
 
@@ -82,6 +79,8 @@ class Api extends AbstractAction
     }
 
     /**
+     * Process order placement
+     *
      * @param Order $order
      * @throws LocalizedException
      *

@@ -8,11 +8,6 @@ use Leanpay\Payment\Model\Installment as Model;
 use Leanpay\Payment\Model\ResourceModel\Installment as ResourceModel;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
-/**
- * Class Collection
- *
- * @package Leanpay\Payment\Model\ResourceModel\Installment
- */
 class Collection extends AbstractCollection
 {
     /**
@@ -21,6 +16,8 @@ class Collection extends AbstractCollection
     protected $_idFieldName = InstallmentInterface::ENTITY_ID;
 
     /**
+     * Resource initialization
+     *
      * @inheridoc
      */
     protected function _construct()
@@ -29,11 +26,13 @@ class Collection extends AbstractCollection
     }
 
     /**
+     * Get all groups
+     *
      * @return array
      */
     public function getAllGroups()
     {
-        $orderStatement = sprintf('%s %s', InstallmentInterface::LOAN_AMOUNT, \Zend_Db_Select::SQL_ASC);
+        $orderStatement = sprintf('%s %s', InstallmentInterface::LOAN_AMOUNT, 'ASC');
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $select = $this->getConnection()
             ->select()

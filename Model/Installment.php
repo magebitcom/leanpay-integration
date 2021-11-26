@@ -7,17 +7,12 @@ use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 
-/**
- * Class Installment
- *
- * @package Leanpay\Payment\Model
- */
 class Installment extends AbstractModel implements InstallmentInterface, IdentityInterface
 {
     /**
      * Cache key
      */
-    const CACHE_TAG = 'leanpay_payment_installment';
+    public const CACHE_TAG = 'leanpay_payment_installment';
 
     /**
      * @var string
@@ -30,6 +25,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     protected $_eventPrefix = 'leanpay_payment_installment';
 
     /**
+     * Resource initialization
+     *
      * @inheridoc
      */
     protected function _construct()
@@ -38,6 +35,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get installment identities
+     *
      * @return string[]
      */
     public function getIdentities()
@@ -46,6 +45,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get group id
+     *
      * @return string|null
      */
     public function getGroupId()
@@ -54,6 +55,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get group name
+     *
      * @return string|null
      */
     public function getGroupName()
@@ -62,6 +65,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get currency code
+     *
      * @return string|null
      */
     public function getCurrencyCode()
@@ -70,6 +75,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get loan amount
+     *
      * @return int|null
      */
     public function getLoanAmount()
@@ -78,6 +85,8 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get installment period
+     *
      * @return int|null
      */
     public function getInstallmentPeriod()
@@ -86,7 +95,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @return array|int|mixed|null
+     * Get installment amount
+     *
+     * @return float|null
      */
     public function getInstallmentAmount()
     {
@@ -94,7 +105,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $groupId
+     * Set group id
+     *
+     * @param string $groupId
      * @return $this
      */
     public function setGroupId($groupId)
@@ -105,7 +118,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $groupName
+     * Set group name
+     *
+     * @param string $groupName
      * @return $this
      */
     public function setGroupName($groupName)
@@ -116,7 +131,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $currencyCode
+     * Set currency code
+     *
+     * @param string $currencyCode
      * @return $this
      */
     public function setCurrencyCode($currencyCode)
@@ -127,7 +144,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $loanAmount
+     * Set loan amount
+     *
+     * @param int $loanAmount
      * @return $this
      */
     public function setLoanAmount($loanAmount)
@@ -138,7 +157,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $installmentPeriod
+     * Set installment period
+     *
+     * @param int $installmentPeriod
      * @return $this
      */
     public function setInstallmentPeriod($installmentPeriod)
@@ -149,7 +170,9 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
-     * @param $installmentAmount
+     * Set installment amount
+     *
+     * @param float $installmentAmount
      * @return $this
      */
     public function setInstallmentAmount($installmentAmount)

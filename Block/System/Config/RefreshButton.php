@@ -6,18 +6,18 @@ namespace Leanpay\Payment\Block\System\Config;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
-/**
- * Class RefreshButton
- *
- * @package Leanpay\Payment\Block\System\Config
- */
 class RefreshButton extends Field
 {
+    /**
+     * @var string
+     */
     protected $_template = 'Leanpay_Payment::system/config/button.phtml';
 
     /**
+     * Retrieve HTML markup for given form element
+     *
      * @param AbstractElement $element
-     * @return mixed
+     * @return string
      */
     public function render(AbstractElement $element)
     {
@@ -27,8 +27,10 @@ class RefreshButton extends Field
     }
 
     /**
+     * Retrieve element HTML markup
+     *
      * @param AbstractElement $element
-     * @return mixed
+     * @return string
      */
     protected function _getElementHtml(AbstractElement $element)
     {
@@ -36,7 +38,9 @@ class RefreshButton extends Field
     }
 
     /**
-     * @return mixed
+     * Generate url by route and parameters
+     *
+     * @return string
      */
     public function getCustomUrl()
     {
@@ -44,12 +48,15 @@ class RefreshButton extends Field
     }
 
     /**
-     * @return mixed
+     * Returns button HTML
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getButtonHtml()
     {
         $button = $this->getLayout()
-            ->createBlock('Magento\Backend\Block\Widget\Button')
+            ->createBlock(\Magento\Backend\Block\Widget\Button::class)
             ->setData([
                 'id' => 'btn_id',
                 'label' => __('Refresh'),

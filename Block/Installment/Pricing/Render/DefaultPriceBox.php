@@ -14,11 +14,6 @@ use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template\Context;
 
-/**
- * Class DefaultPriceBox
- *
- * @package Leanpay\Payment\Block\Installment\Pricing\Render
- */
 class DefaultPriceBox extends FinalPriceBox
 {
     /**
@@ -77,6 +72,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns amount
+     *
      * @return float
      */
     public function getAmount(): float
@@ -89,6 +86,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns lowest installment price
+     *
      * @return string
      */
     public function getLowestInstallmentPrice(): string
@@ -97,6 +96,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns installment helper
+     *
      * @return InstallmentHelper
      */
     public function getInstallmentHelper(): InstallmentHelper
@@ -105,6 +106,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns price box helper
+     *
      * @return Data
      */
     public function getHelper(): Data
@@ -113,6 +116,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns logo
+     *
      * @return string
      */
     public function getLogo(): string
@@ -125,6 +130,8 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * Returns JSON config
+     *
      * @return string
      */
     public function getJsonConfig()
@@ -132,8 +139,8 @@ class DefaultPriceBox extends FinalPriceBox
         $list = $this->installmentHelper->getInstallmentList($this->getAmount());
         $list = array_values($list);
         $values = [];
-
-        for ($index = 0; $index < count($list); $index++) {
+        $listLength = count($list);
+        for ($index = 0; $index < $listLength; $index++) {
             $values[] = $index;
         }
 

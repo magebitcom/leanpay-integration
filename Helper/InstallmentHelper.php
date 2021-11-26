@@ -8,75 +8,70 @@ use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 
-/**
- * Class InstallmentHelper
- *
- * @package Leanpay\Payment\Helper
- */
 class InstallmentHelper extends AbstractHelper
 {
     /**
      * Leanpay Installment Color
      */
-    const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
+    public const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
 
     /**
      * Leanpay Installment Backgroundcolor
      */
-    const LEANPAY_INSTALLMENT_BACKGROUND_COLOR = 'payment/leanpay_installment/background_color';
+    public const LEANPAY_INSTALLMENT_BACKGROUND_COLOR = 'payment/leanpay_installment/background_color';
 
     /**
      * Leanpay Installment homepage
      */
-    const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
+    public const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
 
     /**
      * Leanpay Installment product page
      */
-    const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
+    public const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
 
     /**
      * Leanpay Installment font category page
      */
-    const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
+    public const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
 
     /**
      * Leanpay Installment more info
      */
-    const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
+    public const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
 
     /**
      * Leanpay Installment check yout limits URL
      */
-    const LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT = 'payment/leanpay_installment/check_your_limit';
+    public const LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT = 'payment/leanpay_installment/check_your_limit';
 
     /**
      * Leanpay Installment allowed views
      */
-    const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
+    public const LEANPAY_INSTALLMENT_ALLOWED_VIEWS = 'payment/leanpay/installment_allowed_views';
 
     /**
      * Leanpay Installment group
      */
-    const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
+    public const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
 
     /**
      * Leanpay Installment allowed views
      */
-    const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
+    public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
      * Installment view options
      */
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE = 'HOMEPAGE';
+    public const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE = 'HOMEPAGE';
     /**
      *
      */
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE = 'PRODUCT_PAGE';
+    public const LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE = 'PRODUCT_PAGE';
     /**
      *
      */
-    const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
+    public const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
 
     /**
      * @var ViewBlockConfig
@@ -106,6 +101,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get installment group
+     *
      * @return string
      */
     public function getGroup(): string
@@ -114,6 +111,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get installment color
+     *
      * @return string
      */
     public function getInstallmentColor()
@@ -122,6 +121,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get homepage font size
+     *
      * @return string
      */
     public function getHomepageFontSize()
@@ -130,6 +131,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get catalog font size
+     *
      * @return string
      */
     public function getCatalogFontSize()
@@ -138,6 +141,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get product font size
+     *
      * @return string
      */
     public function getProductFontSize()
@@ -146,6 +151,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get more info url
+     *
      * @return string
      */
     public function getMoreInfoURL()
@@ -154,6 +161,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get check your limit url
+     *
      * @return string
      */
     public function getCheckYourLimitURL()
@@ -162,6 +171,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get allowed views
+     *
      * @return string
      */
     public function getAllowedViews()
@@ -170,6 +181,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get background color
+     *
      * @return string
      */
     public function getBackgroundColor()
@@ -178,6 +191,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Check if can show installment
+     *
      * @param string $view
      * @return bool
      */
@@ -199,7 +214,9 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $price
+     * Get lowest installment price
+     *
+     * @param string $price
      * @return string
      */
     public function getLowestInstallmentPrice($price)
@@ -212,7 +229,9 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $price
+     * Get installment list
+     *
+     * @param float $price
      * @return array
      */
     public function getInstallmentList($price)
@@ -221,8 +240,10 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $price
-     * @param $useTerm
+     * Get tooltip data
+     *
+     * @param float $price
+     * @param bool $useTerm
      * @return string
      */
     public function getToolTipData($price, $useTerm)
@@ -235,6 +256,8 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Check if theme logo is dark
+     *
      * @return mixed
      */
     public function isDarkThemeLogo()
@@ -243,7 +266,9 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $view
+     * Get font size
+     *
+     * @param string $view
      * @return string
      */
     public function getFontSize($view): string
@@ -272,7 +297,8 @@ class InstallmentHelper extends AbstractHelper
      * EUR100 EUR for purchases from 1000 EUR to 1999.99
      * EUR150 EUR for purchases from 2000 EUR to 2999.99
      * EUR200 EUR for purchases from 3000 EUR
-     * @param $price
+     *
+     * @param float $price
      * @return mixed
      */
     public function getDownPaymentRule($price): int
