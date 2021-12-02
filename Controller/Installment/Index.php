@@ -6,6 +6,7 @@ namespace Leanpay\Payment\Controller\Installment;
 use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
 use Leanpay\Payment\Helper\Data;
 use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -47,25 +48,34 @@ class Index implements ActionInterface
     private $resultRedirectFactory;
 
     /**
+     * @var RequestInterface
+     */
+    private $request;
+
+    /**
      * Index constructor.
+     *
      * @param JsonFactory $jsonFactory
      * @param Data $helper
      * @param TemplatePriceBox $template
      * @param SerializerInterface $serializer
      * @param ResultRedirectFactory $resultRedirectFactory
+     * @param RequestInterface $request
      */
     public function __construct(
         JsonFactory $jsonFactory,
         Data $helper,
         TemplatePriceBox $template,
         SerializerInterface $serializer,
-        ResultRedirectFactory $resultRedirectFactory
+        ResultRedirectFactory $resultRedirectFactory,
+        RequestInterface $request
     ) {
         $this->jsonFactory = $jsonFactory;
         $this->helper = $helper;
         $this->template = $template;
         $this->serializer = $serializer;
         $this->resultRedirectFactory = $resultRedirectFactory;
+        $this->request = $request;
     }
 
     /**
@@ -75,12 +85,12 @@ class Index implements ActionInterface
      */
     public function execute()
     {
-        if (!$this->getRequest()->isAjax()) {
+        if (!$this->request->isAjax()) {
             return $this->resultRedirectFactory->create()->setPath('');
         }
 
-        $amount = $this->getRequest()->getParam('amount');
-        $isCheckout = (bool)$this->getRequest()->getParam('checkout');
+        $amount = $this->request->getParam('amount');
+        $isCheckout = (bool)$this->request->getParam('checkout');
         $enabled = $this->helper->isActive();
         $response = $this->jsonFactory->create();
 
