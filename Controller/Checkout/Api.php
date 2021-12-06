@@ -27,9 +27,12 @@ class Api extends AbstractAction
     public function execute()
     {
         $responseBody = $this->driver->fileGetContents('php://input');
+        $result = $this->resultJsonFactory->create()->setData([
+            'success' => false
+        ]);
 
         if (empty($responseBody)) {
-            return;
+            return $result;
         }
 
         $leanpayData = json_decode($responseBody, true);
@@ -44,7 +47,7 @@ class Api extends AbstractAction
         if ($leanpayData['md5Signature'] != $md5Secret) {
             $this->logger->addError('Response: ' . $responseBody);
             $this->logger->addError('My md5: ' . $md5Secret);
-            return;
+            return $result;
         }
 
         $order = $this->findOrder($leanpayData['vendorTransactionId']);
@@ -64,6 +67,10 @@ class Api extends AbstractAction
                 'There was error while trying to parse Leanpay API data: ' . $exception->getMessage()
             );
         }
+
+        return $result->setData([
+            'success' => true,
+        ]);
     }
 
     /**
