@@ -10,6 +10,7 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Filesystem\DriverInterface;
@@ -99,6 +100,11 @@ abstract class AbstractAction implements ActionInterface
     protected $resultJsonFactory;
 
     /**
+     * @var RawFactory
+     */
+    protected $resultRawFactory;
+
+    /**
      * AbstractAction constructor.
      * @param JsonFactory $resultJsonFactory
      * @param ResultRedirectFactory $resultRedirectFactory
@@ -129,7 +135,8 @@ abstract class AbstractAction implements ActionInterface
         PaymentRepository $payment,
         InvoiceService $invoiceService,
         Transaction $transaction,
-        InvoiceSender $invoiceSender
+        InvoiceSender $invoiceSender,
+        RawFactory $resultRawFactory
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->resultRedirectFactory = $resultRedirectFactory;
@@ -145,16 +152,17 @@ abstract class AbstractAction implements ActionInterface
         $this->invoiceService = $invoiceService;
         $this->transaction = $transaction;
         $this->invoiceSender = $invoiceSender;
+        $this->resultRawFactory = $resultRawFactory;
     }
 
     /**
      * Find order searching by leanpay token
      *
-     * @param int $id
+     * @param string $id
      * @return Order
      * @throws NotFoundException
      */
-    public function findOrder(int $id)
+    public function findOrder(string $id)
     {
         $filters[] = $this->filterBuilder
             ->setField('increment_id')

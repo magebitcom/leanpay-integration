@@ -27,9 +27,7 @@ class Api extends AbstractAction
     public function execute()
     {
         $responseBody = $this->driver->fileGetContents('php://input');
-        $result = $this->resultJsonFactory->create()->setData([
-            'success' => false
-        ]);
+        $result = $this->resultRawFactory->create()->setContents('');
 
         if (empty($responseBody)) {
             return $result;
@@ -50,7 +48,7 @@ class Api extends AbstractAction
             return $result;
         }
 
-        $order = $this->findOrder($leanpayData['vendorTransactionId']);
+        $order = $this->findOrder((string)$leanpayData['vendorTransactionId']);
 
         try {
             switch (true) {
@@ -68,9 +66,7 @@ class Api extends AbstractAction
             );
         }
 
-        return $result->setData([
-            'success' => true,
-        ]);
+        return $result;
     }
 
     /**
