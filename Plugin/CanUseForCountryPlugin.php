@@ -11,11 +11,6 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 
-/**
- * Class CanUseForCountryPlugin
- *
- * @package Leanpay\Payment\Plugin
- */
 class CanUseForCountryPlugin
 {
     /**
@@ -40,6 +35,7 @@ class CanUseForCountryPlugin
 
     /**
      * Check whether payment method is applicable to quote
+     *
      * @param CanUseForCountry $subject
      * @param callable $proceed
      * @param MethodInterface $paymentMethod
@@ -47,8 +43,12 @@ class CanUseForCountryPlugin
      *
      * @return bool
      */
-    public function aroundIsApplicable(CanUseForCountry $subject, callable $proceed, MethodInterface $paymentMethod, Quote $quote)
-    {
+    public function aroundIsApplicable(
+        CanUseForCountry $subject,
+        callable $proceed,
+        MethodInterface $paymentMethod,
+        Quote $quote
+    ) {
         if ($paymentMethod->getCode() != Leanpay::CODE) {
             return $proceed($paymentMethod, $quote);
         }
@@ -59,6 +59,8 @@ class CanUseForCountryPlugin
     }
 
     /**
+     * Get billing address
+     *
      * @param Address $address
      * @return int|string
      */

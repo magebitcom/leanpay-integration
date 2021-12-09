@@ -6,11 +6,6 @@ namespace Leanpay\Payment\Model\Config\Source;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Class ViewBlockConfig
- *
- * @package Leanpay\Payment\Model\Config\Source
- */
 class ViewBlockConfig implements OptionSourceInterface
 {
     /**

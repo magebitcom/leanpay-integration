@@ -14,11 +14,6 @@ use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\CronException;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
-/**
- * Class Index
- *
- * @package Leanpay\Payment\Controller\Adminhtml\Refresh
- */
 class Index extends Action
 {
     /**
@@ -57,6 +52,8 @@ class Index extends Action
     }
 
     /**
+     * Execute action based on request and return result
+     *
      * @return ResponseInterface|ResultInterface
      * @throws CronException
      */
@@ -69,14 +66,16 @@ class Index extends Action
         $schedule->setScheduledAt((string)$this->dataTime->gmtTimestamp());
 
         $resultFactory = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $resultFactory->setUrl($this->_redirect->getRefererUrl());
+        $resultFactory->setRefererOrBaseUrl();
 
         if ($schedule->trySchedule()) {
             try {
                 $this->schedule->save($schedule);
                 $this->getMessageManager()->addSuccessMessage(__('Leanpay successfully scheduled a refresh'));
             } catch (AlreadyExistsException | \Exception $e) {
-                $this->getMessageManager()->addErrorMessage(__('Failed to schedule a Leanpay refresh, please try later'));
+                $this->getMessageManager()->addErrorMessage(
+                    __('Failed to schedule a Leanpay refresh, please try later')
+                );
             }
         }
 

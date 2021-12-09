@@ -9,12 +9,8 @@ use Magento\Directory\Model\Currency as CurrencyModel;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Translate\Adapter;
 
-/**
- * Class Currency
- *
- * @package Leanpay\Payment\Block\Adminhtml\Form\Field
- */
 class Currency extends Field
 {
     /**
@@ -23,17 +19,25 @@ class Currency extends Field
     protected $currencyModel;
 
     /**
+     * @var Adapter
+     */
+    protected $translator;
+
+    /**
      * Currency constructor.
      *
+     * @param Adapter $translator
      * @param Context $context
      * @param CurrencyModel $currencyModel
      * @param array $data
      */
     public function __construct(
+        Adapter $translator,
         Context $context,
         CurrencyModel $currencyModel,
         array $data = []
     ) {
+        $this->translator = $translator;
         $this->currencyModel = $currencyModel;
 
         parent::__construct($context, $data);
@@ -54,7 +58,9 @@ class Currency extends Field
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
 
         if (!array_key_exists('EUR', $rates)) {
-            return _('<span style="color: red;"><b>Please set up Currency rate for EUR</b></span>');
+            return $this->translator->translate(
+                '<span style="color: red;"><b>Please set up Currency rate for EUR</b></span>'
+            );
         }
 
         return sprintf(__('1 %1$s equals %3$s %2$f'), $baseCode, number_format((float)$rates['EUR'], 4), 'EUR');

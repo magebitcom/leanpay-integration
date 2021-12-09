@@ -4,12 +4,9 @@ namespace Leanpay\Payment\Setup\Patch\Data;
 
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
-use Magento\Framework\Setup\Patch\PatchRevertableInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 
-class UpdateInstructions
-    implements DataPatchInterface,
-    PatchRevertableInterface
+class UpdateInstructions implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -23,6 +20,7 @@ class UpdateInstructions
 
     /**
      * @param ModuleDataSetupInterface $moduleDataSetup
+     * @param WriterInterface $configWriter
      */
     public function __construct(
         ModuleDataSetupInterface $moduleDataSetup,
@@ -33,7 +31,7 @@ class UpdateInstructions
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function apply()
     {
@@ -46,19 +44,15 @@ class UpdateInstructions
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getDependencies()
     {
         return [];
     }
 
-    public function revert()
-    {
-    }
-
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAliases()
     {

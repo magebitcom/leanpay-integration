@@ -24,7 +24,8 @@ define([
 
     return function (widget) {
         $.widget('mage.priceBox', widget, {
-            reloadPrice: function reDrawPrices() {
+            reloadPrice: function reDrawPrices()
+            {
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
                     priceTemplate = mageTemplate(this.options.priceTemplate);
 

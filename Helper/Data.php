@@ -7,14 +7,10 @@ use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Exception\NotFoundException;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * Class Data
- *
- * @package Leanpay\Payment\Helper
- */
 class Data extends AbstractHelper
 {
     /**
@@ -22,96 +18,98 @@ class Data extends AbstractHelper
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-request-token-post
      */
-    const LEANPAY_TOKEN_URL_DEV = 'https://lapp.leanpay.si/vendor/token';
+    public const LEANPAY_TOKEN_URL_DEV = 'https://lapp.leanpay.si/vendor/token';
 
     /**
      * Post checkout URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
      */
-    const LEANPAY_CHECKOUT_URL_DEV = 'https://lapp.leanpay.si/vendor/checkout';
+    public const LEANPAY_CHECKOUT_URL_DEV = 'https://lapp.leanpay.si/vendor/checkout';
 
     /**
      * Leanpay installment URL
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
 
     /**
      *  Post Token URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-request-token-post
      */
-    const LEANPAY_TOKEN_URL = 'https://app.leanpay.si/vendor/token';
+    public const LEANPAY_TOKEN_URL = 'https://app.leanpay.si/vendor/token';
 
     /**
      * Post checkout URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
      */
-    const LEANPAY_CHECKOUT_URL = 'https://app.leanpay.si/vendor/checkout';
+    public const LEANPAY_CHECKOUT_URL = 'https://app.leanpay.si/vendor/checkout';
 
     /**
      * Leanpay installment URL
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
 
     /**
      * Leanpay Magento 2 api key path in Database
      */
-    const LEANPAY_API_CONFIG_API_KEY_PATH = 'payment/leanpay/api_key';
+    public const LEANPAY_API_CONFIG_API_KEY_PATH = 'payment/leanpay/api_key';
 
     /**
      * Leanpay Magento 2 secret word path in Database
      */
-    const LEANPAY_API_CONFIG_SECRET_WORD_PATH = 'payment/leanpay/api_secret';
+    public const LEANPAY_API_CONFIG_SECRET_WORD_PATH = 'payment/leanpay/api_secret';
 
     /**
      * Leanpay Magento 1 description path in Database
      */
-    const LEANPAY_CONFIG_INSTRUCTIONS_PATH = 'payment/leanpay/instructions';
+    public const LEANPAY_CONFIG_INSTRUCTIONS_PATH = 'payment/leanpay/instructions';
 
     /**
      * Leanpay Magento 1 secret word path in Database
      */
-    const LEANPAY_CONFIG_MODE_PATH = 'payment/leanpay/mode';
+    public const LEANPAY_CONFIG_MODE_PATH = 'payment/leanpay/mode';
 
     /**
      * Leanpay Language configuration path
      */
-    const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
+    public const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
 
     /**
      * Leanpay is active configuration path
      */
-    const LEANPAY_IS_ACTIVE_PATH = 'payment/leanpay/active';
+    public const LEANPAY_IS_ACTIVE_PATH = 'payment/leanpay/active';
 
     /**
      * Successful redirect url
      */
-    const LEANPAY_SUCCESS_URL = 'leanpay/checkout/success';
+    public const LEANPAY_SUCCESS_URL = 'leanpay/checkout/success';
 
     /**
      * Error redirect url
      */
-    const LEANPAY_ERROR_URL = 'leanpay/checkout/failure';
+    public const LEANPAY_ERROR_URL = 'leanpay/checkout/failure';
 
     /**
      * Magento Checkout url for redirect after failure
      */
-    const LEANPAY_MAGENTO_CHECKOUT_URL = 'payment/leanpay/checkout_url';
+    public const LEANPAY_MAGENTO_CHECKOUT_URL = 'payment/leanpay/checkout_url';
 
     /**
      * Mode types
      */
-    const LEANPAY_API_MODE_DEV = 'DEV_MODE';
-    const LEANPAY_API_MODE_LIVE = 'LIVE_MODE';
+    public const LEANPAY_API_MODE_DEV = 'DEV_MODE';
+    public const LEANPAY_API_MODE_LIVE = 'LIVE_MODE';
 
     /**
      * Leanpay responses from api
+     *
+     * @var array
      */
     protected $responseMap = [
         'PENDING' => Order::STATE_PENDING_PAYMENT,
@@ -137,6 +135,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Check if method is active
+     *
      * @return bool
      */
     public function isActive(): bool
@@ -157,25 +157,30 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get leanpay instructions
+     *
      * @return string
      */
     public function getInstructions(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_CONFIG_INSTRUCTIONS_PATH, ScopeInterface::SCOPE_STORES);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_INSTRUCTIONS_PATH,
+            ScopeInterface::SCOPE_STORES
+        );
     }
 
     /**
      * Convert leanpay api status to magento order status
      *
-     * @param $status
+     * @param string $status
      *
      * @return string
-     * @throws Exception
+     * @throws NotFoundException
      */
     public function convertLeanpayStatusToMagento($status): string
     {
         if (!isset($this->responseMap[$status])) {
-            throw new Exception("Can't Find {$status} status");
+            throw new NotFoundException(__('Can\'t Find {$status} status'));
         }
 
         return $this->responseMap[$status];
@@ -198,16 +203,16 @@ class Data extends AbstractHelper
     /**
      * Generate token
      *
-     * @param $leanPayTransactionId
-     * @param $vendorTransactionId
-     * @param $amount
-     * @param $responseStatus
+     * @param string $leanPayTransactionId
+     * @param string $vendorTransactionId
+     * @param float $amount
+     * @param string $responseStatus
      *
      * @return string
      */
     public function generateMD5Secret($leanPayTransactionId, $vendorTransactionId, $amount, $responseStatus): string
     {
-        $string = is_null($leanPayTransactionId) ? 'null' : $leanPayTransactionId;
+        $string = $leanPayTransactionId === null ? 'null' : $leanPayTransactionId;
         $string .= $vendorTransactionId;
         $string .= md5($this->getSecretWord());
         $string .= number_format($amount, 2, '.', '');
@@ -289,7 +294,7 @@ class Data extends AbstractHelper
     /**
      * Get store url
      *
-     * @param $route
+     * @param string $route
      * @param array $params
      *
      * @return string
@@ -300,6 +305,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get leanpay config data
+     *
      * @param string $value
      *
      * @return mixed

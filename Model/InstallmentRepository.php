@@ -11,11 +11,6 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * Class InstallmentRepository
- *
- * @package Leanpay\Payment\Model
- */
 class InstallmentRepository implements InstallmentRepositoryInterface
 {
     /**
@@ -28,6 +23,12 @@ class InstallmentRepository implements InstallmentRepositoryInterface
      */
     private $modelFactory;
 
+    /**
+     * InstallmentRepository constructor.
+     * @param ResourceModel\Installment $resourceModel
+     * @param ResourceModel\Installment\CollectionFactory $collectionFactory
+     * @param InstallmentInterfaceFactory $modelFactory
+     */
     public function __construct(
         ResourceModel\Installment $resourceModel,
         ResourceModel\Installment\CollectionFactory $collectionFactory,
@@ -39,6 +40,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Get installment by Id
+     *
      * @param int|string $id
      * @return InstallmentInterface|null
      * @throws NoSuchEntityException
@@ -56,6 +59,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Save installment
+     *
      * @param InstallmentInterface $installment
      * @return InstallmentInterface|void
      * @throws CouldNotSaveException
@@ -70,6 +75,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Get installment list
+     *
      * @param SearchCriteriaInterface $searchCriteria
      * @return SearchCriteriaInterface[]
      */
@@ -87,6 +94,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Delete installment
+     *
      * @param InstallmentInterface $installment
      * @return bool
      * @throws CouldNotDeleteException
@@ -103,6 +112,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Delete installment by id
+     *
      * @param int|string $id
      * @return bool
      * @throws CouldNotDeleteException
@@ -114,6 +125,8 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
+     * Get empty installment
+     *
      * @return InstallmentInterface
      */
     public function newModel()

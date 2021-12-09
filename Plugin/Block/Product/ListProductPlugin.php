@@ -8,14 +8,11 @@ use Leanpay\Payment\Pricing\Price\Installment;
 use Magento\Catalog\Block\Product\ListProduct;
 use Magento\Catalog\Model\Product;
 
-/**
- * Class ListProductPlugin
- *
- * @package Leanpay\Payment\Plugin\Block\Product
- */
 class ListProductPlugin
 {
     /**
+     * Add installment price
+     *
      * @param ListProduct $subject
      * @param callable $proceed
      * @param Product $product
@@ -39,12 +36,13 @@ class ListProductPlugin
             );
         }
 
-
         return join('', [$result, $price]);
     }
 
     /**
-     * @param $subject
+     * Get price renderer
+     *
+     * @param ListProduct $subject
      * @return mixed
      */
     protected function getPriceRender($subject)

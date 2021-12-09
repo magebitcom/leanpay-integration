@@ -90,8 +90,8 @@ class Request implements RequestInterface
     /**
      * Remove header validation
      *
-     * @param $ch
-     * @param $data
+     * @param resource $ch
+     * @param string $data
      * @return int
      */
     public function parseHeaders($ch, $data): int

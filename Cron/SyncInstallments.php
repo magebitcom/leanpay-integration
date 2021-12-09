@@ -15,11 +15,6 @@ use Magento\Framework\Profiler;
 use Magento\PageCache\Model\Cache\Type;
 use Psr\Log\LoggerInterface;
 
-/**
- * Class SyncInstallments
- *
- * @package Leanpay\Payment\Cron
- */
 class SyncInstallments
 {
     /**
@@ -110,28 +105,9 @@ class SyncInstallments
 
                     $parse = json_decode($data);
                     if ($parse->groups) {
-                        $models = [];
-                        $index = 0;
-                        foreach (reset($parse) as $group) {
-                            if (is_object($group) && $group->groupId && $group->loanAmounts) {
-                                foreach ($group->loanAmounts as $amount) {
-                                    if (is_object($amount) && is_array($amount->possibleInstallments)) {
-                                        foreach ($amount->possibleInstallments as $installment) {
-                                            $models[$index][InstallmentInterface::GROUP_ID] = $group->groupId;
-                                            $models[$index][InstallmentInterface::GROUP_NAME] = $group->groupName;
-                                            $models[$index][InstallmentInterface::CURRENCY_CODE] = $group->currencyCode;
-                                            $models[$index][InstallmentInterface::LOAN_AMOUNT] = $amount->loanAmount;
-                                            $models[$index][InstallmentInterface::INSTALLMENT_AMOUNT] = $installment->installmentAmout;
-                                            $models[$index][InstallmentInterface::INSTALLMENT_PERIOD] = $installment->numberOfMonths;
-                                            $index++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        $models = $this->extractInstallmentData($parse);
                         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
                         $connection->truncateTable($table);
-
                         $this->saveAllModels($models);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
@@ -145,6 +121,8 @@ class SyncInstallments
     }
 
     /**
+     * Adds headers to curl
+     *
      * @param Curl $curl
      * @return Curl
      */
@@ -161,6 +139,8 @@ class SyncInstallments
     }
 
     /**
+     * Saves all models
+     *
      * @param array $models
      */
     private function saveAllModels($models = [])
@@ -177,5 +157,35 @@ class SyncInstallments
                 $this->logger->critical($exception);
             }
         }
+    }
+
+    /**
+     * Extract installment data
+     *
+     * @param array $parse
+     * @return array
+     */
+    private function extractInstallmentData($parse)
+    {
+        $models = [];
+        $index = 0;
+        foreach (reset($parse) as $group) {
+            if (is_object($group) && $group->groupId && $group->loanAmounts) {
+                foreach ($group->loanAmounts as $amount) {
+                    if (is_object($amount) && is_array($amount->possibleInstallments)) {
+                        foreach ($amount->possibleInstallments as $installment) {
+                            $models[$index][InstallmentInterface::GROUP_ID] = $group->groupId;
+                            $models[$index][InstallmentInterface::GROUP_NAME] = $group->groupName;
+                            $models[$index][InstallmentInterface::CURRENCY_CODE] = $group->currencyCode;
+                            $models[$index][InstallmentInterface::LOAN_AMOUNT] = $amount->loanAmount;
+                            $models[$index][InstallmentInterface::INSTALLMENT_AMOUNT] = $installment->installmentAmout;
+                            $models[$index][InstallmentInterface::INSTALLMENT_PERIOD] = $installment->numberOfMonths;
+                            $index++;
+                        }
+                    }
+                }
+            }
+        }
+        return $models;
     }
 }

@@ -10,18 +10,15 @@ use Magento\CatalogWidget\Block\Product\ProductsList;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Render;
 
-/**
- * Class ProductsListPlugin
- *
- * @package Leanpay\Payment\Plugin\Block\Product
- */
 class ProductsListPlugin
 {
     /**
+     * Add installment price to plugin
+     *
      * @param ProductsList $subject
      * @param callable $proceed
      * @param Product $product
-     * @param null $priceType
+     * @param string $priceType
      * @param string $renderZone
      * @param array $arguments
      * @return string
@@ -54,7 +51,9 @@ class ProductsListPlugin
     }
 
     /**
-     * @param $subject
+     * Get layout HTML
+     *
+     * @param ProductsList $subject
      * @return mixed
      */
     protected function getPriceRender($subject)

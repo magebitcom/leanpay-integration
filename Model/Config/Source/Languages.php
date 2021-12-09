@@ -5,11 +5,6 @@ namespace Leanpay\Payment\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Class Languages
- *
- * @package Leanpay\Payment\Model\Config\Source
- */
 class Languages implements OptionSourceInterface
 {
     /**

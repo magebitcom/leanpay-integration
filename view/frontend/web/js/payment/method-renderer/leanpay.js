@@ -22,7 +22,7 @@ define(
                 template: 'Leanpay_Payment/payment/leanpay',
             },
 
-            initialize: function() {
+            initialize: function () {
                 this._super();
                 var self = this;
 
@@ -55,7 +55,7 @@ define(
                 return window.leanpayConfig.logo;
             },
 
-            getInstallmentData: function (){
+            getInstallmentData: function () {
                 var self = this;
                 $.ajax({
                     type: 'get',

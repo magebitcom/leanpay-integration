@@ -7,11 +7,6 @@ use Leanpay\Payment\Model\ResourceModel\Installment\Collection;
 use Leanpay\Payment\Model\ResourceModel\Installment\CollectionFactory;
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Class ViewBlockConfig
- *
- * @package Leanpay\Payment\Model\Config\Source
- */
 class GroupOptions implements OptionSourceInterface
 {
     /**

@@ -8,24 +8,25 @@ use Magento\Payment\Model\Checks\TotalMinMax;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Model\Quote;
 
-/**
- * Class TotalMinMaxPlugin
- *
- * @package Leanpay\Payment\Plugin
- */
 class TotalMinMaxPlugin
 {
+
     /**
+     * Adds extra check to isApplicable
+     *
      * @param TotalMinMax $subject
+     * @param callable $proceed
      * @param MethodInterface $paymentMethod
      * @param Quote $quote
-     * @param callable $proceed
-     *
      * @return bool
      * @throws \Exception
      */
-    public function aroundIsApplicable(TotalMinMax $subject, callable $proceed, MethodInterface $paymentMethod, Quote $quote)
-    {
+    public function aroundIsApplicable(
+        TotalMinMax $subject,
+        callable $proceed,
+        MethodInterface $paymentMethod,
+        Quote $quote
+    ) {
         if ($paymentMethod->getCode() != Leanpay::CODE) {
             return $proceed($paymentMethod, $quote);
         }
