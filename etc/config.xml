@@ -13,6 +13,8 @@
                 <allowspecific>0</allowspecific>
                 <mode>DEV_MODE</mode>
                 <language>sl</language>
+                <leanpay_base_url>https://app.leanpay.si</leanpay_base_url>
+                <leanpay_base_url_dev>https://lapp.leanpay.si</leanpay_base_url_dev>
                 <installment_cron>0 2 * * *</installment_cron>
                 <installment_allowed_views>HOMEPAGE,PRODUCT_PAGE,CATEGORY_PAGE</installment_allowed_views>
                 <checkout_url>checkout/index/index</checkout_url>
