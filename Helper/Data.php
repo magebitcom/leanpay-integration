@@ -163,8 +163,6 @@ class Data extends AbstractHelper
 
     public function getCurrencyType(): string
     {
-        $kk = $this->getStoreId();
-
         $currencyType = $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_CURRENCY,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
@@ -217,15 +215,13 @@ class Data extends AbstractHelper
      */
     public function getLeanpayApiKey(): string
     {
-        $aaa = (string)$this->encryptor->decrypt(
+        return (string)$this->encryptor->decrypt(
             $this->scopeConfig->getValue(
                 self::LEANPAY_API_CONFIG_API_KEY_PATH,
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                 $this->getStoreId()
             )
         );
-
-        return $aaa;
     }
 
     /**
