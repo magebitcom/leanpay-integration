@@ -19,6 +19,7 @@
                 <installment_allowed_views>HOMEPAGE,PRODUCT_PAGE,CATEGORY_PAGE</installment_allowed_views>
                 <checkout_url>checkout/index/index</checkout_url>
                 <instructions><![CDATA[Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta.]]></instructions>
+                <leanpay_currency>EUR</leanpay_currency>
             </leanpay>
             <leanpay_installment>
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>

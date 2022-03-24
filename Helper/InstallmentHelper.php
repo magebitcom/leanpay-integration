@@ -7,6 +7,7 @@ use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Store\Model\ScopeInterface;
 
 class InstallmentHelper extends AbstractHelper
 {
@@ -72,6 +73,18 @@ class InstallmentHelper extends AbstractHelper
      *
      */
     public const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
+
+    /**
+     * Get current leanpay currency
+     */
+    public const LEANPAY_CURRENCY = 'payment/leanpay/leanpay_currency';
+
+    /**
+     * List of allowed installment currencies
+     */
+    public const ALLOWED_INSTALLMENT_CURRENCIES = [
+        'EUR'
+    ];
 
     /**
      * @var ViewBlockConfig
@@ -199,6 +212,13 @@ class InstallmentHelper extends AbstractHelper
     public function canShowInstallment(string $view): bool
     {
         $result = false;
+
+        if (!in_array(
+            $this->scopeConfig->getValue(self::LEANPAY_CURRENCY, ScopeInterface::SCOPE_STORE),
+            self::ALLOWED_INSTALLMENT_CURRENCIES)
+        ) {
+            return $result;
+        }
 
         $config = $this->getAllowedViews();
 
