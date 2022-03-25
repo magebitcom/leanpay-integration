@@ -13,19 +13,27 @@ use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
+
+    public CONST LEANPAY_BASE_URL = 'https://app.leanpay.si/';
+    public CONST LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
+    public CONST LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
+    public CONST LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
+
+    public CONST LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
     /**
      *  Post Token URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-request-token-post
      */
-    public const LEANPAY_TOKEN_URL_DEV = 'https://lapp.leanpay.si/vendor/token';
+    public const LEANPAY_TOKEN_URL = 'vendor/token';
 
     /**
      * Post checkout URL
      *
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
      */
-    public const LEANPAY_CHECKOUT_URL_DEV = 'https://lapp.leanpay.si/vendor/checkout';
+    public const LEANPAY_CHECKOUT_URL = 'vendor/checkout';
+
 
     /**
      * Leanpay installment URL
@@ -34,19 +42,6 @@ class Data extends AbstractHelper
      */
     public const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
 
-    /**
-     *  Post Token URL
-     *
-     * http://static.leanpay.com/api-docs/docs.html#integration-steps-request-token-post
-     */
-    public const LEANPAY_TOKEN_URL = 'https://app.leanpay.si/vendor/token';
-
-    /**
-     * Post checkout URL
-     *
-     * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
-     */
-    public const LEANPAY_CHECKOUT_URL = 'https://app.leanpay.si/vendor/checkout';
 
     /**
      * Leanpay installment URL
@@ -54,6 +49,16 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
+
+    /**
+     * Leanpay Magento 2 base url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL = 'payment/leanpay/leanpay_base_url';
+
+    /**
+     * Leanpay Magento 2 base_dev url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL_DEV = 'payment/leanpay/leanpay_base_url_dev';
 
     /**
      * Leanpay Magento 2 api key path in Database
@@ -123,15 +128,74 @@ class Data extends AbstractHelper
     private $encryptor;
 
     /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    protected $scopeConfig;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Data constructor.
      *
      * @param Context $context
      * @param EncryptorInterface $encryptor
      */
-    public function __construct(Context $context, EncryptorInterface $encryptor)
+    public function __construct(
+        Context $context,
+        EncryptorInterface $encryptor,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+    )
     {
         $this->encryptor = $encryptor;
+        $this->storeManager = $storeManager;
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($context);
+    }
+
+    public function getStoreId(): int
+    {
+        return (int) $this->storeManager->getStore()->getId();
+    }
+
+    public function getCurrencyType(): string
+    {
+        $currencyType = $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_CURRENCY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+
+        if (!$currencyType) {
+            $currencyType = 'EUR';
+        }
+
+        return (string) $currencyType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl(): string
+    {
+        $currencyType = $this->getCurrencyType();
+
+        if ($currencyType === 'EUR') {
+            if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
+                return (string) self::LEANPAY_BASE_URL;
+            }
+
+            return (string) self::LEANPAY_BASE_URL_DEV;
+        }
+
+        if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
+            return (string) self::LEANPAY_BASE_URL_HR;
+        }
+
+        return (string) self::LEANPAY_BASE_URL_DEV_HR;
     }
 
     /**
@@ -152,7 +216,11 @@ class Data extends AbstractHelper
     public function getLeanpayApiKey(): string
     {
         return (string)$this->encryptor->decrypt(
-            $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_API_KEY_PATH)
+            $this->scopeConfig->getValue(
+                self::LEANPAY_API_CONFIG_API_KEY_PATH,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $this->getStoreId()
+            )
         );
     }
 
@@ -165,7 +233,8 @@ class Data extends AbstractHelper
     {
         return (string) $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_INSTRUCTIONS_PATH,
-            ScopeInterface::SCOPE_STORES
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
         );
     }
 
@@ -193,11 +262,7 @@ class Data extends AbstractHelper
      */
     public function getCheckoutUrl(): string
     {
-        if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return self::LEANPAY_CHECKOUT_URL;
-        }
-
-        return self::LEANPAY_CHECKOUT_URL_DEV;
+        return $this->getBaseUrl() . self::LEANPAY_CHECKOUT_URL;
     }
 
     /**
@@ -228,11 +293,7 @@ class Data extends AbstractHelper
      */
     public function getTokenUrl(): string
     {
-        if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return self::LEANPAY_TOKEN_URL;
-        }
-
-        return self::LEANPAY_TOKEN_URL_DEV;
+        return $this->getBaseUrl() . self::LEANPAY_TOKEN_URL;
     }
 
     /**
@@ -242,7 +303,10 @@ class Data extends AbstractHelper
      */
     public function getLeanpayLanguage(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_CONFIG_LANG_PATH);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_LANG_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -253,7 +317,11 @@ class Data extends AbstractHelper
     private function getSecretWord(): string
     {
         return (string)$this->encryptor->decrypt(
-            $this->scopeConfig->getValue(self::LEANPAY_API_CONFIG_SECRET_WORD_PATH)
+            $this->scopeConfig->getValue(
+                self::LEANPAY_API_CONFIG_SECRET_WORD_PATH,
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreId()
+            )
         );
     }
 
@@ -264,7 +332,11 @@ class Data extends AbstractHelper
      */
     private function getEnvironmentMode(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_CONFIG_MODE_PATH);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_MODE_PATH,
+            ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
     }
 
     /**
@@ -274,7 +346,11 @@ class Data extends AbstractHelper
      */
     public function getMagentoCheckoutUrl(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_MAGENTO_CHECKOUT_URL);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_MAGENTO_CHECKOUT_URL,
+            ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
     }
 
     /**

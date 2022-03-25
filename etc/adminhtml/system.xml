@@ -21,8 +21,26 @@
                     <label>Instructions</label>
                 </field>
 
-                <field id="currency" translate="label comment" sortOrder="1" type="select" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="leanpay_currency"
+                       translate="label"
+                       sortOrder="1"
+                       type="select"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1"
+                       canRestore="1">
+                    <label>Currency type</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\CurrencyType</source_model>
+                </field>
+
+                <field id="currency"
+                       translate="label comment"
+                       sortOrder="1"
+                       type="select"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1"
+                       canRestore="0">
                     <label>Base Currency rate</label>
                     <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\Currency</frontend_model>
                     <tooltip>
@@ -56,14 +74,24 @@
                     <source_model>Leanpay\Payment\Model\Config\Source\Modes</source_model>
                 </field>
 
-                <field id="api_key" translate="label comment" sortOrder="10" type="obscure" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="api_key"
+                       translate="label comment"
+                       sortOrder="10"
+                       type="obscure"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
                     <label>API Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
 
-                <field id="api_secret" translate="label comment" sortOrder="20" type="obscure" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="api_secret"
+                       translate="label comment"
+                       sortOrder="20"
+                       type="obscure"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
                     <label>API Secret Word</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
