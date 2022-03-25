@@ -232,7 +232,7 @@ class Leanpay extends AbstractMethod
         $orderItems = $order->getAllVisibleItems();
 
         $additionData = [
-            'vendorTransactionId' => $order->getIncrementId(),
+            'vendorTransactionId' => $order->getQuoteId(),
             'amount' => $amount,
             'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),

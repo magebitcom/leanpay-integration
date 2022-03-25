@@ -165,7 +165,7 @@ abstract class AbstractAction implements ActionInterface
     public function findOrder(string $id)
     {
         $filters[] = $this->filterBuilder
-            ->setField('increment_id')
+            ->setField('quote_id')
             ->setConditionType('eq')
             ->setValue($id)
             ->create();
