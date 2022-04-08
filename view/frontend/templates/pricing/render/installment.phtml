@@ -15,6 +15,8 @@ $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
 $fontSize = $helper->getFontSize($viewKey);
 $color = $helper->getInstallmentColor();
+var_dump($canShow);
+var_dump($price);
 ?>
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
     <?php if ($price && $canShow): ?>

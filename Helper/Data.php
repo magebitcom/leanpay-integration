@@ -40,7 +40,10 @@ class Data extends AbstractHelper
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    public const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL_DEV = [
+        'EUR' => 'https://lapp.leanpay.si/vendor/installment-plans',
+        'HKR' => 'https://lapp.leanpay.hr/vendor/installment-plans'
+    ];
 
 
     /**
@@ -48,7 +51,10 @@ class Data extends AbstractHelper
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    public const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL = [
+        'EUR'=> 'https://app.leanpay.si/vendor/installment-plans',
+        'HKR' => 'https://app.leanpay.hr/vendor/installment-plans'
+    ] ;
 
     /**
      * Leanpay Magento 2 base url in config
@@ -358,7 +364,7 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getInstallmentURL(): string
+    public function getInstallmentURL(): array
     {
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
             return self::LEANPAY_INSTALLMENT_URL;

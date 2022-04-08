@@ -189,6 +189,11 @@
                     <label>Group</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\GroupOptions</source_model>
                 </field>
+                <field id="cron_currencies" translate="label comment" sortOrder="60" type="multiselect" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Installment Currencies</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\CronCurrencies</source_model>
+                </field>
                 <field id="refresh" translate="label" type="button" sortOrder="100" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Refresh</label>
