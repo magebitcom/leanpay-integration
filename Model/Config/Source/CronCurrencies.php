@@ -23,8 +23,8 @@ class CronCurrencies implements OptionSourceInterface
             ],
 
             [
-                'value' => 'HKR',
-                'label' => 'HKR'
+                'value' => 'HRK',
+                'label' => 'HRK'
             ],
         ];
     }
