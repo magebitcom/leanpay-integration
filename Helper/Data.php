@@ -107,6 +107,29 @@ class Data extends AbstractHelper
     public const LEANPAY_API_MODE_LIVE = 'LIVE_MODE';
 
     /**
+     * Multiple financing
+     */
+    public const LEANPAY_PROMOS_MFP_PRODUCT_NAME = 'leanpay_promos/mfp/product_name';
+    public const LEANPAY_PROMOS_MFP_START_DATE = 'leanpay_promos/mfp/start_date';
+    public const LEANPAY_PROMOS_MFP_END_DATE = 'leanpay_promos/mfp/end_date';
+    public const LEANPAY_PROMOS_MFP_CART_SIZE = 'leanpay_promos/mfp/cart_size';
+
+    /**
+     * Multiple financin producs names
+     */
+    public const REGULAR_PRODUCT = 'regular_product';
+    public const ZERO_APR = 'zero_apr';
+    public const ZERO_PERCENT = 'zero_percent';
+    /**
+     * Multiple financing products codes
+     * @var array
+     */
+    protected $vendorProductCodes = [
+        self::REGULAR_PRODUCT => 'ad2e37e4-b626-429a-9bce-49480532a947',
+        self::ZERO_APR       => '166ede78-6556-47f5-bcdc-25ab57a7d6a1',
+        self::ZERO_PERCENT    => '6ebfd301-e22c-4382-a2bf-cb1d50d20aa2'
+    ];
+    /**
      * Leanpay responses from api
      *
      * @var array
@@ -334,5 +357,58 @@ class Data extends AbstractHelper
         }
 
         return true;
+    }
+
+    /**
+     * Get Leanpay Promos Name
+     *
+     * @return string
+     */
+    public function getLeanpayPromosMFPName(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
+    }
+
+    /**
+     * Get Leanpay Promos Start Date
+     *
+     * @return string
+     */
+    public function getLeanpayPromosMFPStartDate(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_START_DATE);
+    }
+
+    /**
+     * Get Leanpay Promos End Date
+     *
+     * @return string
+     */
+    public function getLeanpayPromosMFPEndDate(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_END_DATE);
+    }
+
+    /**
+     * Get Leanpay Promos Cart Size
+     *
+     * @return string
+     */
+    public function getLeanpayPromosMFPCartSize(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
+    }
+
+    /**
+     * Get Leanpay Promos vendor code by selected product name
+     *
+     * @return string
+     */
+    public function getLeanpayPromosVendorCode(): string
+    {
+        $name = $this->getLeanpayPromosMFPName();
+        return array_key_exists($name, $this->vendorProductCodes)
+            ? $this->vendorProductCodes[$name]
+            : '';
     }
 }

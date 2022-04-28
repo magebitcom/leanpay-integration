@@ -174,19 +174,12 @@
             <label>Leanpay Promos</label>
             <tab>sales</tab>
             <resource>Magento_Sales::config_sales</resource>
-            <group id="multiple_financing_products" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="mfp" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Multiple Financing Products</label>
-  <!--              <field id="product_name" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Product Name</label>
-                </field>
-                <field id="product_code" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Leanpay Product Code</label>
-                </field>
-                <field id="description" translate="label" type="textarea" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Description</label>
-                </field>-->
-                <field id="financing_product_name" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+
+                <field id="product_name" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Financing Product Name</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\VendorProductCode</source_model>
                 </field>
 
                 <!-- Date picker field code start-->
