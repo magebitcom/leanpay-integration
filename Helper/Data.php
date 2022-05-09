@@ -417,4 +417,33 @@ class Data extends AbstractHelper
 
         return true;
     }
+
+    /**
+     * Gets all unique api keys
+     *
+     * @return array
+     */
+    public function getAllLeanpayApiKeys(): array
+    {
+        $apiKeys = [];
+        $stores = $this->storeManager->getStores();
+        foreach ($stores as $store) {
+            $apiKey = (string)$this->encryptor->decrypt(
+                $this->scopeConfig->getValue(
+                    self::LEANPAY_API_CONFIG_API_KEY_PATH,
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $store->getId()
+                )
+            );
+            if (!in_array($apiKey, $apiKeys)) {
+                $currencyType = $this->scopeConfig->getValue(
+                    self::LEANPAY_CONFIG_CURRENCY,
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $store->getId()
+                );
+                $apiKeys[$currencyType] = $apiKey;
+            }
+        }
+        return $apiKeys;
+    }
 }

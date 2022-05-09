@@ -195,14 +195,6 @@ class InstallmentHelper extends AbstractHelper
         return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
     }
 
-
-    /**
-     * @return array
-     */
-    public function getInstallmentCronCurrencies() :array {
-        return explode(',',$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_CRON_CURRENCIES));
-    }
-
     /**
      * Get background color
      *

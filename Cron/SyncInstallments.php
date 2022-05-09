@@ -98,16 +98,11 @@ class SyncInstallments
         Profiler::start('leanpay_sync_installment');
         if ($this->helper->isActive()) {
             $urls = $this->helper->getInstallmentURL();
-            $enabledCurrencies = $this->installmentHelper->getInstallmentCronCurrencies();
-            $apiKey = $this->helper->getLeanpayApiKey();
-            foreach ($enabledCurrencies as $enabledCurrency) {
-                $this->syncInstallments($urls[$enabledCurrency], $apiKey, $enabledCurrency);
+            $apiKeys = $this->helper->getAllLeanpayApiKeys();
+            foreach ($apiKeys as $currency => $apiKey) {
+                $this->syncInstallments($urls[$currency], $apiKey, $currency);
             }
         }
-
-
-
-
         Profiler::stop('leanpay_sync_installment');
     }
 
