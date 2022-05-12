@@ -220,10 +220,6 @@ class Leanpay extends AbstractMethod
             return false;
         }
 
-        if ($vendorCode = $this->getPromoCode($quote)) {
-
-        }
-
         return true;
     }
 

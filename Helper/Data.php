@@ -465,10 +465,12 @@ class Data extends AbstractHelper
 
     /**
      * @param $handler
-     * @return false|mixed|void|null
+     * @return string
      */
     private function validateProduct($handler)
     {
+        $validOption = [];
+
         $result = '';
         if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
             $cache = [];
@@ -477,19 +479,41 @@ class Data extends AbstractHelper
                 $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
                 $incluse = $product->getData('leanpay_product_exclusive_inclusive') == 'inclusive' ? 1 : 0;
+                $priority = $product->getData('leanpay_product_priority');
                 $cache[$item->getProductId()] = $incluse;
 
                 $end = strtotime($product->getData('leanpay_product_end_date') ?? '');
                 $start = strtotime($product->getData('leanpay_product_start_date') ?? '');
                 $isTime = strtotime($product->getData('leanpay_product_time_based') ?? '');
 
+                if ($productValue > $product->getFinalPrice()){
+                    return $result;
+                }
+
                 if ($isTime) {
                     $currentTime = strtotime($this->dateTime->gmtDate());
                     if ($start < $currentTime && $currentTime < $end) {
-                        $result = $vendorCode;
+                        $validOption[$product->getId()] = [
+                            'priority' => $priority,
+                            'inclusive' => $incluse,
+                            'code' => $vendorCode
+                        ];
                     }
                 } else {
-                    $result = $vendorCode;
+                    $validOption[$product->getId()] = [
+                        'priority' => $priority,
+                        'inclusive' => $incluse,
+                        'code' => $vendorCode
+                    ];
+                }
+            }
+        }
+
+        if (!empty($validOption)) {
+            foreach ($validOption as $option) {
+                if ($option['inclusive']) {
+                    $result = $option['code'];
+                    break;
                 }
             }
         }
@@ -504,6 +528,7 @@ class Data extends AbstractHelper
     private function validateCategory($handler)
     {
         $result = '';
+        $validOption = [];
         $ids = [];
         if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
             foreach ($handler->getItems() as $item) {
@@ -541,8 +566,22 @@ class Data extends AbstractHelper
                             $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
 
                             if ($categoryIsTime){
-                                if ($categoryStart < $currentTime && $categoryEnd > $currentTime){
+                                if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
+                                    if (!$result) {
+                                        $result = $categoryVendorProduct;
+                                    } else {
+                                        if ($categoryIsExclusive) {
+                                            $result = $categoryVendorProduct;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (!$result) {
                                     $result = $categoryVendorProduct;
+                                } else {
+                                    if ($categoryIsExclusive) {
+                                        $result = $categoryVendorProduct;
+                                    }
                                 }
                             }
                         }
