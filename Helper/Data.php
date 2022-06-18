@@ -123,6 +123,8 @@ class Data extends AbstractHelper
     public const REGULAR_PRODUCT = 'regular_product';
     public const ZERO_APR = 'zero_apr';
     public const ZERO_PERCENT = 'zero_percent';
+    public const HR_VENDOR_PRODUCT_ONE = 'hr_one';
+    public const HR_VENDOR_PRODUCT_TWO = 'hr_two';
     /**
      * Multiple financing products codes
      * @var array
@@ -130,7 +132,9 @@ class Data extends AbstractHelper
     protected $vendorProductCodes = [
         self::REGULAR_PRODUCT => 'ad2e37e4-b626-429a-9bce-49480532a947',
         self::ZERO_APR => '166ede78-6556-47f5-bcdc-25ab57a7d6a1',
-        self::ZERO_PERCENT => '6ebfd301-e22c-4382-a2bf-cb1d50d20aa2'
+        self::ZERO_PERCENT => '6ebfd301-e22c-4382-a2bf-cb1d50d20aa2',
+        self::HR_VENDOR_PRODUCT_ONE => 'e8884a49-c537-4f51-8599-167702732ad9',
+        self::HR_VENDOR_PRODUCT_TWO => '17ac4e4a-5b1f-4dba-aa05-00395ea8fc0b'
     ];
     /**
      * Leanpay responses from api

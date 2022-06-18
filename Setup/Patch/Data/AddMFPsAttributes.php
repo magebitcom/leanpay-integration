@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace Leanpay\Payment\Setup\Patch\Data;
 
 use Leanpay\Payment\Model\Config\Source\ExclusiveOrInclusive;
+use Leanpay\Payment\Model\Config\Source\VendorAttribute;
 use Magento\Catalog\Model\Attribute\Backend\Startdate;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
@@ -43,7 +44,6 @@ class AddMFPsAttributes implements DataPatchInterface {
      * {@inheritdoc}
      */
     public function apply() {
-
         $this->createProductAttributes();
         $this->createCategoryAttributes();
     }
@@ -98,7 +98,8 @@ class AddMFPsAttributes implements DataPatchInterface {
             ],
             'leanpay_product_vendor_code' => [
                 'label' => 'Leanpay Product Code / vendorProductCode',
-                'input' => 'text',
+                'input' => 'select',
+                'source' => VendorAttribute::class,
                 'type' => 'varchar',
             ],
             'leanpay_product_exclusive_inclusive' => [
@@ -169,7 +170,8 @@ class AddMFPsAttributes implements DataPatchInterface {
             ],
             'leanpay_category_vendor_code' => [
                 'label' => 'Leanpay Product Code / vendorProductCode',
-                'input' => 'text',
+                'input' => 'select',
+                'source' => VendorAttribute::class,
                 'type' => 'varchar',
             ],
             'leanpay_category_exclusive_inclusive' => [
