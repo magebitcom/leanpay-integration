@@ -110,8 +110,8 @@ class SyncInstallments
      * @param $url
      * @param $apiKey
      */
-    public function syncInstallments($url, $apiKey, $currency) {
-
+    public function syncInstallments($url, $apiKey, $currency)
+    {
         try {
             if ($apiKey) {
                 $curl = $this->addHeaders($this->curlClient);

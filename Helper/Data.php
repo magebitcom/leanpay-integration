@@ -14,12 +14,12 @@ use Magento\Store\Model\ScopeInterface;
 class Data extends AbstractHelper
 {
 
-    public CONST LEANPAY_BASE_URL = 'https://app.leanpay.si/';
-    public CONST LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
-    public CONST LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
-    public CONST LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
+    public const LEANPAY_BASE_URL = 'https://app.leanpay.si/';
+    public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
+    public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
+    public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
 
-    public CONST LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
+    public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
     /**
      *  Post Token URL
      *
@@ -154,8 +154,7 @@ class Data extends AbstractHelper
         EncryptorInterface $encryptor,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    )
-    {
+    ) {
         $this->encryptor = $encryptor;
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;

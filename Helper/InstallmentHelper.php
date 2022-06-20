@@ -96,9 +96,12 @@ class InstallmentHelper extends AbstractHelper
      */
     private $storeManager;
 
+    private $leanpayHelper;
+
     /**
      * InstallmentHelper constructor.
      *
+     * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param ViewBlockConfig $blockConfig
      * @param Installment $resourceModel
@@ -215,9 +218,10 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
-        if (!in_array(
-            $this->storeManager->getStore()->getCurrentCurrency()->getCode(),
-            explode(',',$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_CRON_CURRENCIES, ScopeInterface::SCOPE_STORE)))
+        $installmentCurrencies = $this->resourceModel->getInstallmentCurrencies();
+        $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        if ($this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY) === $currentStoreCurrency &&
+            !in_array($currentStoreCurrency, array_keys($installmentCurrencies))
         ) {
             return $result;
         }
@@ -360,8 +364,9 @@ class InstallmentHelper extends AbstractHelper
     {
         if ($this->getCurrency() == "HRK") {
             return "Kn";
+        } else {
+            return "€";
         }
-        else return "€";
     }
 
     /**
@@ -386,9 +391,8 @@ class InstallmentHelper extends AbstractHelper
             'Informativni izračun ne vključuje stroškov ocene tveganja.' => 'Informativni izračun ne uključuje troškove procjene rizika.',
             'Preveri svoj limit' => 'Provjerite svoj limit',
             'Več informacij' => 'Više informacija'
-
         ];
-        if($this->getCurrency() == "HRK" && isset($translationArray[$text])) {
+        if ($this->getCurrency() == "HRK" && isset($translationArray[$text])) {
             return $translationArray[$text];
         } else {
             return $text;
@@ -404,5 +408,4 @@ class InstallmentHelper extends AbstractHelper
     {
         return $this->getCurrency() == "EUR";
     }
-
 }

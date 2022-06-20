@@ -115,4 +115,22 @@ class Installment extends AbstractDb
 
         return $this->getConnection()->fetchAssoc($select);
     }
+
+
+    /**
+     * @return array
+     */
+    public function getInstallmentCurrencies(): array
+    {
+        $select = $this->getConnection()
+            ->select()
+            ->distinct()
+            ->from(
+                InstallmentInterface::TABLE_NAME,
+                [
+                    InstallmentInterface::CURRENCY_CODE,
+                ]
+            );
+        return $this->getConnection()->fetchAssoc($select);
+    }
 }

@@ -29,8 +29,8 @@ $currency = $helper->getCurrencyCode();
     <?php if ($price && $canShow): ?>
         <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
             <span class="installment-wrapper-start"><?= $block->escapeHtml(__('ali')); ?></span>
-            <div class="installment-additional-wrapper">
-                <div class="installment-plans" style="font-size: <?= /* @noEscape */ $fontSize ?>px;">
+            <div class="installment-additional-wrapper" style="font-size: <?= /* @noEscape */ $fontSize ?>px;">
+                <div class="installment-plans">
                     <div class="installment-block-wrapper">
                         <?php $list = $helper->getInstallmentList($block->getAmount()); ?>
                         <span class="installment-block">
@@ -131,9 +131,7 @@ $currency = $helper->getCurrencyCode();
                         <div class="installment-quick-information">
                             <?= $escaper->escapeHtml(
                                 __($helper->getTranslation('Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ').
-                                    $helper->getTranslation('Za obročno plačilo v košarici izberi Leanpay. ').
-                                    $helper->getTranslation('Informativni izračun ne vključuje stroškov ocene tveganja.'))
-                            ); ?>
+                                   $helper->getTranslation('Za obročno plačilo v košarici izberi Leanpay. '))); ?>
                         </div>
                         <div class="installment-links">
                             <a href="<?= $escaper->escapeUrl($helper->getCheckYourLimitURL()); ?>"

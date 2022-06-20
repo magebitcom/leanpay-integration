@@ -204,12 +204,10 @@ class Leanpay extends AbstractMethod
         }
 
         $currency = $this->helper->getCurrencyType();
-
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
-
-        if (!array_key_exists($currency, $rates)) {
+        if ($currency != $baseCode && !array_key_exists($currency, $rates)) {
             return false;
         }
 
