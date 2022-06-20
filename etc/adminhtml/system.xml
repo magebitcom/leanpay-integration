@@ -127,12 +127,12 @@
                 </field>
 
                 <field id="min_order_total" translate="label" type="text" sortOrder="70" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Minimum Order Total</label>
                 </field>
 
                 <field id="max_order_total" translate="label" type="text" sortOrder="80" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Maximum Order Total</label>
                 </field>
                 <field id="installment_allowed_views" translate="label" type="multiselect" sortOrder="1010"
@@ -185,7 +185,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="group" translate="label comment" sortOrder="50" type="select" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Group</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\GroupOptions</source_model>
                 </field>

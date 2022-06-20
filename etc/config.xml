@@ -25,9 +25,9 @@
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>
                 <color>#F58466</color>
                 <background_color>#F58466</background_color>
-                <font_size_homepage>20</font_size_homepage>
-                <font_size_product_page>20</font_size_product_page>
-                <font_size_catalog_page>20</font_size_catalog_page>
+                <font_size_homepage>15</font_size_homepage>
+                <font_size_product_page>15</font_size_product_page>
+                <font_size_catalog_page>15</font_size_catalog_page>
                 <more_info>https://www.leanpay.si/</more_info>
                 <check_your_limit>https://app.leanpay.si/vendor/pre-qualified</check_your_limit>
                 <use_dark_logo>0</use_dark_logo>

@@ -14,12 +14,12 @@ use Magento\Store\Model\ScopeInterface;
 class Data extends AbstractHelper
 {
 
-    public CONST LEANPAY_BASE_URL = 'https://app.leanpay.si/';
-    public CONST LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
-    public CONST LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
-    public CONST LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
+    public const LEANPAY_BASE_URL = 'https://app.leanpay.si/';
+    public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
+    public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
+    public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
 
-    public CONST LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
+    public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
     /**
      *  Post Token URL
      *
@@ -40,7 +40,10 @@ class Data extends AbstractHelper
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    public const LEANPAY_INSTALLMENT_URL_DEV = 'https://lapp.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL_DEV = [
+        'EUR' => 'https://lapp.leanpay.si/vendor/installment-plans',
+        'HRK' => 'https://lapp.leanpay.hr/vendor/installment-plans'
+    ];
 
 
     /**
@@ -48,7 +51,10 @@ class Data extends AbstractHelper
      *
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
-    public const LEANPAY_INSTALLMENT_URL = 'https://app.leanpay.si/vendor/installment-plans';
+    public const LEANPAY_INSTALLMENT_URL = [
+        'EUR'=> 'https://app.leanpay.si/vendor/installment-plans',
+        'HRK' => 'https://app.leanpay.hr/vendor/installment-plans'
+    ] ;
 
     /**
      * Leanpay Magento 2 base url in config
@@ -148,8 +154,7 @@ class Data extends AbstractHelper
         EncryptorInterface $encryptor,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    )
-    {
+    ) {
         $this->encryptor = $encryptor;
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
@@ -358,7 +363,7 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getInstallmentURL(): string
+    public function getInstallmentURL(): array
     {
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
             return self::LEANPAY_INSTALLMENT_URL;
@@ -410,5 +415,34 @@ class Data extends AbstractHelper
         }
 
         return true;
+    }
+
+    /**
+     * Gets all unique api keys
+     *
+     * @return array
+     */
+    public function getAllLeanpayApiKeys(): array
+    {
+        $apiKeys = [];
+        $stores = $this->storeManager->getStores();
+        foreach ($stores as $store) {
+            $apiKey = (string)$this->encryptor->decrypt(
+                $this->scopeConfig->getValue(
+                    self::LEANPAY_API_CONFIG_API_KEY_PATH,
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $store->getId()
+                )
+            );
+            if (!in_array($apiKey, $apiKeys)) {
+                $currencyType = $this->scopeConfig->getValue(
+                    self::LEANPAY_CONFIG_CURRENCY,
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $store->getId()
+                );
+                $apiKeys[$currencyType] = $apiKey;
+            }
+        }
+        return $apiKeys;
     }
 }
