@@ -7,6 +7,8 @@ use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class InstallmentHelper extends AbstractHelper
 {
@@ -74,6 +76,12 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
 
     /**
+     * Leanpay Installment allowed currencies
+     */
+    public const LEANPAY_INSTALLMENT_CRON_CURRENCIES = 'payment/leanpay_installment/cron_currencies';
+
+
+    /**
      * @var ViewBlockConfig
      */
     private $blockConfig;
@@ -84,17 +92,27 @@ class InstallmentHelper extends AbstractHelper
     private $resourceModel;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    private $leanpayHelper;
+
+    /**
      * InstallmentHelper constructor.
      *
+     * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param ViewBlockConfig $blockConfig
      * @param Installment $resourceModel
      */
     public function __construct(
+        StoreManagerInterface $storeManager,
         Context $context,
         ViewBlockConfig $blockConfig,
         Installment $resourceModel
     ) {
+        $this->storeManager = $storeManager;
         $this->resourceModel = $resourceModel;
         $this->blockConfig = $blockConfig;
         parent::__construct($context);
@@ -107,7 +125,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getGroup(): string
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -200,6 +218,14 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
+        $installmentCurrencies = $this->resourceModel->getInstallmentCurrencies();
+        $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        if ($this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY) === $currentStoreCurrency &&
+            !in_array($currentStoreCurrency, array_keys($installmentCurrencies))
+        ) {
+            return $result;
+        }
+
         $config = $this->getAllowedViews();
 
         if (strlen($config) > 0 && strpos($config, 'DISABLED') !== false) {
@@ -224,8 +250,7 @@ class InstallmentHelper extends AbstractHelper
         if (!$price) {
             return '';
         }
-
-        return $this->resourceModel->getLowestInstallment($price, $this->getGroup());
+        return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->getCurrency());
     }
 
     /**
@@ -318,5 +343,69 @@ class InstallmentHelper extends AbstractHelper
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCurrency(): string
+    {
+        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCurrencyCode(): string
+    {
+        if ($this->getCurrency() == "HRK") {
+            return "Kn";
+        } else {
+            return "€";
+        }
+    }
+
+    /**
+     * @param $text
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getTranslation($text): string
+    {
+        $translationArray = [
+            'Hitro in enostavno obročno odplačevanje' => 'Brz i jednostavan izračun rata',
+            'Že od' => 'Već od',
+            'Vaš mesečni obrok' => 'mjesečno',
+            'Izračun obrokov' => 'Klikni za izračun',
+            'Želim čim nižji obrok' => 'Želim što niži iznos rate',
+            'Odplačati želim čim prej' => 'Želim otplatiti što prije',
+            'Želim si izbrati svoje obroke' => 'Želim sam odabarati broj rata',
+            'Informativni znesek za plačilo' => '',
+            'Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ' => 'Leanpay omogućuje brzo i jednostavno plaćanje na rate preko interneta. ',
+            'Za obročno plačilo v košarici izberi Leanpay. ' => 'Za plaćanje na rate u košarici odaberite Leanpay kao vrstu plaćanja. ',
+            'Informativni izračun ne vključuje stroškov ocene tveganja.' => 'Informativni izračun ne uključuje troškove procjene rizika.',
+            'Preveri svoj limit' => 'Provjerite svoj limit',
+            'Več informacij' => 'Više informacija'
+        ];
+        if ($this->getCurrency() == "HRK" && isset($translationArray[$text])) {
+            return $translationArray[$text];
+        } else {
+            return $text;
+        }
+    }
+
+    /**
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function allowDownPayment(): bool
+    {
+        return $this->getCurrency() == "EUR";
     }
 }
