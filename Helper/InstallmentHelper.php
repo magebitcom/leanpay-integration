@@ -63,6 +63,17 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
+     * Leanpay MIN order allowed price
+     */
+    public const LEANPAY_INSTALLMENT_MIN = 'payment/leanpay/min_order_total';
+
+    /**
+     * Leanpay MAX order allowed price
+     */
+    public const LEANPAY_INSTALLMENT_MAX = 'payment/leanpay/max_order_total';
+
+
+    /**
      * Installment view options
      */
     public const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE = 'HOMEPAGE';
@@ -247,9 +258,19 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getLowestInstallmentPrice($price)
     {
+        $scopeId = $this->storeManager->getStore()->getId();
+
+        $min = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MIN, ScopeInterface::SCOPE_STORE, $scopeId);
+        $max = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MAX, ScopeInterface::SCOPE_STORE, $scopeId);
+
         if (!$price) {
             return '';
         }
+
+        if ($price > $max || $price < $min) {
+            return '';
+        }
+
         return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->getCurrency());
     }
 
