@@ -130,9 +130,9 @@ class Data extends AbstractHelper
      * @var array
      */
     protected $vendorProductCodes = [
-        self::REGULAR_PRODUCT => 'ad2e37e4-b626-429a-9bce-49480532a947',
-        self::ZERO_APR => '166ede78-6556-47f5-bcdc-25ab57a7d6a1',
-        self::ZERO_PERCENT => '6ebfd301-e22c-4382-a2bf-cb1d50d20aa2',
+        self::REGULAR_PRODUCT => '4b6d131f-aa07-4dd9-9620-763b0352839b',
+        self::ZERO_APR => '2ea1b9c0-696b-402f-ba95-c5802e0d4d7e',
+        self::ZERO_PERCENT => '983e35c2-dfe5-4ee6-b480-5d7a859179c1',
         self::HR_VENDOR_PRODUCT_ONE => 'e8884a49-c537-4f51-8599-167702732ad9',
         self::HR_VENDOR_PRODUCT_TWO => '17ac4e4a-5b1f-4dba-aa05-00395ea8fc0b'
     ];
