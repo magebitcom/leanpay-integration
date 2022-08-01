@@ -21,8 +21,26 @@
                     <label>Instructions</label>
                 </field>
 
-                <field id="currency" translate="label comment" sortOrder="1" type="select" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="leanpay_currency"
+                       translate="label"
+                       sortOrder="1"
+                       type="select"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1"
+                       canRestore="1">
+                    <label>Currency type</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\CurrencyType</source_model>
+                </field>
+
+                <field id="currency"
+                       translate="label comment"
+                       sortOrder="1"
+                       type="select"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1"
+                       canRestore="0">
                     <label>Base Currency rate</label>
                     <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\Currency</frontend_model>
                     <tooltip>
@@ -56,14 +74,24 @@
                     <source_model>Leanpay\Payment\Model\Config\Source\Modes</source_model>
                 </field>
 
-                <field id="api_key" translate="label comment" sortOrder="10" type="obscure" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="api_key"
+                       translate="label comment"
+                       sortOrder="10"
+                       type="obscure"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
                     <label>API Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
 
-                <field id="api_secret" translate="label comment" sortOrder="20" type="obscure" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="api_secret"
+                       translate="label comment"
+                       sortOrder="20"
+                       type="obscure"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
                     <label>API Secret Word</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
@@ -99,12 +127,12 @@
                 </field>
 
                 <field id="min_order_total" translate="label" type="text" sortOrder="70" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Minimum Order Total</label>
                 </field>
 
                 <field id="max_order_total" translate="label" type="text" sortOrder="80" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Maximum Order Total</label>
                 </field>
                 <field id="installment_allowed_views" translate="label" type="multiselect" sortOrder="1010"
@@ -157,7 +185,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="group" translate="label comment" sortOrder="50" type="select" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="1">
                     <label>Group</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\GroupOptions</source_model>
                 </field>
@@ -165,37 +193,6 @@
                        showInStore="1">
                     <label>Refresh</label>
                     <frontend_model>Leanpay\Payment\Block\System\Config\RefreshButton</frontend_model>
-                </field>
-            </group>
-        </section>
-
-        <section id="leanpay_promos"  translate="label" type="text" sortOrder="301" showInDefault="1" showInWebsite="1" showInStore="1">
-            <class>separator-top</class>
-            <label>Leanpay Promos</label>
-            <tab>sales</tab>
-            <resource>Magento_Sales::config_sales</resource>
-            <group id="mfp" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Multiple Financing Products</label>
-
-                <field id="product_name" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Financing Product Name</label>
-                    <source_model>Leanpay\Payment\Model\Config\Source\VendorProductCode</source_model>
-                </field>
-
-                <!-- Date picker field code start-->
-                <field id="start_date" translate="label" type="date" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Start Date For Financing Product Value</label>
-                    <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\DatePicker</frontend_model>
-                </field>
-
-                <field id="end_date" translate="label" type="date" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>End Date For Financing Product Value</label>
-                    <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\DatePicker</frontend_model>
-                </field>
-
-                <field id="cart_size" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
-                    <label>Cart-size Financing Product Value</label>
                 </field>
             </group>
         </section>

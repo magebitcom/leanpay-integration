@@ -148,7 +148,8 @@ class DefaultPriceBox extends FinalPriceBox
             'min' => array_key_first($list),
             'max' => array_key_last($list),
             'data' => $list,
-            'value' => $values
+            'value' => $values,
+            'currency' => $this->installmentHelper->getCurrencyCode()
         ];
 
         return (string) $this->serializer->serialize($data);

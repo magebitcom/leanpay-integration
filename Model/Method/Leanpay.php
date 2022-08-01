@@ -21,12 +21,10 @@ use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Directory\Model\Currency as CurrencyModel;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Store\Model\StoreManagerInterface;
 use Leanpay\Payment\Model\Request;
-use Leanpay\Payment\Helper\Data as LeanHelper;
 use Magento\Sales\Model\Order;
 
 class Leanpay extends AbstractMethod
@@ -126,11 +124,6 @@ class Leanpay extends AbstractMethod
     protected $orderRepository;
 
     /**
-     * @var LeanHelper
-     */
-    private $leanHelper;
-
-    /**
      * Leanpay constructor.
      *
      * @param Context $context
@@ -153,25 +146,24 @@ class Leanpay extends AbstractMethod
      * @param DirectoryHelper|null $directory
      */
     public function __construct(
-        LeanHelper                 $leanHelper,
-        Context                    $context,
-        Registry                   $registry,
+        Context $context,
+        Registry $registry,
         ExtensionAttributesFactory $extensionFactory,
-        AttributeValueFactory      $customAttributeFactory,
-        Data                       $paymentData,
-        ScopeConfigInterface       $scopeConfig,
-        Logger                     $logger,
-        PaymentData                $helper,
-        CurrencyModel              $currencyModel,
-        StoreManagerInterface      $storeManager,
-        PriceCurrencyInterface     $priceCurrency,
-        Session                    $checkoutSession,
-        Request                    $request,
-        OrderRepositoryInterface   $orderRepository,
-        AbstractResource           $resource = null,
-        AbstractDb                 $resourceCollection = null,
-        array                      $data = [],
-        DirectoryHelper            $directory = null
+        AttributeValueFactory $customAttributeFactory,
+        Data $paymentData,
+        ScopeConfigInterface $scopeConfig,
+        Logger $logger,
+        PaymentData $helper,
+        CurrencyModel $currencyModel,
+        StoreManagerInterface $storeManager,
+        PriceCurrencyInterface $priceCurrency,
+        Session $checkoutSession,
+        Request $request,
+        OrderRepositoryInterface $orderRepository,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        array $data = [],
+        DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,
@@ -188,11 +180,10 @@ class Leanpay extends AbstractMethod
         );
 
         $this->helper = $helper;
-        $this->request = $request;
-        $this->leanHelper = $leanHelper;
-        $this->storeManager = $storeManager;
         $this->currencyModel = $currencyModel;
+        $this->storeManager = $storeManager;
         $this->priceCurrency = $priceCurrency;
+        $this->request = $request;
         $this->checkoutSession = $checkoutSession;
         $this->orderRepository = $orderRepository;
     }
@@ -212,11 +203,11 @@ class Leanpay extends AbstractMethod
             return false;
         }
 
+        $currency = $this->helper->getCurrencyType();
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
-
-        if (!array_key_exists('EUR', $rates)) {
+        if ($currency != $baseCode && !array_key_exists($currency, $rates)) {
             return false;
         }
 
@@ -237,7 +228,11 @@ class Leanpay extends AbstractMethod
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
+
+        $currency = $this->helper->getCurrencyType();
+
+        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), $currency);
+
         $orderItems = $order->getAllVisibleItems();
 
         $additionData = [
@@ -252,10 +247,6 @@ class Leanpay extends AbstractMethod
             'language' => $this->helper->getLeanpayLanguage()
         ];
 
-        if ($promoProduct = $this->getPromoCode($order)) {
-            $additionData['vendorProductCode'] = $promoProduct;
-        }
-
         if ($orderItems) {
             foreach ($orderItems as $item) {
                 $price = $item->getRowTotal() / $item->getQtyOrdered();
@@ -264,7 +255,7 @@ class Leanpay extends AbstractMethod
                     $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
-                        'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
+                        'price' => $order->getStore()->getBaseCurrency()->convert($price, $currency),
                         'qty' => $item->getQtyOrdered()
                     ];
                 }
@@ -284,17 +275,5 @@ class Leanpay extends AbstractMethod
         $stateObject->setStatus($state);
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    private function getPromoCode($handler):string
-    {
-        if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
-            return $this->leanHelper->getPromoCode($handler);
-        }
-
-        return '';
     }
 }
