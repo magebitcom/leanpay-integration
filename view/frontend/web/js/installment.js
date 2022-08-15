@@ -43,10 +43,11 @@ define(
                 function sliderUpdate(id = 0)
                 {
                     var data = JSON.parse($('.installment-slider-data').html()).data[id];
+                    var currency = JSON.parse($('.installment-slider-data').html()).currency
                     $('.term-html .installment_period').html(data.installment_period + ' x');
-                    $('.term-html .installment_amount').html(data.installment_amount + '€');
+                    $('.term-html .installment_amount').html(data.installment_amount + currency);
                     $('.installment-slider-term .total')
-                        .html((data.installment_period * data.installment_amount).toFixed(2) + '€');
+                        .html((data.installment_period * data.installment_amount).toFixed(2) + currency);
                 }
             }
         }

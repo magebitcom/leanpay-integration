@@ -25,7 +25,7 @@ class Installment extends AbstractDb
      * @param string $group
      * @return string
      */
-    public function getLowestInstallment($price, $group)
+    public function getLowestInstallment($price, $group, $currency = 'EUR')
     {
         if (!$price) {
             return '';
@@ -34,12 +34,13 @@ class Installment extends AbstractDb
         $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'ASC');
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
-
+        $whereStatementCurrency = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::CURRENCY_CODE);
         $select = $this->getConnection()
             ->select()
             ->from(InstallmentInterface::TABLE_NAME, [InstallmentInterface::INSTALLMENT_AMOUNT])
             ->where($whereStatement, round($price))
             ->where($whereStatementGroup, $group)
+            ->where($whereStatementCurrency, $currency)
             ->order($orderStatement);
 
         return $this->getConnection()->fetchOne($select);
@@ -112,6 +113,24 @@ class Installment extends AbstractDb
             ->where($whereStatementGroup, $group)
             ->order($orderStatement);
 
+        return $this->getConnection()->fetchAssoc($select);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getInstallmentCurrencies(): array
+    {
+        $select = $this->getConnection()
+            ->select()
+            ->distinct()
+            ->from(
+                InstallmentInterface::TABLE_NAME,
+                [
+                    InstallmentInterface::CURRENCY_CODE,
+                ]
+            );
         return $this->getConnection()->fetchAssoc($select);
     }
 }
