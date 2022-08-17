@@ -212,11 +212,11 @@ class Leanpay extends AbstractMethod
             return false;
         }
 
+        $currency = $this->helper->getCurrencyType();
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
-
-        if (!array_key_exists('EUR', $rates)) {
+        if ($currency != $baseCode && !array_key_exists($currency, $rates)) {
             return false;
         }
 
@@ -237,7 +237,11 @@ class Leanpay extends AbstractMethod
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
+
+        $currency = $this->helper->getCurrencyType();
+
+        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), $currency);
+
         $orderItems = $order->getAllVisibleItems();
 
         $additionData = [
@@ -264,7 +268,7 @@ class Leanpay extends AbstractMethod
                     $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
-                        'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
+                        'price' => $order->getStore()->getBaseCurrency()->convert($price, $currency),
                         'qty' => $item->getQtyOrdered()
                     ];
                 }
