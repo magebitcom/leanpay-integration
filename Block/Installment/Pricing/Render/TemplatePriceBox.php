@@ -2,6 +2,7 @@
 
 namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 
+use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -140,9 +141,44 @@ class TemplatePriceBox extends Template
             'max' => array_key_last($list),
             'data' => $list,
             'value' => $values,
-            'currency' => $this->installmentHelper->getCurrencyCode()
+            'currency' => $this->installmentHelper->getCurrencyCode(),
         ];
-
+        if ($this->installmentHelper->getCurrency() === 'HRK') {
+            $convertedValues = [];
+            foreach ($values as $value) {
+                $convertedValues[] = $this->installmentHelper->getTransitionPrice($value);
+            }
+            $data['convertedCurrency'] = 'EUR';
+            $data['convertedValues'] = $convertedValues;
+        }
         return (string) $this->serializer->serialize($data);
+    }
+
+    public function getTooltipPriceBlock($useTerm = false): string
+    {
+        $data = $this->installmentHelper->getToolTipData($this->getAmount(), $useTerm);
+        $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
+        $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
+        if ($this->installmentHelper->getCurrency() === 'HRK') {
+            return $this->_escaper->escapeHtml(
+                __('%1 x %2%3 / %4%5',
+                    $term,
+                    $amount,
+                    $this->installmentHelper->getCurrencyCode(),
+                    $this->installmentHelper->getTransitionPrice($amount),
+                    'EUR'
+                )
+            );
+        }
+        return $this->_escaper->escapeHtml(__('%1 x %2%3', $term, $amount, $this->installmentHelper->getCurrencyCode()));
+    }
+
+    public function shouldRenderTooltipPriceBlock($useTerm = false): bool
+    {
+        $data = $this->installmentHelper->getToolTipData($this->getAmount(), $useTerm);
+        return isset(
+            $data[InstallmentInterface::INSTALLMENT_AMOUNT],
+            $data[InstallmentInterface::INSTALLMENT_PERIOD]
+        );
     }
 }
