@@ -22,7 +22,7 @@ $currency = $helper->getCurrencyCode();
         <div class="installment-price"
              style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
                     font-size: <?= $escaper->escapeHtmlAttr($fontSize)?>px;">
-            <?= $escaper->escapeHtml(__('ali od %1 %2 / mesec', $price, $currency)); ?>
+            <?= $block->getCategoryPriceBlock();?>
         </div>
     <?php endif; ?>
 <?php else: ?>
@@ -41,7 +41,7 @@ $currency = $helper->getCurrencyCode();
                               style="background-color:<?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()); ?>;">
                             <?= $escaper->escapeHtml(__($helper->getTranslation('Že od'))); ?>
                             <strong>
-                                <?= $escaper->escapeHtml(__('%1 %2', $block->getLowestInstallmentPrice(), $currency)); ?>
+                                <?= $block->getProductPriceBlock();?>
                             </strong>
                         </span>
                         <span class="installment-message"
@@ -81,34 +81,18 @@ $currency = $helper->getCurrencyCode();
                         </div>
                         <div class="installment-plans">
                             <div class="installment-lowest-amount">
-                                <?php $data = $helper->getToolTipData($block->getAmount(), true); ?>
-                                <?php if (isset(
-                                    $data[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                    $data[InstallmentInterface::INSTALLMENT_PERIOD]
-                                )): ?>
-                                    <?php
-                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
-                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-                                    ?>
+                                <?php if ($block->shouldRenderTooltipPriceBlock(true)): ?>
                                     <span class="installment-lowest-message">
                                      <?= $escaper->escapeHtml(__($helper->getTranslation('Želim čim nižji obrok'))); ?>
-                                    <strong><?= $escaper->escapeHtml(__('%1 x %2%3', $term, $amount, $currency)); ?></strong>
+                                    <strong><?= $block->getTooltipPriceBlock(true); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="installment-lowest-term">
-                                <?php $data = $helper->getToolTipData($block->getAmount(), false); ?>
-                                <?php if (isset(
-                                    $data[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                    $data[InstallmentInterface::INSTALLMENT_PERIOD]
-                                )): ?>
-                                    <?php
-                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
-                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-                                    ?>
+                                <?php if ($block->shouldRenderTooltipPriceBlock(false)): ?>
                                     <span class="installment-lowest-message">
                                         <?= $escaper->escapeHtml(__($helper->getTranslation('Odplačati želim čim prej'))); ?>
-                                        <strong><?= $escaper->escapeHtml(__('%1 x %2%3', $term, $amount, $currency)); ?></strong>
+                                        <strong><?= $block->getTooltipPriceBlock(false); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>

@@ -91,6 +91,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public const LEANPAY_INSTALLMENT_CRON_CURRENCIES = 'payment/leanpay_installment/cron_currencies';
 
+    public const TRANSITION_CONVERSION_RATE = 7.53450;
 
     /**
      * @var ViewBlockConfig
@@ -384,7 +385,7 @@ class InstallmentHelper extends AbstractHelper
     public function getCurrencyCode(): string
     {
         if ($this->getCurrency() == "HRK") {
-            return "Kn";
+            return "HRK";
         } else {
             return "€";
         }
@@ -428,5 +429,11 @@ class InstallmentHelper extends AbstractHelper
     public function allowDownPayment(): bool
     {
         return $this->getCurrency() == "EUR";
+    }
+
+    public function getTransitionPrice (string $price): string
+    {
+        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
+        return (string) round($convertedPrice,2);
     }
 }
