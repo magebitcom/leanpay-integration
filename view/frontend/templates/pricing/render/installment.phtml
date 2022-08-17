@@ -22,7 +22,7 @@ $currency = $helper->getCurrencyCode();
         <div class="installment-price"
              style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
                     font-size: <?= $escaper->escapeHtmlAttr($fontSize)?>px;">
-            <?= $block->getCategoryPriceBlock();?>
+            <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($block->getAmount()));?>
         </div>
     <?php endif; ?>
 <?php else: ?>
@@ -41,7 +41,7 @@ $currency = $helper->getCurrencyCode();
                               style="background-color:<?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()); ?>;">
                             <?= $escaper->escapeHtml(__($helper->getTranslation('Že od'))); ?>
                             <strong>
-                                <?= $block->getProductPriceBlock();?>
+                                <?= $escaper->escapeHtml($helper->getProductPriceBlock($block->getAmount()));?>
                             </strong>
                         </span>
                         <span class="installment-message"
@@ -81,18 +81,18 @@ $currency = $helper->getCurrencyCode();
                         </div>
                         <div class="installment-plans">
                             <div class="installment-lowest-amount">
-                                <?php if ($block->shouldRenderTooltipPriceBlock(true)): ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), true)): ?>
                                     <span class="installment-lowest-message">
                                      <?= $escaper->escapeHtml(__($helper->getTranslation('Želim čim nižji obrok'))); ?>
-                                    <strong><?= $block->getTooltipPriceBlock(true); ?></strong>
+                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), true)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="installment-lowest-term">
-                                <?php if ($block->shouldRenderTooltipPriceBlock(false)): ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), false)): ?>
                                     <span class="installment-lowest-message">
                                         <?= $escaper->escapeHtml(__($helper->getTranslation('Odplačati želim čim prej'))); ?>
-                                        <strong><?= $block->getTooltipPriceBlock(false); ?></strong>
+                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), false)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -134,7 +134,7 @@ $currency = $helper->getCurrencyCode();
             </div>
         </div>
         <div class="installment-slider-data" style="display: none; visibility: hidden;">
-            <?= $block->getJsonConfig() ?: ''; ?>
+            <?= $helper->getJsonConfig($block->getAmount()) ?: ''; ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>
