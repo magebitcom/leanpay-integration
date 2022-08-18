@@ -42,12 +42,19 @@ define(
 
                 function sliderUpdate(id = 0)
                 {
-                    var data = JSON.parse($('.installment-slider-data').html()).data[id];
-                    var currency = JSON.parse($('.installment-slider-data').html()).currency
+                    var installmentData = JSON.parse($('.installment-slider-data').html())
+                    var data = installmentData.data[id];
+                    var currency = installmentData.currency
                     $('.term-html .installment_period').html(data.installment_period + ' x');
-                    $('.term-html .installment_amount').html(data.installment_amount + currency);
+                    var installmentAmountHtml = data.installment_amount + currency
+                    var installmentTotalHtml = (data.installment_period * data.installment_amount).toFixed(2) + currency
+                    if (installmentData.convertedValues && installmentData.convertedValues[id]) {
+                        installmentAmountHtml += ' / ' + installmentData.convertedValues[id] + installmentData.convertedCurrency;
+                        installmentTotalHtml += ' / ' + (data.installment_period * installmentData.convertedValues[id]).toFixed(2) + installmentData.convertedCurrency
+                    }
+                    $('.term-html .installment_amount').html(installmentAmountHtml);
                     $('.installment-slider-term .total')
-                        .html((data.installment_period * data.installment_amount).toFixed(2) + currency);
+                        .html(installmentTotalHtml);
                 }
             }
         }

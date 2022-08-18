@@ -130,32 +130,6 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
-     * Returns JSON config
-     *
-     * @return string
-     */
-    public function getJsonConfig()
-    {
-        $list = $this->installmentHelper->getInstallmentList($this->getAmount());
-        $list = array_values($list);
-        $values = [];
-        $listLength = count($list);
-        for ($index = 0; $index < $listLength; $index++) {
-            $values[] = $index;
-        }
-
-        $data = [
-            'min' => array_key_first($list),
-            'max' => array_key_last($list),
-            'data' => $list,
-            'value' => $values,
-            'currency' => $this->installmentHelper->getCurrencyCode()
-        ];
-
-        return (string) $this->serializer->serialize($data);
-    }
-
-    /**
      * Get Key for caching block content
      *
      * @return string
@@ -164,4 +138,5 @@ class DefaultPriceBox extends FinalPriceBox
     {
         return parent::getCacheKey() . ($this->getData('view_key'));
     }
+
 }
