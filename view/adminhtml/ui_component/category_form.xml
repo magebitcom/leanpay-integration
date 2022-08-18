@@ -105,7 +105,7 @@
             </field>
         </container>
 
-        <field name="leanpay_category_exclusive_inclusive">
+        <field name="leanpay_category_vendor_code">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\VendorAttribute</item>
                 <item name="dataType" xsi:type="string">string</item>
@@ -116,7 +116,7 @@
                     </item>
                     <item name="sortOrder" xsi:type="number">80</item>
                     <item name="formElement" xsi:type="string">select</item>
-                    <item name="label" translate="true" xsi:type="string">VendorProductCodee</item>
+                    <item name="label" translate="true" xsi:type="string">VendorProductCode</item>
                 </item>
             </argument>
         </field>
