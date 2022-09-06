@@ -49,7 +49,7 @@ define(
                     var installmentAmountHtml = data.installment_amount + currency
                     var installmentTotalHtml = (data.installment_period * data.installment_amount).toFixed(2) + currency
                     if (installmentData.convertedValues && installmentData.convertedValues[id]) {
-                        installmentAmountHtml += ' / ' + installmentData.convertedValues[id] + installmentData.convertedCurrency;
+                        installmentAmountHtml += ' / ' + installmentData.convertedValues[id].toFixed(2) + installmentData.convertedCurrency;
                         installmentTotalHtml += ' / ' + (data.installment_period * installmentData.convertedValues[id]).toFixed(2) + installmentData.convertedCurrency
                     }
                     $('.term-html .installment_amount').html(installmentAmountHtml);
