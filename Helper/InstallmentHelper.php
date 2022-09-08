@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Helper;
 
+use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -91,6 +93,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public const LEANPAY_INSTALLMENT_CRON_CURRENCIES = 'payment/leanpay_installment/cron_currencies';
 
+    /**
+     * Fixed conversion rate during euro transition period
+     */
+    public const TRANSITION_CONVERSION_RATE = 7.53450;
 
     /**
      * @var ViewBlockConfig
@@ -107,7 +113,10 @@ class InstallmentHelper extends AbstractHelper
      */
     private $storeManager;
 
-    private $leanpayHelper;
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
 
     /**
      * InstallmentHelper constructor.
@@ -118,11 +127,13 @@ class InstallmentHelper extends AbstractHelper
      * @param Installment $resourceModel
      */
     public function __construct(
+        SerializerInterface $serializer,
         StoreManagerInterface $storeManager,
         Context $context,
         ViewBlockConfig $blockConfig,
         Installment $resourceModel
     ) {
+        $this->serializer = $serializer;
         $this->storeManager = $storeManager;
         $this->resourceModel = $resourceModel;
         $this->blockConfig = $blockConfig;
@@ -384,7 +395,7 @@ class InstallmentHelper extends AbstractHelper
     public function getCurrencyCode(): string
     {
         if ($this->getCurrency() == "HRK") {
-            return "Kn";
+            return "HRK";
         } else {
             return "€";
         }
@@ -428,5 +439,129 @@ class InstallmentHelper extends AbstractHelper
     public function allowDownPayment(): bool
     {
         return $this->getCurrency() == "EUR";
+    }
+
+    /**
+     * @param string $price
+     * @return string
+     */
+    public function getTransitionPrice (string $price): string
+    {
+        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
+        return (string) round($convertedPrice,2);
+    }
+
+    /**
+     * Returns Json config
+     *
+     * @return string
+     */
+    public function getJsonConfig($amount)
+    {
+        $list = $this->getInstallmentList($amount);
+        $list = array_values($list);
+        $values = [];
+        $listLength = count($list);
+        for ($index = 0; $index < $listLength; $index++) {
+            $values[] = $index;
+        }
+
+        $data = [
+            'min' => array_key_first($list),
+            'max' => array_key_last($list),
+            'data' => $list,
+            'value' => $values,
+            'currency' => $this->getCurrencyCode(),
+        ];
+        if ($this->getCurrency() === 'HRK') {
+            $convertedValues = [];
+            foreach ($list as $value) {
+                $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] / self::TRANSITION_CONVERSION_RATE;;
+            }
+            $data['convertedCurrency'] = 'EUR';
+            $data['convertedValues'] = $convertedValues;
+        }
+
+        return (string) $this->serializer->serialize($data);
+    }
+
+    /**
+     * @param $amount
+     * @param false $useTerm
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getTooltipPriceBlock($amount, $useTerm = false): \Magento\Framework\Phrase
+    {
+        $data = $this->getToolTipData($amount, $useTerm);
+        $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
+        $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
+        if ($this->getCurrency() === 'HRK') {
+            return __('%1 x %2%3 / %4%5',
+                    $term,
+                    $amount,
+                    $this->getCurrencyCode(),
+                    $this->getTransitionPrice($amount),
+                    'EUR'
+            );
+        }
+        return __('%1 x %2%3', $term, $amount, $this->getCurrencyCode());
+    }
+
+    /**
+     * @param $amount
+     * @param false $useTerm
+     * @return bool
+     */
+    public function shouldRenderTooltipPriceBlock($amount,$useTerm = false): bool
+    {
+        $data = $this->getToolTipData($amount, $useTerm);
+        return isset(
+            $data[InstallmentInterface::INSTALLMENT_AMOUNT],
+            $data[InstallmentInterface::INSTALLMENT_PERIOD]
+        );
+    }
+
+    /**
+     * @param $amount
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCategoryPriceBlock($amount): \Magento\Framework\Phrase
+    {
+        $price = $this->getLowestInstallmentPrice($amount);
+        if ($this->getCurrency() === 'HRK') {
+            return __(
+                'od %1 %2 / %3 %4 mjesečno',
+                $price,
+                $this->getCurrencyCode(),
+                $this->getTransitionPrice($price),
+                'EUR'
+            );
+        }
+        return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
+    }
+
+    /**
+     * @param $amount
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getProductPriceBlock($amount): \Magento\Framework\Phrase
+    {
+        $price = $this->getLowestInstallmentPrice($amount);
+        if ($this->getCurrency() === 'HRK') {
+            return
+                __('%1 %2 / %3 %4',
+                    $price,
+                    $this->getCurrencyCode(),
+                    $this->getTransitionPrice($price),
+                    'EUR'
+                );
+        }
+        return __('%1 %2', $price, $this->getCurrencyCode());
     }
 }

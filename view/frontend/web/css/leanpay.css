@@ -32,6 +32,7 @@
 
 .leanpay label.label {
     display: inline-block;
+    padding-top: 0px;
 }
 
 .leanpay label.label span {
@@ -39,7 +40,7 @@
 }
 
 .leanpay .instructions {
-    margin: 20px 0 0;
+    margin: 0;
 }
 
 .installment-additional-wrapper .installment-tooltip.hidden {
@@ -108,7 +109,6 @@
 .installment-wrapper {
     position: relative;
     border-top: 1px solid #e4e4e4;
-    padding-top: 10px;
 }
 
 .installment-additional-wrapper .installment-title,
@@ -258,10 +258,7 @@
     }
 
     .checkout-index-index .installment-wrapper {
-        position: absolute;
-        top: 0;
-        left: 150px;
-        width: 70%;
+        display: inline-block;
     }
 
     .checkout-index-index .installment-additional-wrapper {
