@@ -55,9 +55,9 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = [
-        'EUR'=> 'https://app.leanpay.si/vendor/installment-plans',
+        'EUR' => 'https://app.leanpay.si/vendor/installment-plans',
         'HRK' => 'https://app.leanpay.hr/vendor/installment-plans'
-    ] ;
+    ];
 
     /**
      * Leanpay Magento 2 base url in config
@@ -193,13 +193,13 @@ class Data extends AbstractHelper
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        Context                                   $context,
-        EncryptorInterface                        $encryptor,
-        DateTime                                  $dateTime,
-        \Magento\Framework\App\ResourceConnection $connection,
+        Context                                                         $context,
+        EncryptorInterface                                              $encryptor,
+        DateTime                                                        $dateTime,
+        \Magento\Framework\App\ResourceConnection                       $connection,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Store\Model\StoreManagerInterface                      $storeManager,
+        \Magento\Framework\App\Config\ScopeConfigInterface              $scopeConfig
     )
     {
         $this->connection = $connection;
@@ -213,7 +213,7 @@ class Data extends AbstractHelper
 
     public function getStoreId(): int
     {
-        return (int) $this->storeManager->getStore()->getId();
+        return (int)$this->storeManager->getStore()->getId();
     }
 
     public function getCurrencyType(): string
@@ -228,7 +228,7 @@ class Data extends AbstractHelper
             $currencyType = 'EUR';
         }
 
-        return (string) $currencyType;
+        return (string)$currencyType;
     }
 
     /**
@@ -240,17 +240,17 @@ class Data extends AbstractHelper
 
         if ($currencyType === 'EUR') {
             if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-                return (string) self::LEANPAY_BASE_URL;
+                return (string)self::LEANPAY_BASE_URL;
             }
 
-            return (string) self::LEANPAY_BASE_URL_DEV;
+            return (string)self::LEANPAY_BASE_URL_DEV;
         }
 
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return (string) self::LEANPAY_BASE_URL_HR;
+            return (string)self::LEANPAY_BASE_URL_HR;
         }
 
-        return (string) self::LEANPAY_BASE_URL_DEV_HR;
+        return (string)self::LEANPAY_BASE_URL_DEV_HR;
     }
 
     /**
@@ -358,7 +358,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayLanguage(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_LANG_PATH,
             ScopeInterface::SCOPE_STORE
         );
@@ -387,7 +387,7 @@ class Data extends AbstractHelper
      */
     private function getEnvironmentMode(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_MODE_PATH,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -401,7 +401,7 @@ class Data extends AbstractHelper
      */
     public function getMagentoCheckoutUrl(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_MAGENTO_CHECKOUT_URL,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -501,8 +501,16 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getLeanpayPromosMFPName(): string
+    public function getLeanpayPromosMFPName(int $storeId = 0): string
     {
+        if ($storeId) {
+            return (string)$this->scopeConfig->getValue(
+                self::LEANPAY_PROMOS_MFP_PRODUCT_NAME,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+        }
+
         return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
     }
 
@@ -531,8 +539,12 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getLeanpayPromosMFPCartSize(): string
+    public function getLeanpayPromosMFPCartSize(int $storeId = 0): string
     {
+        if ($storeId) {
+            return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE, ScopeInterface::SCOPE_STORE, $storeId);
+        }
+
         return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
     }
 
@@ -543,7 +555,8 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosVendorCode(): string
     {
-        $name = $this->getLeanpayPromosMFPName();
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        $name = $this->getLeanpayPromosMFPName($storeId);
         return array_key_exists($name, $this->vendorProductCodes)
             ? $this->vendorProductCodes[$name]
             : '';
@@ -598,7 +611,7 @@ class Data extends AbstractHelper
                 $start = strtotime($product->getData('leanpay_product_start_date') ?? '');
                 $isTime = strtotime($product->getData('leanpay_product_time_based') ?? '');
 
-                if ($productValue > $product->getFinalPrice()){
+                if ($productValue > $product->getFinalPrice()) {
                     return $result;
                 }
 
@@ -654,8 +667,8 @@ class Data extends AbstractHelper
                 $string = sprintf('select category_id from %s where product_id in (%s) group by category_id', $table, $ids);
                 $categoriesToCompare = $this->connection->getConnection()->fetchCol($string);
 
-                if (!empty($categoriesToCompare)){
-                   $collection = $this->catalogCategoryFactory->create();
+                if (!empty($categoriesToCompare)) {
+                    $collection = $this->catalogCategoryFactory->create();
                     $requiredAttributes = [
                         'leanpay_category_financing_product_value',
                         'leanpay_category_priority',
@@ -665,7 +678,7 @@ class Data extends AbstractHelper
                         'leanpay_category_vendor_code',
                         'leanpay_category_exclusive_inclusive'
                     ];
-                   $categories = $collection->addIdFilter($categoriesToCompare)->addAttributeToSelect($requiredAttributes)->getItems();
+                    $categories = $collection->addIdFilter($categoriesToCompare)->addAttributeToSelect($requiredAttributes)->getItems();
                     if (!empty($categories)) {
                         foreach ($categories as $category) {
                             $categoryStart = strtotime($category->getData('leanpay_category_start_date') ?? '');
@@ -677,7 +690,7 @@ class Data extends AbstractHelper
                             $categoryProductValue = $category->getData('leanpay_category_financing_product_value');
                             $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
 
-                            if ($categoryIsTime){
+                            if ($categoryIsTime) {
                                 if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
                                     if (!$result) {
                                         $result = $categoryVendorProduct;
@@ -712,7 +725,8 @@ class Data extends AbstractHelper
     private function validateGlobal($handler)
     {
         try {
-            $requiredSize = $this->getLeanpayPromosMFPCartSize() ?? 0;
+            $storeId = (int)$this->storeManager->getStore()->getId();
+            $requiredSize = $this->getLeanpayPromosMFPCartSize($storeId) ?? 0;
             $requiredDateStart = strtotime($this->getLeanpayPromosMFPStartDate());
             $requiredDateEnd = strtotime($this->getLeanpayPromosMFPEndDate());
             $currentTime = strtotime($this->dateTime->gmtDate());
