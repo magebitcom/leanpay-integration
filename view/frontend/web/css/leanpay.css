@@ -242,6 +242,11 @@
     height: 30px;
 }
 
+.checkout-index-index .installment-min-price {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 @media screen and (min-width: 1200px) {
     .checkout-index-index .installment-info{
         display: -webkit-box;
