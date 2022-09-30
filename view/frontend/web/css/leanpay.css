@@ -66,6 +66,11 @@
     padding: 7px;
 }
 
+.checkout-index-index .installment-min-price {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .installment-min-price .installment-message {
     padding: 6px;
 }
