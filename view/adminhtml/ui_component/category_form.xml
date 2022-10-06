@@ -90,8 +90,8 @@
                 </settings>
             </field>
         </container>
-
-        <field name="leanpay_category_financing_product_value">
+        
+        <field name="leanpay_category_vendor_code">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\VendorAttribute</item>
                 <item name="dataType" xsi:type="string">string</item>

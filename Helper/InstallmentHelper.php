@@ -476,7 +476,7 @@ class InstallmentHelper extends AbstractHelper
         if ($this->getCurrency() === 'HRK') {
             $convertedValues = [];
             foreach ($list as $value) {
-                $convertedValues[] = $this->getTransitionPrice($value[InstallmentInterface::INSTALLMENT_AMOUNT]);
+                $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] / self::TRANSITION_CONVERSION_RATE;;
             }
             $data['convertedCurrency'] = 'EUR';
             $data['convertedValues'] = $convertedValues;

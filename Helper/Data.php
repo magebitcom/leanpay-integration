@@ -519,8 +519,16 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getLeanpayPromosMFPName(): string
+    public function getLeanpayPromosMFPName(int $storeId = 0): string
     {
+        if ($storeId) {
+            return (string)$this->scopeConfig->getValue(
+                self::LEANPAY_PROMOS_MFP_PRODUCT_NAME,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+        }
+
         return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
     }
 
@@ -549,8 +557,12 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getLeanpayPromosMFPCartSize(): string
+    public function getLeanpayPromosMFPCartSize(int $storeId = 0): string
     {
+        if ($storeId) {
+            return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE, ScopeInterface::SCOPE_STORE, $storeId);
+        }
+
         return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
     }
 
@@ -561,7 +573,8 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosVendorCode(): string
     {
-        $name = $this->getLeanpayPromosMFPName();
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        $name = $this->getLeanpayPromosMFPName($storeId);
         return array_key_exists($name, $this->vendorProductCodes)
             ? $this->vendorProductCodes[$name]
             : '';
@@ -730,7 +743,8 @@ class Data extends AbstractHelper
     private function validateGlobal($handler)
     {
         try {
-            $requiredSize = $this->getLeanpayPromosMFPCartSize() ?? 0;
+            $storeId = (int)$this->storeManager->getStore()->getId();
+            $requiredSize = $this->getLeanpayPromosMFPCartSize($storeId) ?? 0;
             $requiredDateStart = strtotime($this->getLeanpayPromosMFPStartDate());
             $requiredDateEnd = strtotime($this->getLeanpayPromosMFPEndDate());
             $currentTime = strtotime($this->dateTime->gmtDate());
