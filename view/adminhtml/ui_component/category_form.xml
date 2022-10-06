@@ -9,20 +9,6 @@
                 <item name="sortOrder" xsi:type="number">11</item>
             </item>
         </argument>
-        <field name="leanpay_category_financing_product_value">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="required" xsi:type="boolean">false</item>
-                    <item name="validation" xsi:type="array">
-                        <item name="required-entry" xsi:type="boolean">false</item>
-                    </item>
-                    <item name="sortOrder" xsi:type="number">10</item>
-                    <item name="dataType" xsi:type="string">string</item>
-                    <item name="formElement" xsi:type="string">input</item>
-                    <item name="label" translate="true" xsi:type="string">Financing Product Value</item>
-                </item>
-            </argument>
-        </field>
 
         <field name="leanpay_category_exclusive_inclusive">
             <argument name="data" xsi:type="array">
@@ -105,7 +91,7 @@
             </field>
         </container>
 
-        <field name="leanpay_category_exclusive_inclusive">
+        <field name="leanpay_category_financing_product_value">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\VendorAttribute</item>
                 <item name="dataType" xsi:type="string">string</item>
@@ -116,7 +102,7 @@
                     </item>
                     <item name="sortOrder" xsi:type="number">80</item>
                     <item name="formElement" xsi:type="string">select</item>
-                    <item name="label" translate="true" xsi:type="string">VendorProductCodee</item>
+                    <item name="label" translate="true" xsi:type="string">VendorProductCode</item>
                 </item>
             </argument>
         </field>

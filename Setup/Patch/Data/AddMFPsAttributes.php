@@ -66,11 +66,6 @@ class AddMFPsAttributes implements DataPatchInterface {
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
         $productAttributes = [
-            'leanpay_product_financing_product_value' => [
-                'label' => 'Financing Product Value',
-                'input' => 'text',
-                'type' => 'varchar',
-            ],
             'leanpay_product_priority' => [
                 'label' => 'Priority',
                 'input' => 'text',
