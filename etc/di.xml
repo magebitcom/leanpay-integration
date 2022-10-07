@@ -108,4 +108,13 @@
     <preference for="Leanpay\Payment\Api\Data\InstallmentSearchResultsInterface"
                 type="Leanpay\Payment\Model\InstallmentSearchResults"/>
     <preference for="Leanpay\Payment\Api\RequestInterface" type="Leanpay\Payment\Model\Request"/>
+
+    <!-- Comand line -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="import" xsi:type="object">Leanpay\Payment\Console\Import</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
