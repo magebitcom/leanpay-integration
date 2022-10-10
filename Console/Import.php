@@ -49,7 +49,7 @@ class Import extends Command
     ) {
         $this->appState->setAreaCode('frontend');
         $output->writeln('Importing Started Leanpay... ');
-        $this->installments->execute();
+         $this->installments->execute();
         $output->writeln('Importing Completed Leanpay... ');
     }
 

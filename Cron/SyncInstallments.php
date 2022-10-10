@@ -213,14 +213,15 @@ class SyncInstallments
                             $models[$index][InstallmentInterface::LOAN_AMOUNT] = $amount->loanAmount;
                             $models[$index][InstallmentInterface::INSTALLMENT_AMOUNT] = $installment->installmentAmout;
                             $models[$index][InstallmentInterface::INSTALLMENT_PERIOD] = $installment->numberOfMonths;
-                            if (!isset($installmentProductCache[$group->groupId])) {
-                                $isStored = $this->installmentProductRepository->getByGroupId($group->groupId);
+                            $countryCode = $this->helper->getCountryCode();
+                            if (!isset($installmentProductCache[$group->groupId . $countryCode])) {
+                                $isStored = $this->installmentProductRepository->getByGroupId($group->groupId, $countryCode);
 
                                 if (!$isStored) {
                                     $vendorProduct = $this->installmentProductRepository->newModel();
+                                    $country = $this->helper->getCountryCode() == 'si' ? 'Slovenia' : 'Croatia';
                                     $vendorProduct->setCountry($this->helper->getCountryCode());
                                     $vendorProduct->setGroupId($group->groupId);
-                                    $country = $this->helper->getCountryCode() == 'si' ? 'Slovenia' : 'Croatia';
                                     $groupName = sprintf('%s ( %s )', $group->groupName, $country);
                                     $vendorProduct->setGroupName($groupName);
                                     $this->installmentProductRepository->save($vendorProduct);
