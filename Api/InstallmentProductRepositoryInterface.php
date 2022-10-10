@@ -67,5 +67,5 @@ interface InstallmentProductRepositoryInterface
      * @param string $groupId
      * @return InstallmentProductInterface
      */
-    public function getByGroupId(string $groupId): ?InstallmentProductInterface;
+    public function getByGroupId(string $groupId, string $country = 'si'): ?InstallmentProductInterface;
 }

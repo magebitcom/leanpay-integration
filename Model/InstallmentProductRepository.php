@@ -161,10 +161,13 @@ class InstallmentProductRepository implements InstallmentProductRepositoryInterf
      * @param string $groupId
      * @return InstallmentProductInterface
      */
-    public function getByGroupId(string $groupId): ?InstallmentProductInterface
+    public function getByGroupId(string $groupId, string $country = 'si'): ?InstallmentProductInterface
     {
         $criteria = $this->criteriaBuilderFactory->create();
-        $criteria = $criteria->addFilter(InstallmentProductInterface::GROUP_ID, $groupId)->create();
+        $criteria = $criteria
+            ->addFilter(InstallmentProductInterface::GROUP_ID, $groupId)
+            ->addFilter(InstallmentProduct::COUNTRY, $country)
+            ->create();
 
         $result = $this->getList($criteria)->getItems();
 
