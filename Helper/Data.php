@@ -698,19 +698,19 @@ class Data extends AbstractHelper
                             if ($categoryIsTime) {
                                 if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
                                     if (!$result) {
-                                        $result = $categoryVendorProduct;
+                                        $result = $categoryProductValue;
                                     } else {
                                         if ($categoryIsExclusive) {
-                                            $result = $categoryVendorProduct;
+                                            $result = $categoryProductValue;
                                         }
                                     }
                                 }
                             } else {
                                 if (!$result) {
-                                    $result = $categoryVendorProduct;
+                                    $result = $categoryProductValue;
                                 } else {
                                     if ($categoryIsExclusive) {
-                                        $result = $categoryVendorProduct;
+                                        $result = $categoryProductValue;
                                     }
                                 }
                             }
