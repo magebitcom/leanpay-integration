@@ -595,11 +595,12 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosVendorCode(): string
     {
-        $storeId = (int) $this->storeManager->getStore()->getId();
+        $storeId = (int)$this->storeManager->getStore()->getId();
         return $this->getLeanpayPromosMFPName($storeId);
     }
 
-    public function getProductPromoCode(ProductInterface $product = null){
+    public function getProductPromoCode(ProductInterface $product = null)
+    {
         if (!$product) {
             return '';
         }
@@ -660,15 +661,20 @@ class Data extends AbstractHelper
                 } else {
                     $product = $item->getProduct();
                 }
+
                 $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
+                if (!$vendorCode){
+                    continue;
+                }
+
                 $incluse = $product->getData('leanpay_product_exclusive_inclusive') == 'inclusive' ? 1 : 0;
                 $priority = $product->getData('leanpay_product_priority');
                 $cache[$item->getProductId()] = $incluse;
 
                 $end = strtotime($product->getData('leanpay_product_end_date') ?? '');
                 $start = strtotime($product->getData('leanpay_product_start_date') ?? '');
-                $isTime = strtotime($product->getData('leanpay_product_time_based') ?? '');
+                $isTime = $product->getData('leanpay_product_time_based');
 
                 if ($productValue > $product->getFinalPrice()) {
                     return $result;
@@ -694,16 +700,29 @@ class Data extends AbstractHelper
         }
 
         if (!empty($validOption)) {
-
             usort($validOption, function ($a, $b) {
                 return ($a['priority'] > $b['priority']) ? -1 : 1;
             });
+
+            // checks if there are two items or more and rule have inclusive only allowed
+            if ((sizeof($items) > 1 &&  $incluse)){
+                $validOption = [];
+            }
+
+            //check if two items with same priority colide
+            if (sizeof($validOption) > 1 &&
+                $validOption[0]['priority'] == $validOption[1]['priority'] &&
+                $validOption[0]['inclusive'] == $validOption[1]['inclusive'] &&
+                $validOption[0]['code'] != $validOption[1]['code']
+            ) {
+                $validOption = [];
+            }
 
             foreach ($validOption as $option) {
                 if ($option['inclusive']) {
                     $result = $option['code'];
                     break;
-                }else{
+                } else {
                     $result = $option['code'];
                 }
             }
@@ -750,17 +769,19 @@ class Data extends AbstractHelper
                         'leanpay_category_vendor_code',
                         'leanpay_category_exclusive_inclusive'
                     ];
-                    $categories = $collection->addIdFilter($categoriesToCompare)->addAttributeToSelect($requiredAttributes)->getItems();
+                    $categories = $collection->addIdFilter($categoriesToCompare)
+                        ->addAttributeToSelect($requiredAttributes)
+                        ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
+                        ->getItems();
                     if (!empty($categories)) {
                         foreach ($categories as $category) {
                             $categoryStart = strtotime($category->getData('leanpay_category_start_date') ?? '');
                             $categoryEnd = strtotime($category->getData('leanpay_category_end_date') ?? '');
-                            $categoryIsTime = strtotime($category->getData('leanpay_category_time_based') ?? '');
-                            $categoryPriority = (bool)$category->getData('leanpay_category_priority');
+                            $categoryIsTime = $category->getData('leanpay_category_time_based');
+                            $categoryPriority = $category->getData('leanpay_category_priority');
                             $categoryIsExclusive = $category->getData('leanpay_category_exclusive_inclusive') == 'inclusive' ? true : false;
                             $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
                             $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
-
                             if ($categoryIsTime) {
                                 if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
                                     $validOption[] = [
@@ -777,12 +798,12 @@ class Data extends AbstractHelper
                                 ];
                             }
                         }
-                        if (!empty($validOption) && is_array($validOption)){
+                        if (!empty($validOption) && is_array($validOption)) {
                             usort($validOption, function ($a, $b) {
                                 return ($a['priority'] > $b['priority']) ? -1 : 1;
                             });
 
-                            foreach ($validOption as $item){
+                            foreach ($validOption as $item) {
                                 $result = $item['code'];
                                 break;
                             }
@@ -809,7 +830,7 @@ class Data extends AbstractHelper
             $currentTime = strtotime($this->dateTime->gmtDate());
 
             // Invalid due to date
-            if ($currentTime < $requiredDateStart && $currentTime > $requiredDateEnd) {
+            if ($currentTime < $requiredDateStart || $currentTime > $requiredDateEnd) {
                 return false;
             }
 
