@@ -638,7 +638,14 @@ class Data extends AbstractHelper
                 if (is_array($handler)) {
                     $product = $item;
                 } else {
-                    $product = $item->getProduct();
+                    if ($item->getProductType() == 'simple') {
+                        if ($item->getParentItem()) {
+                            continue;
+                        }
+                        $product = $item->getProduct();
+                    } else {
+                        $product = $item->getProduct();
+                    }
                 }
 
                 $productValue = $product->getData('leanpay_product_financing_product_value');
