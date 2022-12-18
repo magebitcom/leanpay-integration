@@ -711,8 +711,8 @@ class Data extends AbstractHelper
                 return ($a['priority'] > $b['priority']) ? -1 : 1;
             });
 
-            // checks if there are two items or more and rule have inclusive only allowed
-            if ((sizeof($items) > 1 &&  $incluse)){
+            // checks if there are two items or more and rule have exclusive only allowed
+            if ((sizeof($items) > 1 && !$incluse)){
                 $validOption = [];
             }
 
