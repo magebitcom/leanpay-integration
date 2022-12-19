@@ -624,6 +624,7 @@ class Data extends AbstractHelper
     {
         $validOption = [];
         $result = '';
+        $productCount = 0;
 
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
 
@@ -647,6 +648,7 @@ class Data extends AbstractHelper
                         $product = $item->getProduct();
                     }
                 }
+                $productCount++;
 
                 $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
@@ -682,6 +684,16 @@ class Data extends AbstractHelper
                         'code' => $vendorCode
                     ];
                 }
+
+                if (sizeof($validOption) > 0){
+                    $allSame = true;
+                    foreach ($validOption as $option){
+                        if(!reset($validOption)['code'] == $option['code']){
+                            $allSame = false;
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -691,8 +703,10 @@ class Data extends AbstractHelper
             });
 
             // checks if there are two items or more and rule have exclusive only allowed
-            if ((sizeof($items) > 1 && !$incluse)){
-                $validOption = [];
+            if ($productCount > 1 && !$incluse){
+                if(!$allSame){
+                    $validOption = [];
+                }
             }
 
             //check if two items with same priority colide
