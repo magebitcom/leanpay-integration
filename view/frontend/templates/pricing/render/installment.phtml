@@ -117,8 +117,10 @@ $color = $helper->getInstallmentColor();
                                 </div>
                                 <div class="installment-slider"></div>
                                 <div class="total-html">
-                                    <span><?= $escaper->escapeHtml(__($helper->getTranslation('Informativni znesek za plačilo'))); ?></span>
-                                    <span class="total"></span>
+                                    <?php if (!$isPreCalculated): ?>
+                                        <span><?= $escaper->escapeHtml(__($helper->getTranslation('Informativni znesek za plačilo'))); ?></span>
+                                        <span class="total"></span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
