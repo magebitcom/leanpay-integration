@@ -3,8 +3,12 @@
 namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
+use Leanpay\Payment\Api\Data\InstallmentProductInterface;
+use Leanpay\Payment\Api\InstallmentProductRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
+use Magento\Framework\Api\SearchCriteriaBuilderFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template;
 
@@ -31,6 +35,16 @@ class TemplatePriceBox extends Template
     private $serializer;
 
     /**
+     * @var InstallmentProductRepositoryInterface
+     */
+    private $productRepo;
+
+    /**
+     * @var \Magento\Framework\Api\SearchCriteriaBuilder
+     */
+    private $searchCriteria;
+
+    /**
      * TemplatePriceBox constructor.
      *
      * @param Template\Context $context
@@ -44,8 +58,12 @@ class TemplatePriceBox extends Template
         InstallmentHelper  $installmentHelper,
         Data $helper,
         SerializerInterface $serializer,
+        InstallmentProductRepositoryInterface $productRepository,
+        SearchCriteriaBuilderFactory $criteriaBuilderFactory,
         array $data = []
     ) {
+        $this->productRepo = $productRepository;
+        $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->installmentHelper = $installmentHelper;
         $this->helper = $helper;
         $this->serializer = $serializer;
@@ -78,9 +96,40 @@ class TemplatePriceBox extends Template
      *
      * @return string
      */
-    public function getLowestInstallmentPrice(): string
+    public function getLowestInstallmentPrice(string $group = ''): string
     {
         return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount());
+    }
+
+
+    /**
+     * Retreves financila product, used in all view except checkout place order
+     *
+     * @return string
+     */
+    public function getFinancialProduct(): string
+    {
+        try {
+            return $this->helper->getProductPromoCode($this->getSaleableItem());
+        } catch (LocalizedException $exception) {
+            return '';
+        }
+    }
+
+    /**
+     * @param string $code
+     * @return string|void
+     */
+    public function getInstallmentVendorName(string $code = ''){
+        if (!$code){
+            return '';
+        }
+
+        $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
+            ->setPageSize(1)
+            ->setCurrentPage(1)
+            ->create();
+        $items = $this->productRepo->getList($search);
     }
 
     /**

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="leanpay_promotions">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Leanpay Promotions</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="sortOrder" xsi:type="number">11</item>
+            </item>
+        </argument>
+
+        <field name="leanpay_category_exclusive_inclusive">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\ExclusiveOrInclusive</item>
+                <item name="dataType" xsi:type="string">string</item>
+                <item name="config" xsi:type="array">
+                    <item name="required" xsi:type="boolean">false</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="label" translate="true" xsi:type="string">Inclusive Or Exclusive</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="leanpay_category_priority">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="required" xsi:type="boolean">false</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" translate="true" xsi:type="string">Priority</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="leanpay_category_time_based">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">40</item>
+                    <item name="dataType" xsi:type="string">boolean</item>
+                    <item name="formElement" xsi:type="string">checkbox</item>
+                    <item name="source" xsi:type="string">category</item>
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="valueMap" xsi:type="array">
+                        <item name="true" xsi:type="string">1</item>
+                        <item name="false" xsi:type="string">0</item>
+                    </item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="default" xsi:type="string">0</item>
+                    <item name="label" xsi:type="string" translate="true">Time-based</item>
+                </item>
+            </argument>
+        </field>
+
+        <container name="leanpay_date_group" component="Magento_Ui/js/form/components/group" sortOrder="50">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="additionalClasses" xsi:type="string">admin__control-grouped-date</item>
+                    <item name="breakLine" xsi:type="boolean">false</item>
+                </item>
+            </argument>
+            <field name="leanpay_category_start_date" sortOrder="10" formElement="date">
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field-date">true</class>
+                    </additionalClasses>
+                    <dataType>string</dataType>
+                    <label translate="true">Date If Time-based From</label>
+                </settings>
+            </field>
+            <field name="leanpay_category_end_date" sortOrder="20" formElement="date">
+                <settings>
+                    <scopeLabel/>
+                    <additionalClasses>
+                        <class name="admin__field-date">true</class>
+                    </additionalClasses>
+                    <dataType>string</dataType>
+                    <label translate="true">To</label>
+                </settings>
+            </field>
+        </container>
+        
+        <field name="leanpay_category_vendor_code">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\VendorAttribute</item>
+                <item name="dataType" xsi:type="string">string</item>
+                <item name="config" xsi:type="array">
+                    <item name="required" xsi:type="boolean">false</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="sortOrder" xsi:type="number">80</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="label" translate="true" xsi:type="string">VendorProductCode</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>

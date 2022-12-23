@@ -2,12 +2,16 @@
 
 namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 
+use Leanpay\Payment\Api\Data\InstallmentProductInterface;
+use Leanpay\Payment\Api\InstallmentProductRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolverInterface;
 use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
 use Magento\Catalog\Pricing\Render\FinalPriceBox;
+use Magento\Framework\Api\SearchCriteriaBuilderFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\Render\RendererPool;
 use Magento\Framework\Pricing\SaleableInterface;
@@ -53,19 +57,23 @@ class DefaultPriceBox extends FinalPriceBox
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
      */
     public function __construct(
-        StoreManagerInterface $storeManager,
-        Context $context,
-        SaleableInterface $saleableItem,
-        PriceInterface $price,
-        RendererPool $rendererPool,
-        Data $helper,
-        InstallmentHelper $installmentHelper,
-        SerializerInterface $serializer,
-        array $data = [],
-        SalableResolverInterface $salableResolver = null,
+        StoreManagerInterface           $storeManager,
+        Context                         $context,
+        SaleableInterface               $saleableItem,
+        PriceInterface                  $price,
+        RendererPool                    $rendererPool,
+        Data                            $helper,
+        InstallmentHelper               $installmentHelper,
+        SerializerInterface             $serializer,
+        InstallmentProductRepositoryInterface $productRepository,
+        SearchCriteriaBuilderFactory $criteriaBuilderFactory,
+        array                           $data = [],
+        SalableResolverInterface        $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
         $this->storeManager = $storeManager;
+        $this->productRepo = $productRepository;
+        $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->helper = $helper;
         $this->installmentHelper = $installmentHelper;
         $this->serializer = $serializer;
@@ -78,6 +86,20 @@ class DefaultPriceBox extends FinalPriceBox
             $salableResolver,
             $minimalPriceCalculator
         );
+    }
+
+    /**
+     * Retreves financila product, used in all view except checkout place order
+     *
+     * @return string
+     */
+    public function getFinancialProduct(): string
+    {
+        try {
+            return $this->helper->getProductPromoCode($this->getSaleableItem());
+        } catch (LocalizedException $exception) {
+            return '';
+        }
     }
 
     /**
@@ -101,13 +123,43 @@ class DefaultPriceBox extends FinalPriceBox
     }
 
     /**
+     * @param string $code
+     * @return string|void
+     */
+    public function getInstallmentVendorName(string $code = ''){
+        if (!$code){
+            return '';
+        }
+
+        try{
+            $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
+                ->setPageSize(1)
+                ->setCurrentPage(1)
+                ->create();
+
+            $items = $this->productRepo->getList($search)->getItems();
+
+            if (empty($items)){
+                return '';
+            }
+
+            foreach ($items as $item){
+                return $item->getData(InstallmentProductInterface::GROUP_NAME);
+            }
+
+        }catch (LocalizedException $exception){
+            return '';
+        }
+    }
+
+    /**
      * Returns lowest installment price
      *
      * @return string
      */
-    public function getLowestInstallmentPrice(): string
+    public function getLowestInstallmentPrice(string $group = ''): string
     {
-        return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount());
+        return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount(), $group);
     }
 
     /**
