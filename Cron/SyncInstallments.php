@@ -114,9 +114,6 @@ class SyncInstallments
     public function syncInstallments($url, $apiKey, $apiType)
     {
         try {
-            if ($apiType === Data::API_ENDPOINT_SLOVENIA) {
-                return;
-            }
             if ($apiKey) {
                 $curl = $this->addHeaders($this->curlClient);
                 $curl->post($url, json_encode(['vendorApiKey' => $apiKey]));
