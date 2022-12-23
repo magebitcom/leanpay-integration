@@ -99,8 +99,8 @@ class SyncInstallments
         if ($this->helper->isActive()) {
             $urls = $this->helper->getInstallmentURL();
             $apiKeys = $this->helper->getAllLeanpayApiKeys();
-            foreach ($apiKeys as $currency => $apiKey) {
-                $this->syncInstallments($urls[$currency], $apiKey, $currency);
+            foreach ($apiKeys as $apiType => $apiKey) {
+                $this->syncInstallments($urls[$apiType], $apiKey, $apiType);
             }
         }
         Profiler::stop('leanpay_sync_installment');
@@ -109,10 +109,14 @@ class SyncInstallments
     /**
      * @param $url
      * @param $apiKey
+     * @param $apiType
      */
-    public function syncInstallments($url, $apiKey, $currency)
+    public function syncInstallments($url, $apiKey, $apiType)
     {
         try {
+            if ($apiType === Data::API_ENDPOINT_SLOVENIA) {
+                return;
+            }
             if ($apiKey) {
                 $curl = $this->addHeaders($this->curlClient);
                 $curl->post($url, json_encode(['vendorApiKey' => $apiKey]));
@@ -127,8 +131,8 @@ class SyncInstallments
                     if ($parse->groups) {
                         $models = $this->extractInstallmentData($parse);
                         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
-                        $connection->delete($table, 'currency_code = \''.$currency.'\'');
-                        $this->saveAllModels($models);
+                        $connection->delete($table, 'api_type = \''.$apiType.'\'');
+                        $this->saveAllModels($models, $apiType);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
                 }
@@ -160,16 +164,24 @@ class SyncInstallments
      * Saves all models
      *
      * @param array $models
+     * @param string $apiType
      */
-    private function saveAllModels($models = [])
+    private function saveAllModels($models = [], $apiType = Data::API_ENDPOINT_SLOVENIA)
     {
         $this->eventManager->dispatch(
             'leanpay_syncinstallment_cron_models_save',
-            ['models' => $models]
+            [
+                'models' => $models,
+                'api_type' => $apiType
+            ]
         );
 
         foreach ($models as $model) {
             try {
+                $model = array_merge(
+                    $model,
+                    [InstallmentInterface::API_TYPE => $apiType]
+                );
                 $this->repository->save($this->repository->newModel()->setData($model));
             } catch (CouldNotSaveException $exception) {
                 $this->logger->critical($exception);
