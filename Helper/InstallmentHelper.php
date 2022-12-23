@@ -246,11 +246,8 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
-        $installmentCurrencies = $this->resourceModel->getInstallmentCurrencies();
         $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
-        if ($this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY) === $currentStoreCurrency &&
-            !in_array($currentStoreCurrency, array_keys($installmentCurrencies))
-        ) {
+        if ($currentStoreCurrency !== "HRK" && $currentStoreCurrency !== "EUR") {
             return $result;
         }
 
