@@ -124,9 +124,6 @@ class SyncInstallments
     public function syncInstallments($url, $apiKey, $apiType, $store_id = 0)
     {
         try {
-            if ($apiType === Data::API_ENDPOINT_SLOVENIA) {
-                return;
-            }
             if ($apiKey) {
                 $this->emulation->startEnvironmentEmulation($store_id, $area = 'frontend');
                 $curl = $this->addHeaders($this->curlClient);
