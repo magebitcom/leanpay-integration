@@ -94,9 +94,16 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_CRON_CURRENCIES = 'payment/leanpay_installment/cron_currencies';
 
     /**
-     * Fixed conversion rate during euro transition period
+     * Fixed conversion rate during euro transition period HR
      */
-    public const TRANSITION_CONVERSION_RATE = 7.53450;
+    public const TRANSITION_CONVERSION_RATE = [
+        'HRK' => '7.53450',
+        'RON' => '4.93000'
+    ];
+
+    public const ALLOWED_CURRENCIES = [
+        'HRK', 'RON'
+    ];
 
     /**
      * @var ViewBlockConfig
@@ -127,13 +134,14 @@ class InstallmentHelper extends AbstractHelper
      * @param Installment $resourceModel
      */
     public function __construct(
+        Data                  $dataHelper,
         SerializerInterface   $serializer,
         StoreManagerInterface $storeManager,
         Context               $context,
         ViewBlockConfig       $blockConfig,
         Installment           $resourceModel
-    )
-    {
+    ) {
+        $this->dataHelper = $dataHelper;
         $this->serializer = $serializer;
         $this->storeManager = $storeManager;
         $this->resourceModel = $resourceModel;
@@ -321,6 +329,10 @@ class InstallmentHelper extends AbstractHelper
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
+        if ($group) {
+            return $this->resourceModel->getToolTipData($price, $group, $useTerm);
+        }
+
         return $this->resourceModel->getToolTipData($price, $this->getGroup(), $useTerm);
     }
 
@@ -406,10 +418,12 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrencyCode(): string
     {
-        if ($this->getCurrency() == "HRK") {
-            return "HRK";
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return 'HRK';
+        } elseif ($this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
+            return 'RON';
         } else {
-            return "€";
+            return '€';
         }
     }
 
@@ -436,7 +450,9 @@ class InstallmentHelper extends AbstractHelper
             'Preveri svoj limit' => 'Provjerite svoj limit',
             'Več informacij' => 'Više informacija',
         ];
-        if ($this->getCurrency() == "HRK" && isset($translationArray[$text])) {
+        if ($this->getCurrency() == 'HRK' && isset($translationArray[$text])) {
+            return $translationArray[$text];
+        } elseif ($this->getCurrency() == 'RON' && isset($translationArray[$text])) {
             return $translationArray[$text];
         } else {
             return $text;
@@ -457,9 +473,13 @@ class InstallmentHelper extends AbstractHelper
      * @param string $price
      * @return string
      */
-    public function getTransitionPrice(string $price): string
+    public function getTransitionPrice(string $price, string $currencyCode): string
     {
-        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
+        if (!in_array($currencyCode, self::ALLOWED_CURRENCIES)) {
+            return 1;
+        }
+
+        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE[$currencyCode];
         return (string)round($convertedPrice, 2);
     }
 
@@ -485,15 +505,14 @@ class InstallmentHelper extends AbstractHelper
             'value' => $values,
             'currency' => $this->getCurrencyCode(),
         ];
-        if ($this->getCurrency() === 'HRK') {
-            $convertedValues = [];
-            foreach ($list as $value) {
-                $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] / self::TRANSITION_CONVERSION_RATE;;
-            }
-            $data['convertedCurrency'] = 'EUR';
-            $data['convertedValues'] = $convertedValues;
+        if ($this->getCurrency() !='EUR') {
+        $convertedValues = [];
+        foreach ($list as $value) {
+            $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] / self::TRANSITION_CONVERSION_RATE[$this->getCurrencyCode()];
         }
-
+        $data['convertedCurrency'] = 'EUR';
+        $data['convertedValues'] = $convertedValues;
+    }
         return (string)$this->serializer->serialize($data);
     }
 
@@ -509,12 +528,13 @@ class InstallmentHelper extends AbstractHelper
         $data = $this->getToolTipData($amount, $useTerm, $group);
         $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
         $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-        if ($this->getCurrency() === 'HRK') {
+
+        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
             return __('%1 x %2%3 / %4%5',
                 $term,
                 $amount,
                 $this->getCurrencyCode(),
-                $this->getTransitionPrice($amount),
+                $this->getTransitionPrice($amount, $this->getCurrency()),
                 'EUR'
             );
         }
@@ -549,12 +569,12 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if ($this->getCurrency() === 'HRK') {
+        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
             return __(
                 'od %1 %2 / %3 %4 mjesečno',
                 $price,
                 $this->getCurrencyCode(),
-                $this->getTransitionPrice($price),
+                $this->getTransitionPrice($price, $this->getCurrency()),
                 'EUR'
             );
         }
@@ -575,12 +595,12 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if ($this->getCurrency() === 'HRK') {
+        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
             return
                 __('%1 %2 / %3 %4',
                     $price,
                     $this->getCurrencyCode(),
-                    $this->getTransitionPrice($price),
+                    $this->getTransitionPrice($price, $this->getCurrency()),
                     'EUR'
                 );
         }

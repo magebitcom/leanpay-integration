@@ -33,6 +33,10 @@ class CurrencyType implements OptionSourceInterface
                 'value' => 'HRK',
                 'label' => __('HRK')
             ],
+            [
+                'value' => 'RON',
+                'label' => __('RON')
+            ],
         ];
     }
 }
