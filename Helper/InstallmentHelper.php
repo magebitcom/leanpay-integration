@@ -436,7 +436,7 @@ class InstallmentHelper extends AbstractHelper
             'Za obročno plačilo v košarici izberi Leanpay. ' => 'Za plaćanje na rate u košarici odaberite Leanpay kao vrstu plaćanja. ',
             'Informativni izračun ne vključuje stroškov ocene tveganja.' => 'Informativni izračun ne uključuje troškove procjene rizika.',
             'Preveri svoj limit' => 'Provjerite svoj limit',
-            'Več informacij' => 'Više informacija'
+            'Več informacij' => 'Više informacija',
         ];
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA && isset($translationArray[$text])) {
             return $translationArray[$text];

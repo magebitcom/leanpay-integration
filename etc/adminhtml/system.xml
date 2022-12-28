@@ -196,5 +196,36 @@
                 </field>
             </group>
         </section>
+
+        <section id="leanpay_promos"  translate="label" type="text" sortOrder="301" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Leanpay Promos</label>
+            <tab>sales</tab>
+            <resource>Magento_Sales::config_sales</resource>
+            <group id="mfp" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Multiple Financing Products</label>
+
+                <field id="product_name" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Financing Product Name</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\VendorProductCode</source_model>
+                </field>
+
+                <!-- Date picker field code start-->
+                <field id="start_date" translate="label" type="date" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Start Date For Financing Product Value</label>
+                    <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\DatePicker</frontend_model>
+                </field>
+
+                <field id="end_date" translate="label" type="date" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>End Date For Financing Product Value</label>
+                    <frontend_model>Leanpay\Payment\Block\Adminhtml\Form\Field\DatePicker</frontend_model>
+                </field>
+
+                <field id="cart_size" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Cart-size Financing Product Value</label>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

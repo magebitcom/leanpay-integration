@@ -67,6 +67,16 @@ class Data extends AbstractHelper
     ];
 
     /**
+     * Leanpay Magento 2 base url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL = 'payment/leanpay/leanpay_base_url';
+
+    /**
+     * Leanpay Magento 2 base_dev url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL_DEV = 'payment/leanpay/leanpay_base_url_dev';
+
+    /**
      * Leanpay Magento 2 api key path in Database
      */
     public const LEANPAY_API_CONFIG_API_KEY_PATH = 'payment/leanpay/api_key';
@@ -211,6 +221,21 @@ class Data extends AbstractHelper
     public function getStoreId(): int
     {
         return (int)$this->storeManager->getStore()->getId();
+    }
+
+    public function getCurrencyType(): string
+    {
+        $currencyType = $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_CURRENCY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+
+        if (!$currencyType) {
+            $currencyType = 'EUR';
+        }
+
+        return (string)$currencyType;
     }
 
     /**
