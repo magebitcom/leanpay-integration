@@ -118,21 +118,27 @@ class InstallmentHelper extends AbstractHelper
      */
     private $serializer;
 
+    protected $dataHelper;
+
     /**
      * InstallmentHelper constructor.
      *
+     * @param Data $dataHelper
+     * @param SerializerInterface $serializer
      * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param ViewBlockConfig $blockConfig
      * @param Installment $resourceModel
      */
     public function __construct(
+        Data $dataHelper,
         SerializerInterface $serializer,
         StoreManagerInterface $storeManager,
         Context $context,
         ViewBlockConfig $blockConfig,
         Installment $resourceModel
     ) {
+        $this->dataHelper = $dataHelper;
         $this->serializer = $serializer;
         $this->storeManager = $storeManager;
         $this->resourceModel = $resourceModel;
@@ -240,11 +246,8 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
-        $installmentCurrencies = $this->resourceModel->getInstallmentCurrencies();
         $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
-        if ($this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY) === $currentStoreCurrency &&
-            !in_array($currentStoreCurrency, array_keys($installmentCurrencies))
-        ) {
+        if ($currentStoreCurrency !== "HRK" && $currentStoreCurrency !== "EUR") {
             return $result;
         }
 
@@ -271,8 +274,16 @@ class InstallmentHelper extends AbstractHelper
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
-        $min = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MIN, ScopeInterface::SCOPE_STORE, $scopeId);
-        $max = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MAX, ScopeInterface::SCOPE_STORE, $scopeId);
+        $min = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MIN,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+        $max = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MAX,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
 
         if (!$price) {
             return '';
@@ -282,7 +293,7 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->getCurrency());
+        return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->dataHelper->getApiType());
     }
 
     /**
@@ -384,7 +395,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrency(): string
     {
-        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        return $this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+            ScopeInterface::SCOPE_STORE,
+            $this->storeManager->getStore()->getId()
+        );
     }
 
     /**
@@ -394,7 +408,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrencyCode(): string
     {
-        if ($this->getCurrency() == "HRK") {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             return "HRK";
         } else {
             return "€";
@@ -424,7 +438,7 @@ class InstallmentHelper extends AbstractHelper
             'Preveri svoj limit' => 'Provjerite svoj limit',
             'Več informacij' => 'Više informacija',
         ];
-        if ($this->getCurrency() == "HRK" && isset($translationArray[$text])) {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA && isset($translationArray[$text])) {
             return $translationArray[$text];
         } else {
             return $text;
@@ -438,7 +452,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function allowDownPayment(): bool
     {
-        return $this->getCurrency() == "EUR";
+        return $this->dataHelper->getApiType() === Data::API_ENDPOINT_SLOVENIA;
     }
 
     /**
@@ -446,6 +460,16 @@ class InstallmentHelper extends AbstractHelper
      * @return string
      */
     public function getTransitionPrice (string $price): string
+    {
+        $convertedPrice = $price * self::TRANSITION_CONVERSION_RATE;
+        return (string) round($convertedPrice,2);
+    }
+
+    /**
+     * @param string $price
+     * @return string
+     */
+    public function getTransitionPriceHkrToEur (string $price): string
     {
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
         return (string) round($convertedPrice,2);
@@ -471,14 +495,14 @@ class InstallmentHelper extends AbstractHelper
             'max' => array_key_last($list),
             'data' => $list,
             'value' => $values,
-            'currency' => $this->getCurrencyCode(),
+            'currency' => 'EUR',
         ];
-        if ($this->getCurrency() === 'HRK') {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             $convertedValues = [];
             foreach ($list as $value) {
-                $convertedValues[] = $this->getTransitionPrice($value[InstallmentInterface::INSTALLMENT_AMOUNT]);
+                $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] * self::TRANSITION_CONVERSION_RATE;;
             }
-            $data['convertedCurrency'] = 'EUR';
+            $data['convertedCurrency'] = 'HRK';
             $data['convertedValues'] = $convertedValues;
         }
 
@@ -497,13 +521,14 @@ class InstallmentHelper extends AbstractHelper
         $data = $this->getToolTipData($amount, $useTerm);
         $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
         $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-        if ($this->getCurrency() === 'HRK') {
-            return __('%1 x %2%3 / %4%5',
-                    $term,
-                    $amount,
-                    $this->getCurrencyCode(),
-                    $this->getTransitionPrice($amount),
-                    'EUR'
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return __(
+                '%1 x %2%3 / %4%5',
+                $term,
+                $amount,
+                'EUR',
+                $this->getTransitionPrice($amount),
+                $this->getCurrencyCode()
             );
         }
         return __('%1 x %2%3', $term, $amount, $this->getCurrencyCode());
@@ -532,13 +557,13 @@ class InstallmentHelper extends AbstractHelper
     public function getCategoryPriceBlock($amount): \Magento\Framework\Phrase
     {
         $price = $this->getLowestInstallmentPrice($amount);
-        if ($this->getCurrency() === 'HRK') {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             return __(
                 'od %1 %2 / %3 %4 mjesečno',
                 $price,
-                $this->getCurrencyCode(),
+                'EUR',
                 $this->getTransitionPrice($price),
-                'EUR'
+                $this->getCurrencyCode(),
             );
         }
         return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
@@ -553,13 +578,14 @@ class InstallmentHelper extends AbstractHelper
     public function getProductPriceBlock($amount): \Magento\Framework\Phrase
     {
         $price = $this->getLowestInstallmentPrice($amount);
-        if ($this->getCurrency() === 'HRK') {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             return
-                __('%1 %2 / %3 %4',
+                __(
+                    '%1 %2 / %3 %4',
                     $price,
-                    $this->getCurrencyCode(),
+                    'EUR',
                     $this->getTransitionPrice($price),
-                    'EUR'
+                    $this->getCurrencyCode()
                 );
         }
         return __('%1 %2', $price, $this->getCurrencyCode());

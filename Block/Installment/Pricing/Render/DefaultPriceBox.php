@@ -13,6 +13,7 @@ use Magento\Framework\Pricing\Render\RendererPool;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Store\Model\StoreManagerInterface;
 
 class DefaultPriceBox extends FinalPriceBox
 {
@@ -32,8 +33,14 @@ class DefaultPriceBox extends FinalPriceBox
     private $serializer;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+
+    /**
      * DefaultPriceBox constructor.
-     *
+     * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param SaleableInterface $saleableItem
      * @param PriceInterface $price
@@ -46,6 +53,7 @@ class DefaultPriceBox extends FinalPriceBox
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
      */
     public function __construct(
+        StoreManagerInterface $storeManager,
         Context $context,
         SaleableInterface $saleableItem,
         PriceInterface $price,
@@ -57,6 +65,7 @@ class DefaultPriceBox extends FinalPriceBox
         SalableResolverInterface $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
+        $this->storeManager = $storeManager;
         $this->helper = $helper;
         $this->installmentHelper = $installmentHelper;
         $this->serializer = $serializer;
@@ -78,11 +87,17 @@ class DefaultPriceBox extends FinalPriceBox
      */
     public function getAmount(): float
     {
-        return $this->getSaleableItem()
+        $amount = $this->getSaleableItem()
             ->getPriceInfo()
             ->getPrice(FinalPrice::PRICE_CODE)
             ->getAmount()
             ->getValue();
+
+        if ($this->storeManager->getStore()->getCurrentCurrency()->getCode() === "HRK") {
+           $amount = (float)$this->installmentHelper->getTransitionPriceHkrToEur((string)$amount);
+        }
+
+        return $amount;
     }
 
     /**

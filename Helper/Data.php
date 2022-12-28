@@ -23,6 +23,13 @@ class Data extends AbstractHelper
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
 
     public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
+
+    public const LEANPAY_CONFIG_API_ENDPOINT_TYPE = 'payment/leanpay/api_endpoint_type';
+
+    public const API_ENDPOINT_SLOVENIA = 'SLO';
+
+    public const API_ENDPOINT_CROATIA = 'CRO';
+
     /**
      *  Post Token URL
      *
@@ -44,8 +51,8 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL_DEV = [
-        'EUR' => 'https://lapp.leanpay.si/vendor/installment-plans',
-        'HRK' => 'https://lapp.leanpay.hr/vendor/installment-plans'
+        self::API_ENDPOINT_SLOVENIA => 'https://lapp.leanpay.si/vendor/installment-plans',
+        self::API_ENDPOINT_CROATIA => 'https://lapp.leanpay.hr/vendor/installment-plans'
     ];
 
 
@@ -55,8 +62,8 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = [
-        'EUR' => 'https://app.leanpay.si/vendor/installment-plans',
-        'HRK' => 'https://app.leanpay.hr/vendor/installment-plans'
+        self::API_ENDPOINT_SLOVENIA => 'https://app.leanpay.si/vendor/installment-plans',
+        self::API_ENDPOINT_CROATIA => 'https://app.leanpay.hr/vendor/installment-plans'
     ];
 
     /**
@@ -236,9 +243,9 @@ class Data extends AbstractHelper
      */
     public function getBaseUrl(): string
     {
-        $currencyType = $this->getCurrencyType();
+        $currencyType = $this->getApiType();
 
-        if ($currencyType === 'EUR') {
+        if ($currencyType === self::API_ENDPOINT_SLOVENIA) {
             if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
                 return (string)self::LEANPAY_BASE_URL;
             }
@@ -276,6 +283,20 @@ class Data extends AbstractHelper
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                 $this->getStoreId()
             )
+        );
+    }
+
+    /**
+     * Get Leanpay api type
+     *
+     * @return string
+     */
+    public function getApiType(): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
         );
     }
 
@@ -469,7 +490,7 @@ class Data extends AbstractHelper
 
     /**
      * Gets all unique api keys
-     *
+     * This is still based on
      * @return array
      */
     public function getAllLeanpayApiKeys(): array
@@ -485,12 +506,12 @@ class Data extends AbstractHelper
                 )
             );
             if (!in_array($apiKey, $apiKeys)) {
-                $currencyType = $this->scopeConfig->getValue(
-                    self::LEANPAY_CONFIG_CURRENCY,
+                $endpointType = $this->scopeConfig->getValue(
+                    self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
                     \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 );
-                $apiKeys[$currencyType] = $apiKey;
+                $apiKeys[$endpointType] = $apiKey;
             }
         }
         return $apiKeys;
