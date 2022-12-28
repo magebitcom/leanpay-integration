@@ -75,6 +75,17 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     }
 
     /**
+     * Get API type
+     *
+     * @return string|null
+     */
+    public function getApiType()
+    {
+        return $this->getData(InstallmentInterface::API_TYPE);
+    }
+
+
+    /**
      * Get loan amount
      *
      * @return int|null
@@ -139,6 +150,19 @@ class Installment extends AbstractModel implements InstallmentInterface, Identit
     public function setCurrencyCode($currencyCode)
     {
         $this->setData(InstallmentInterface::CURRENCY_CODE, $currencyCode);
+
+        return $this;
+    }
+
+    /**
+     * Set API type
+     *
+     * @param string $apiType
+     * @return $this
+     */
+    public function setApiType($apiType)
+    {
+        $this->setData(InstallmentInterface::API_TYPE, $apiType);
 
         return $this;
     }

@@ -204,9 +204,11 @@ class Leanpay extends AbstractMethod
         }
 
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        if ($this->helper->getApiType() === PaymentData::API_ENDPOINT_CROATIA && $baseCode == "HRK") {
+            return true;
+        }
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
-
         if (!array_key_exists('EUR', $rates)) {
             return false;
         }
@@ -232,7 +234,7 @@ class Leanpay extends AbstractMethod
         $orderItems = $order->getAllVisibleItems();
 
         $additionData = [
-            'vendorTransactionId' => $order->getIncrementId(),
+            'vendorTransactionId' => $order->getQuoteId(),
             'amount' => $amount,
             'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),

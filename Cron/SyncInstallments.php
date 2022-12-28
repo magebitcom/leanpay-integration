@@ -6,6 +6,7 @@ namespace Leanpay\Payment\Cron;
 use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Api\InstallmentRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
+use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\App\Cache\Manager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Event\ManagerInterface;
@@ -53,8 +54,13 @@ class SyncInstallments
     private $cacheManager;
 
     /**
+     * @var InstallmentHelper
+     */
+    private $installmentHelper;
+
+
+    /**
      * SyncInstallments constructor.
-     *
      * @param Curl $curl
      * @param Data $helper
      * @param ManagerInterface $eventManager
@@ -62,6 +68,7 @@ class SyncInstallments
      * @param InstallmentRepositoryInterface $repository
      * @param ResourceConnection $resource
      * @param Manager $manager
+     * @param InstallmentHelper $installmentHelper
      */
     public function __construct(
         Curl $curl,
@@ -70,7 +77,8 @@ class SyncInstallments
         LoggerInterface $logger,
         InstallmentRepositoryInterface $repository,
         ResourceConnection $resource,
-        Manager $manager
+        Manager $manager,
+        InstallmentHelper $installmentHelper
     ) {
         $this->logger = $logger;
         $this->curlClient = $curl;
@@ -79,6 +87,7 @@ class SyncInstallments
         $this->repository = $repository;
         $this->resource = $resource;
         $this->cacheManager = $manager;
+        $this->installmentHelper = $installmentHelper;
     }
 
     /**
@@ -87,13 +96,25 @@ class SyncInstallments
     public function execute()
     {
         Profiler::start('leanpay_sync_installment');
+        if ($this->helper->isActive()) {
+            $urls = $this->helper->getInstallmentURL();
+            $apiKeys = $this->helper->getAllLeanpayApiKeys();
+            foreach ($apiKeys as $apiType => $apiKey) {
+                $this->syncInstallments($urls[$apiType], $apiKey, $apiType);
+            }
+        }
+        Profiler::stop('leanpay_sync_installment');
+    }
 
-        $url = $this->helper->getInstallmentURL();
-        $apiKey = $this->helper->getLeanpayApiKey();
-        $enabled = $this->helper->isActive();
-
+    /**
+     * @param $url
+     * @param $apiKey
+     * @param $apiType
+     */
+    public function syncInstallments($url, $apiKey, $apiType)
+    {
         try {
-            if ($apiKey && $enabled) {
+            if ($apiKey) {
                 $curl = $this->addHeaders($this->curlClient);
                 $curl->post($url, json_encode(['vendorApiKey' => $apiKey]));
                 $data = $curl->getBody();
@@ -107,8 +128,8 @@ class SyncInstallments
                     if ($parse->groups) {
                         $models = $this->extractInstallmentData($parse);
                         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
-                        $connection->truncateTable($table);
-                        $this->saveAllModels($models);
+                        $connection->delete($table, 'api_type = \''.$apiType.'\'');
+                        $this->saveAllModels($models, $apiType);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
                 }
@@ -116,8 +137,6 @@ class SyncInstallments
         } catch (\Exception $exception) {
             $this->logger->critical($exception);
         }
-
-        Profiler::stop('leanpay_sync_installment');
     }
 
     /**
@@ -142,16 +161,24 @@ class SyncInstallments
      * Saves all models
      *
      * @param array $models
+     * @param string $apiType
      */
-    private function saveAllModels($models = [])
+    private function saveAllModels($models = [], $apiType = Data::API_ENDPOINT_SLOVENIA)
     {
         $this->eventManager->dispatch(
             'leanpay_syncinstallment_cron_models_save',
-            ['models' => $models]
+            [
+                'models' => $models,
+                'api_type' => $apiType
+            ]
         );
 
         foreach ($models as $model) {
             try {
+                $model = array_merge(
+                    $model,
+                    [InstallmentInterface::API_TYPE => $apiType]
+                );
                 $this->repository->save($this->repository->newModel()->setData($model));
             } catch (CouldNotSaveException $exception) {
                 $this->logger->critical($exception);

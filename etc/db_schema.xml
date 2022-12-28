@@ -7,6 +7,7 @@
         <column xsi:type="varchar" name="group_id" default="0" nullable="false" comment="Group ID"/>
         <column xsi:type="varchar" name="group_name" nullable="false" length="255" comment="Group name"/>
         <column xsi:type="varchar" name="currency_code" nullable="false" length="3" comment="Currency Code"/>
+        <column xsi:type="varchar" name="api_type" nullable="false" length="3" comment="API Endpoint Type"/>
         <column xsi:type="int" name="loan_amount" default="0" nullable="false" unsigned="true" comment="Loan Amount"/>
         <column xsi:type="int" name="installment_period" default="0" nullable="false" unsigned="true"
                 comment="Installment Period"/>
@@ -24,6 +25,7 @@
             <column name="group_id"/>
             <column name="group_name"/>
             <column name="currency_code"/>
+            <column name="api_type"/>
         </index>
     </table>
 </schema>

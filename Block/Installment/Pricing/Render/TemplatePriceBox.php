@@ -2,6 +2,7 @@
 
 namespace Leanpay\Payment\Block\Installment\Pricing\Render;
 
+use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -118,30 +119,5 @@ class TemplatePriceBox extends Template
         }
 
         return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
-    }
-
-    /**
-     * Returns Json config
-     *
-     * @return string
-     */
-    public function getJsonConfig()
-    {
-        $list = $this->installmentHelper->getInstallmentList($this->getAmount());
-        $list = array_values($list);
-        $values = [];
-        $listLength = count($list);
-        for ($index = 0; $index < $listLength; $index++) {
-            $values[] = $index;
-        }
-
-        $data = [
-            'min' => array_key_first($list),
-            'max' => array_key_last($list),
-            'data' => $list,
-            'value' => $values
-        ];
-
-        return (string) $this->serializer->serialize($data);
     }
 }

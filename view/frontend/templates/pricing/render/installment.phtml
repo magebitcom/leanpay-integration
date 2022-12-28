@@ -18,38 +18,38 @@ $color = $helper->getInstallmentColor();
     <?php if ($price && $canShow): ?>
         <div class="installment-price"
              style="color: <?= $block->escapeHtmlAttr($color) ?>;
-                    font-size: <?= $block->escapeHtmlAttr($fontSize)?>px;">
-            <?= $block->escapeHtml(__('ali od %1 € / mesec', $price)); ?>
+                 font-size: <?= $block->escapeHtmlAttr($fontSize)?>px;">
+            <?= $block->escapeHtml($helper->getCategoryPriceBlock($block->getAmount())); ?>
         </div>
     <?php endif; ?>
 <?php else: ?>
     <?php if ($price && $canShow): ?>
         <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
             <span class="installment-wrapper-start"><?= $block->escapeHtml(__('ali')); ?></span>
-            <div class="installment-additional-wrapper">
-                <div class="installment-plans" style="font-size: <?= /* @noEscape */ $fontSize ?>px;">
+            <div class="installment-additional-wrapper" style="font-size: <?= /* @noEscape */ $fontSize ?>px;">
+                <div class="installment-plans">
                     <div class="installment-block-wrapper">
                         <?php $list = $helper->getInstallmentList($block->getAmount()); ?>
                         <span class="installment-block">
-                            <?= $block->escapeHtml(__('Hitro in enostavno obročno odplačevanje')); ?>
+                            <?= $block->escapeHtml(__($helper->getTranslation('Hitro in enostavno obročno odplačevanje'))); ?>
                         </span>
                         <span class="installment-min-price">
                         <span class="installment-price"
                               style="background-color:<?= $block->escapeHtmlAttr($helper->getBackgroundColor()); ?>;">
-                            <?= $block->escapeHtml(__('Že od')); ?>
+                            <?= $block->escapeHtml(__($helper->getTranslation('Že od'))); ?>
                             <strong>
-                                <?= $block->escapeHtml(__('%1 €', $block->getLowestInstallmentPrice())); ?>
+                                <?= $block->escapeHtml($helper->getProductPriceBlock($block->getAmount()));?>
                             </strong>
                         </span>
                         <span class="installment-message"
                               style="border: 1px solid <?= $block->escapeHtmlAttr($helper->getBackgroundColor()) ?>;">
-                            <?= $block->escapeHtml(__('Vaš mesečni obrok')); ?>
-                        </span>
+                            <?= $block->escapeHtml(__($helper->getTranslation('Vaš mesečni obrok'))); ?>
                         </span>
                     </div>
                 </div>
                 <div class="installment-mouse">
                     <div class="installment-info">
+                        <?php if ($helper->allowDownPayment()): ?>
                         <div class="installment-deposit">
                             <span class="deposit">
                                 <?= $block->escapeHtml(
@@ -57,9 +57,10 @@ $color = $helper->getInstallmentColor();
                                 ); ?>
                             </span>
                         </div>
+                        <?php endif;?>
                         <div class="installment-logo-wrapper">
                             <span class="installment-logo-text">
-                                <?= $block->escapeHtml(__('Izračun obrokov')); ?>
+                                <?= $block->escapeHtml(__($helper->getTranslation('Izračun obrokov'))); ?>
                             </span>
                             <span class="installment-logo-span">
                                 <img class="installment-logo"
@@ -76,40 +77,24 @@ $color = $helper->getInstallmentColor();
                         </div>
                         <div class="installment-plans">
                             <div class="installment-lowest-amount">
-                                <?php $data = $helper->getToolTipData($block->getAmount(), true); ?>
-                                <?php if (isset(
-                                    $data[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                    $data[InstallmentInterface::INSTALLMENT_PERIOD]
-                                )): ?>
-                                    <?php
-                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
-                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-                                    ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), true)): ?>
                                     <span class="installment-lowest-message">
-                                     <?= $block->escapeHtml(__('Želim čim nižji obrok')); ?>
-                                    <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $amount)); ?></strong>
+                                     <?= $block->escapeHtml(__($helper->getTranslation('Želim čim nižji obrok'))); ?>
+                                    <strong><?= $block->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), true)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="installment-lowest-term">
-                                <?php $data = $helper->getToolTipData($block->getAmount(), false); ?>
-                                <?php if (isset(
-                                    $data[InstallmentInterface::INSTALLMENT_AMOUNT],
-                                    $data[InstallmentInterface::INSTALLMENT_PERIOD]
-                                )): ?>
-                                    <?php
-                                    $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
-                                    $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
-                                    ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), false)): ?>
                                     <span class="installment-lowest-message">
-                                        <?= $block->escapeHtml(__('Odplačati želim čim prej')); ?>
-                                        <strong><?= $block->escapeHtml(__('%1 x %2€', $term, $amount)); ?></strong>
+                                        <?= $block->escapeHtml(__($helper->getTranslation('Odplačati želim čim prej'))); ?>
+                                        <strong><?= $block->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), false)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="installment-slider-term">
                                 <div class="term-text">
-                                    <?= $block->escapeHtml(__('Želim si izbrati svoje obroke')); ?>
+                                    <?= $block->escapeHtml(__($helper->getTranslation('Želim si izbrati svoje obroke'))); ?>
                                 </div>
                                 <div class="term-html">
                                     <span class="installment_period">
@@ -118,28 +103,27 @@ $color = $helper->getInstallmentColor();
                                 </div>
                                 <div class="installment-slider"></div>
                                 <div class="total-html">
-                                    <span><?= $block->escapeHtml(__('Informativni znesek za plačilo')); ?></span>
+                                    <span><?= $block->escapeHtml(__($helper->getTranslation('Informativni znesek za plačilo'))); ?></span>
                                     <span class="total"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="installment-quick-information">
                             <?= $block->escapeHtml(
-                                __('Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. '.
-                                    'Za obročno plačilo v košarici izberi Leanpay. '.
-                                    'Informativni izračun ne vključuje stroškov ocene tveganja.')
+                                __($helper->getTranslation('Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ').
+                                    $helper->getTranslation('Za obročno plačilo v košarici izberi Leanpay. '))
                             ); ?>
                         </div>
                         <div class="installment-links">
                             <a href="<?= $block->escapeUrl($helper->getCheckYourLimitURL()); ?>"
                                target="_blank"
                                rel="noopener noreferrer">
-                                <span class="link-option"><?= $block->escapeHtml(__('Preveri svoj limit')); ?></span>
+                                <span class="link-option"><?= $block->escapeHtml(__($helper->getTranslation('Preveri svoj limit'))); ?></span>
                             </a>
                             <a href="<?= $block->escapeUrl($helper->getMoreInfoURL()); ?>"
                                target="_blank"
                                rel="noopener noreferrer">
-                                <span class="link-option"><?= $block->escapeHtml(__('Več informacij')); ?></span>
+                                <span class="link-option"><?= $block->escapeHtml(__($helper->getTranslation('Več informacij'))); ?></span>
                             </a>
                         </div>
                     </div>
@@ -147,7 +131,7 @@ $color = $helper->getInstallmentColor();
             </div>
         </div>
         <div class="installment-slider-data" style="display: none; visibility: hidden;">
-            <?= $block->getJsonConfig() ?: ''; ?>
+            <?= $helper->getJsonConfig($block->getAmount()) ?: ''; ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>

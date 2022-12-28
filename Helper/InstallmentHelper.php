@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Helper;
 
+use Leanpay\Payment\Api\Data\InstallmentInterface;
 use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class InstallmentHelper extends AbstractHelper
 {
@@ -61,6 +65,17 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
+     * Leanpay MIN order allowed price
+     */
+    public const LEANPAY_INSTALLMENT_MIN = 'payment/leanpay/min_order_total';
+
+    /**
+     * Leanpay MAX order allowed price
+     */
+    public const LEANPAY_INSTALLMENT_MAX = 'payment/leanpay/max_order_total';
+
+
+    /**
      * Installment view options
      */
     public const LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE = 'HOMEPAGE';
@@ -74,6 +89,16 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE = 'CATEGORY_PAGE';
 
     /**
+     * Leanpay Installment allowed currencies
+     */
+    public const LEANPAY_INSTALLMENT_CRON_CURRENCIES = 'payment/leanpay_installment/cron_currencies';
+
+    /**
+     * Fixed conversion rate during euro transition period
+     */
+    public const TRANSITION_CONVERSION_RATE = 7.53450;
+
+    /**
      * @var ViewBlockConfig
      */
     private $blockConfig;
@@ -84,17 +109,38 @@ class InstallmentHelper extends AbstractHelper
     private $resourceModel;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    protected $dataHelper;
+
+    /**
      * InstallmentHelper constructor.
      *
+     * @param Data $dataHelper
+     * @param SerializerInterface $serializer
+     * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param ViewBlockConfig $blockConfig
      * @param Installment $resourceModel
      */
     public function __construct(
+        Data $dataHelper,
+        SerializerInterface $serializer,
+        StoreManagerInterface $storeManager,
         Context $context,
         ViewBlockConfig $blockConfig,
         Installment $resourceModel
     ) {
+        $this->dataHelper = $dataHelper;
+        $this->serializer = $serializer;
+        $this->storeManager = $storeManager;
         $this->resourceModel = $resourceModel;
         $this->blockConfig = $blockConfig;
         parent::__construct($context);
@@ -107,7 +153,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getGroup(): string
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -200,6 +246,11 @@ class InstallmentHelper extends AbstractHelper
     {
         $result = false;
 
+        $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        if ($currentStoreCurrency !== "HRK" && $currentStoreCurrency !== "EUR") {
+            return $result;
+        }
+
         $config = $this->getAllowedViews();
 
         if (strlen($config) > 0 && strpos($config, 'DISABLED') !== false) {
@@ -221,11 +272,28 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getLowestInstallmentPrice($price)
     {
+        $scopeId = $this->storeManager->getStore()->getId();
+
+        $min = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MIN,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+        $max = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MAX,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+
         if (!$price) {
             return '';
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $this->getGroup());
+        if ($price > $max || $price < $min) {
+            return '';
+        }
+
+        return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->dataHelper->getApiType());
     }
 
     /**
@@ -318,5 +386,208 @@ class InstallmentHelper extends AbstractHelper
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCurrency(): string
+    {
+        return $this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+            ScopeInterface::SCOPE_STORE,
+            $this->storeManager->getStore()->getId()
+        );
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCurrencyCode(): string
+    {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return "HRK";
+        } else {
+            return "€";
+        }
+    }
+
+    /**
+     * @param $text
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getTranslation($text): string
+    {
+        $translationArray = [
+            'Hitro in enostavno obročno odplačevanje' => 'Brz i jednostavan izračun rata',
+            'Že od' => 'Već od',
+            'Vaš mesečni obrok' => 'mjesečno',
+            'Izračun obrokov' => 'Klikni za izračun',
+            'Želim čim nižji obrok' => 'Želim što niži iznos rate',
+            'Odplačati želim čim prej' => 'Želim otplatiti što prije',
+            'Želim si izbrati svoje obroke' => 'Želim sam odabarati broj rata',
+            'Informativni znesek za plačilo' => '',
+            'Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ' => 'Leanpay omogućuje brzo i jednostavno plaćanje na rate preko interneta. ',
+            'Za obročno plačilo v košarici izberi Leanpay. ' => 'Za plaćanje na rate u košarici odaberite Leanpay kao vrstu plaćanja. ',
+            'Informativni izračun ne vključuje stroškov ocene tveganja.' => 'Informativni izračun ne uključuje troškove procjene rizika.',
+            'Preveri svoj limit' => 'Provjerite svoj limit',
+            'Več informacij' => 'Više informacija'
+        ];
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA && isset($translationArray[$text])) {
+            return $translationArray[$text];
+        } else {
+            return $text;
+        }
+    }
+
+    /**
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function allowDownPayment(): bool
+    {
+        return $this->dataHelper->getApiType() === Data::API_ENDPOINT_SLOVENIA;
+    }
+
+    /**
+     * @param string $price
+     * @return string
+     */
+    public function getTransitionPrice (string $price): string
+    {
+        $convertedPrice = $price * self::TRANSITION_CONVERSION_RATE;
+        return (string) round($convertedPrice,2);
+    }
+
+    /**
+     * @param string $price
+     * @return string
+     */
+    public function getTransitionPriceHkrToEur (string $price): string
+    {
+        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
+        return (string) round($convertedPrice,2);
+    }
+
+    /**
+     * Returns Json config
+     *
+     * @return string
+     */
+    public function getJsonConfig($amount)
+    {
+        $list = $this->getInstallmentList($amount);
+        $list = array_values($list);
+        $values = [];
+        $listLength = count($list);
+        for ($index = 0; $index < $listLength; $index++) {
+            $values[] = $index;
+        }
+
+        $data = [
+            'min' => array_key_first($list),
+            'max' => array_key_last($list),
+            'data' => $list,
+            'value' => $values,
+            'currency' => 'EUR',
+        ];
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            $convertedValues = [];
+            foreach ($list as $value) {
+                $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] * self::TRANSITION_CONVERSION_RATE;;
+            }
+            $data['convertedCurrency'] = 'HRK';
+            $data['convertedValues'] = $convertedValues;
+        }
+
+        return (string) $this->serializer->serialize($data);
+    }
+
+    /**
+     * @param $amount
+     * @param false $useTerm
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getTooltipPriceBlock($amount, $useTerm = false): \Magento\Framework\Phrase
+    {
+        $data = $this->getToolTipData($amount, $useTerm);
+        $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
+        $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return __(
+                '%1 x %2%3 / %4%5',
+                $term,
+                $amount,
+                'EUR',
+                $this->getTransitionPrice($amount),
+                $this->getCurrencyCode()
+            );
+        }
+        return __('%1 x %2%3', $term, $amount, $this->getCurrencyCode());
+    }
+
+    /**
+     * @param $amount
+     * @param false $useTerm
+     * @return bool
+     */
+    public function shouldRenderTooltipPriceBlock($amount,$useTerm = false): bool
+    {
+        $data = $this->getToolTipData($amount, $useTerm);
+        return isset(
+            $data[InstallmentInterface::INSTALLMENT_AMOUNT],
+            $data[InstallmentInterface::INSTALLMENT_PERIOD]
+        );
+    }
+
+    /**
+     * @param $amount
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCategoryPriceBlock($amount): \Magento\Framework\Phrase
+    {
+        $price = $this->getLowestInstallmentPrice($amount);
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return __(
+                'od %1 %2 / %3 %4 mjesečno',
+                $price,
+                'EUR',
+                $this->getTransitionPrice($price),
+                $this->getCurrencyCode(),
+            );
+        }
+        return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
+    }
+
+    /**
+     * @param $amount
+     * @return \Magento\Framework\Phrase
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getProductPriceBlock($amount): \Magento\Framework\Phrase
+    {
+        $price = $this->getLowestInstallmentPrice($amount);
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return
+                __(
+                    '%1 %2 / %3 %4',
+                    $price,
+                    'EUR',
+                    $this->getTransitionPrice($price),
+                    $this->getCurrencyCode()
+                );
+        }
+        return __('%1 %2', $price, $this->getCurrencyCode());
     }
 }
