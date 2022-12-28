@@ -563,7 +563,7 @@ class InstallmentHelper extends AbstractHelper
                 $price,
                 'EUR',
                 $this->getTransitionPrice($price),
-                $this->getCurrencyCode(),
+                $this->getCurrencyCode()
             );
         }
         return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
