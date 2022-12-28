@@ -5,6 +5,7 @@ namespace Leanpay\Payment\Controller\Installment;
 
 use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
 use Leanpay\Payment\Helper\Data;
+use Leanpay\Payment\Helper\InstallmentHelper;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -14,6 +15,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Index implements ActionInterface
 {
@@ -53,8 +55,19 @@ class Index implements ActionInterface
     private $request;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var InstallmentHelper
+     */
+    private $installmentHelper;
+
+    /**
      * Index constructor.
-     *
+     * @param InstallmentHelper $installmentHelper
+     * @param StoreManagerInterface $storeManager
      * @param JsonFactory $jsonFactory
      * @param Data $helper
      * @param TemplatePriceBox $template
@@ -63,6 +76,8 @@ class Index implements ActionInterface
      * @param RequestInterface $request
      */
     public function __construct(
+        InstallmentHelper $installmentHelper,
+        StoreManagerInterface $storeManager,
         JsonFactory $jsonFactory,
         Data $helper,
         TemplatePriceBox $template,
@@ -70,6 +85,8 @@ class Index implements ActionInterface
         ResultRedirectFactory $resultRedirectFactory,
         RequestInterface $request
     ) {
+        $this->installmentHelper = $installmentHelper;
+        $this->storeManager = $storeManager;
         $this->jsonFactory = $jsonFactory;
         $this->helper = $helper;
         $this->template = $template;
@@ -93,7 +110,6 @@ class Index implements ActionInterface
         $isCheckout = (bool)$this->request->getParam('checkout');
         $enabled = $this->helper->isActive();
         $response = $this->jsonFactory->create();
-
         if ($amount && $enabled) {
             $response->setData(
                 [
