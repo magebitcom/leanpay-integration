@@ -67,6 +67,16 @@ class Data extends AbstractHelper
     ];
 
     /**
+     * Leanpay Magento 2 base url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL = 'payment/leanpay/leanpay_base_url';
+
+    /**
+     * Leanpay Magento 2 base_dev url in config
+     */
+    public const LEANPAY_CONFIG_BASE_URL_DEV = 'payment/leanpay/leanpay_base_url_dev';
+
+    /**
      * Leanpay Magento 2 api key path in Database
      */
     public const LEANPAY_API_CONFIG_API_KEY_PATH = 'payment/leanpay/api_key';
@@ -112,6 +122,11 @@ class Data extends AbstractHelper
     public const LEANPAY_MAGENTO_CHECKOUT_URL = 'payment/leanpay/checkout_url';
 
     /**
+     * Magento Checkout url for redirect after failure
+     */
+    public const LEANPAY_MAGENTO_CHECKOUT_URL_A = 'payment/leanpay/checkout_url';
+
+    /**
      * Mode types
      */
     public const LEANPAY_API_MODE_DEV = 'DEV_MODE';
@@ -124,6 +139,7 @@ class Data extends AbstractHelper
     public const LEANPAY_PROMOS_MFP_START_DATE = 'leanpay_promos/mfp/start_date';
     public const LEANPAY_PROMOS_MFP_END_DATE = 'leanpay_promos/mfp/end_date';
     public const LEANPAY_PROMOS_MFP_CART_SIZE = 'leanpay_promos/mfp/cart_size';
+    public const LEANPAY_PROMOS_MFP_COUNTRY = 'leanpay_promos/mfp/product_country';
 
     /**
      * Multiple financin producs names
@@ -211,6 +227,21 @@ class Data extends AbstractHelper
     public function getStoreId(): int
     {
         return (int)$this->storeManager->getStore()->getId();
+    }
+
+    public function getCurrencyType(): string
+    {
+        $currencyType = $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_CURRENCY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+
+        if (!$currencyType) {
+            $currencyType = 'EUR';
+        }
+
+        return (string)$currencyType;
     }
 
     /**
@@ -391,6 +422,18 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @return string
+     */
+    public function getCountryCode(): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::LEANPAY_PROMOS_MFP_COUNTRY,
+            ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+    }
+
+    /**
      * Get Magento Checkout URL
      *
      * @return string
@@ -486,7 +529,7 @@ class Data extends AbstractHelper
                     \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 );
-                $apiKeys[$endpointType] = $apiKey;
+                $apiKeys[$currencyType] = ['key' => $apiKey, 'store_id' => $store->getId()];
             }
         }
         return $apiKeys;

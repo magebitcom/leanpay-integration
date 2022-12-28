@@ -28,4 +28,19 @@
             <column name="api_type"/>
         </index>
     </table>
+    <table name="leanpay_products" resource="default" engine="innodb" comment="Leanpay base table">
+        <column xsi:type="bigint" name="entity_id" padding="6" unsigned="false" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="varchar" name="group_id" default="0" nullable="false" comment="GroupCode"/>
+        <column xsi:type="varchar" name="group_name" default="0" nullable="false" comment="GroupCode"/>
+        <column xsi:type="varchar" name="country" default="0" nullable="false" comment="Country"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="LEANPAY_PRODUCT_GROUP_ID_GROUP_NAME_COUNTRY" indexType="fulltext">
+            <column name="group_id"/>
+            <column name="group_name"/>
+            <column name="country"/>
+        </index>
+    </table>
 </schema>

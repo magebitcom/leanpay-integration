@@ -16,5 +16,20 @@
             "LEANPAY_INSTALLMENT_INSTALLMENT_AMOUNT_INSTALLMENT_PERIOD": true,
             "LEANPAY_INSTALLMENT_GROUP_ID_GROUP_NAME_CURRENCY_CODE": true
         }
+    },
+    "leanpay_products": {
+        "column": {
+            "entity_id": true,
+            "group_id": true,
+            "country": true,
+            "group_name": true
+        },
+        "index": {
+            "LEANPAY_PRODUCTS_GROUP_ID_COUNTRY": true,
+            "LEANPAY_PRODUCTS_GROUP_ID_GROUP_NAME_COUNTRY": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
     }
 }
