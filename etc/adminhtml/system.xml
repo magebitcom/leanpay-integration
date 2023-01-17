@@ -205,11 +205,6 @@
             <group id="mfp" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Multiple Financing Products</label>
 
-                <field id="product_country" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Financing Product Country</label>
-                    <source_model>Leanpay\Payment\Model\Config\Source\VendorProductCountryCode</source_model>
-                </field>
-
                 <field id="product_name" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Financing Product Name</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\VendorProductCode</source_model>

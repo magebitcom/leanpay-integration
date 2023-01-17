@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Helper;
 
 use Exception;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
@@ -595,11 +596,19 @@ class Data extends AbstractHelper
     public function getLeanpayPromosVendorCode(): string
     {
         $storeId = (int) $this->storeManager->getStore()->getId();
-        $name = $this->getLeanpayPromosMFPName($storeId);
-        return array_key_exists($name, $this->vendorProductCodes)
-            ? $this->vendorProductCodes[$name]
-            : '';
+        return $this->getLeanpayPromosMFPName($storeId);
     }
+
+    public function getProductPromoCode(ProductInterface $product = null){
+        if (!$product) {
+            return '';
+        }
+        $data = [];
+        $data[] = $product;
+        return $this->getPromoCode($data);
+
+    }
+
 
     /**
      * Need to be able to validate and undestand correct rule
@@ -608,7 +617,7 @@ class Data extends AbstractHelper
      */
     public function getPromoCode($handler): string
     {
-        if (!$handler instanceof OrderInterface && !$handler instanceof CartInterface) {
+        if ((!$handler instanceof OrderInterface && !$handler instanceof CartInterface) xor is_array($handler)) {
             return '';
         }
 
@@ -634,12 +643,23 @@ class Data extends AbstractHelper
     private function validateProduct($handler)
     {
         $validOption = [];
-
         $result = '';
-        if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
+
+        if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
+
+            if (is_array($handler)) {
+                $items = $handler;
+            } else {
+                $items = $handler->getItems();
+            }
+
             $cache = [];
-            foreach ($handler->getItems() as $item) {
-                $product = $item->getProduct();
+            foreach ($items as $item) {
+                if (is_array($handler)) {
+                    $product = $item;
+                } else {
+                    $product = $item->getProduct();
+                }
                 $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
                 $incluse = $product->getData('leanpay_product_exclusive_inclusive') == 'inclusive' ? 1 : 0;
@@ -674,10 +694,17 @@ class Data extends AbstractHelper
         }
 
         if (!empty($validOption)) {
+
+            usort($validOption, function ($a, $b) {
+                return ($a['priority'] > $b['priority']) ? -1 : 1;
+            });
+
             foreach ($validOption as $option) {
                 if ($option['inclusive']) {
                     $result = $option['code'];
                     break;
+                }else{
+                    $result = $option['code'];
                 }
             }
         }
@@ -694,9 +721,15 @@ class Data extends AbstractHelper
         $result = '';
         $validOption = [];
         $ids = [];
-        if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
-            foreach ($handler->getItems() as $item) {
-                $ids[] = $item->getProductId();
+        if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
+            if (is_array($handler)) {
+                $items = $handler;
+            } else {
+                $items = $handler->getItems();
+            }
+
+            foreach ($items as $item) {
+                $ids[] = $item->getProductId() ?? $item->getId();
             }
 
             if (!empty($ids)) {
@@ -726,27 +759,32 @@ class Data extends AbstractHelper
                             $categoryPriority = (bool)$category->getData('leanpay_category_priority');
                             $categoryIsExclusive = $category->getData('leanpay_category_exclusive_inclusive') == 'inclusive' ? true : false;
                             $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
-                            $categoryProductValue = $category->getData('leanpay_category_financing_product_value');
                             $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
 
                             if ($categoryIsTime) {
                                 if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
-                                    if (!$result) {
-                                        $result = $categoryProductValue;
-                                    } else {
-                                        if ($categoryIsExclusive) {
-                                            $result = $categoryProductValue;
-                                        }
-                                    }
+                                    $validOption[] = [
+                                        'priority' => $categoryPriority,
+                                        'inclusive' => $categoryIsExclusive,
+                                        'code' => $categoryVendorProduct
+                                    ];
                                 }
                             } else {
-                                if (!$result) {
-                                    $result = $categoryProductValue;
-                                } else {
-                                    if ($categoryIsExclusive) {
-                                        $result = $categoryProductValue;
-                                    }
-                                }
+                                $validOption[] = [
+                                    'priority' => $categoryPriority,
+                                    'inclusive' => $categoryIsExclusive,
+                                    'code' => $categoryVendorProduct
+                                ];
+                            }
+                        }
+                        if (!empty($validOption) && is_array($validOption)){
+                            usort($validOption, function ($a, $b) {
+                                return ($a['priority'] > $b['priority']) ? -1 : 1;
+                            });
+
+                            foreach ($validOption as $item){
+                                $result = $item['code'];
+                                break;
                             }
                         }
                     }

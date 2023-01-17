@@ -8,8 +8,15 @@ use Magento\Framework\Escaper;
 /** @var DefaultPriceBox $block */
 /** @var Escaper $escaper */
 
+$financialProduct = $block->getFinancialProduct();
+$vendorProductName = $block->getInstallmentVendorName($financialProduct);
 
-$price = $block->getLowestInstallmentPrice();
+if ($vendorProductName) {
+    $price = $block->getLowestInstallmentPrice($vendorProductName);
+} else {
+    $price = $block->getLowestInstallmentPrice();
+}
+
 $viewKey = $block->getData('view_key') ?? InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
 $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);

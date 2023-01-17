@@ -270,7 +270,7 @@ class InstallmentHelper extends AbstractHelper
      * @param string $price
      * @return string
      */
-    public function getLowestInstallmentPrice($price)
+    public function getLowestInstallmentPrice($price, $group = '')
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
@@ -293,7 +293,11 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $this->getGroup(), $this->dataHelper->getApiType());
+        if (!$group){
+            $group = $this->getGroup();
+        }
+
+        return $this->resourceModel->getLowestInstallment($price, $group, $this->getCurrency());
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Cron;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
+use Leanpay\Payment\Api\Data\InstallmentProductInterface;
 use Leanpay\Payment\Api\InstallmentProductRepositoryInterface;
 use Leanpay\Payment\Api\InstallmentRepositoryInterface;
 use Leanpay\Payment\Helper\Data;
@@ -211,6 +212,7 @@ class SyncInstallments
         $index = 0;
 
         $installmentProductCache = [];
+        $connection = $this->resource->getConnection();
 
         foreach (reset($parse) as $group) {
             if (is_object($group) && $group->groupId && $group->loanAmounts) {
@@ -223,21 +225,19 @@ class SyncInstallments
                             $models[$index][InstallmentInterface::LOAN_AMOUNT] = $amount->loanAmount;
                             $models[$index][InstallmentInterface::INSTALLMENT_AMOUNT] = $installment->installmentAmout;
                             $models[$index][InstallmentInterface::INSTALLMENT_PERIOD] = $installment->numberOfMonths;
-                            $countryCode = $this->helper->getCountryCode();
+                            $countryCode = $group->currencyCode;
                             if (!isset($installmentProductCache[$group->groupId . $countryCode])) {
                                 $isStored = $this->installmentProductRepository->getByGroupId($group->groupId, $countryCode);
 
                                 if (!$isStored) {
                                     $vendorProduct = $this->installmentProductRepository->newModel();
-                                    $country = $this->helper->getCountryCode() == 'si' ? 'Slovenia' : 'Croatia';
-                                    $vendorProduct->setCountry($this->helper->getCountryCode());
                                     $vendorProduct->setGroupId($group->groupId);
-                                    $groupName = sprintf('%s ( %s )', $group->groupName, $country);
+                                    $groupName = $group->groupName;
                                     $vendorProduct->setGroupName($groupName);
                                     $this->installmentProductRepository->save($vendorProduct);
                                 }
 
-                                $installmentProductCache[$group->groupId] = true;
+                                $installmentProductCache[$group->groupId. $countryCode] = true;
                             }
 
                             $index++;
