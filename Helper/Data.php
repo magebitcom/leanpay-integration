@@ -478,6 +478,20 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get Leanpay api type
+     *
+     * @return string
+     */
+    public function getApiType(): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+    }
+
+    /**
      * Gets all unique api keys
      *
      * @return array
