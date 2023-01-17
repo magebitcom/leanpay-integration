@@ -233,7 +233,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getBackgroundColor()
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
     }
 
     /**
@@ -293,7 +293,7 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        if (!$group){
+        if (!$group) {
             $group = $this->getGroup();
         }
 
@@ -306,8 +306,12 @@ class InstallmentHelper extends AbstractHelper
      * @param float $price
      * @return array
      */
-    public function getInstallmentList($price)
+    public function getInstallmentList($price, $group = '')
     {
+        if ($group) {
+            return $this->resourceModel->getInstallmentList($price, $group);
+        }
+
         return $this->resourceModel->getInstallmentList($price, $this->getGroup());
     }
 
@@ -318,10 +322,13 @@ class InstallmentHelper extends AbstractHelper
      * @param bool $useTerm
      * @return string
      */
-    public function getToolTipData($price, $useTerm)
+    public function getToolTipData($price, $useTerm, $group = '')
     {
         if (!$price) {
             return '';
+        }
+        if ($group){
+            return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
         return $this->resourceModel->getToolTipData($price, $this->getGroup(), $useTerm);
@@ -463,7 +470,7 @@ class InstallmentHelper extends AbstractHelper
      * @param string $price
      * @return string
      */
-    public function getTransitionPrice (string $price): string
+    public function getTransitionPrice(string $price): string
     {
         $convertedPrice = $price * self::TRANSITION_CONVERSION_RATE;
         return (string) round($convertedPrice,2);
@@ -476,7 +483,7 @@ class InstallmentHelper extends AbstractHelper
     public function getTransitionPriceHkrToEur (string $price): string
     {
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
-        return (string) round($convertedPrice,2);
+        return (string)round($convertedPrice, 2);
     }
 
     /**
@@ -484,9 +491,9 @@ class InstallmentHelper extends AbstractHelper
      *
      * @return string
      */
-    public function getJsonConfig($amount)
+    public function getJsonConfig($amount, $group = '')
     {
-        $list = $this->getInstallmentList($amount);
+        $list = $this->getInstallmentList($amount, $group);
         $list = array_values($list);
         $values = [];
         $listLength = count($list);
@@ -510,7 +517,7 @@ class InstallmentHelper extends AbstractHelper
             $data['convertedValues'] = $convertedValues;
         }
 
-        return (string) $this->serializer->serialize($data);
+        return (string)$this->serializer->serialize($data);
     }
 
     /**
@@ -520,9 +527,9 @@ class InstallmentHelper extends AbstractHelper
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getTooltipPriceBlock($amount, $useTerm = false): \Magento\Framework\Phrase
+    public function getTooltipPriceBlock($amount, $useTerm = false, $group = ''): \Magento\Framework\Phrase
     {
-        $data = $this->getToolTipData($amount, $useTerm);
+        $data = $this->getToolTipData($amount, $useTerm, $group);
         $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
         $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
@@ -543,7 +550,7 @@ class InstallmentHelper extends AbstractHelper
      * @param false $useTerm
      * @return bool
      */
-    public function shouldRenderTooltipPriceBlock($amount,$useTerm = false): bool
+    public function shouldRenderTooltipPriceBlock($amount, $useTerm = false): bool
     {
         $data = $this->getToolTipData($amount, $useTerm);
         return isset(
@@ -558,10 +565,15 @@ class InstallmentHelper extends AbstractHelper
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCategoryPriceBlock($amount): \Magento\Framework\Phrase
+    public function getCategoryPriceBlock($amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
     {
-        $price = $this->getLowestInstallmentPrice($amount);
-        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+        if ($preCalculatedValue) {
+            $price = $preCalculatedValue;
+        } else {
+            $price = $this->getLowestInstallmentPrice($amount);
+        }
+
+        if ($this->getCurrency() === 'HRK') {
             return __(
                 'od %1 %2 / %3 %4 mjesečno',
                 $price,
@@ -579,10 +591,15 @@ class InstallmentHelper extends AbstractHelper
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getProductPriceBlock($amount): \Magento\Framework\Phrase
+    public function getProductPriceBlock($amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
     {
-        $price = $this->getLowestInstallmentPrice($amount);
-        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+        if ($preCalculatedValue) {
+            $price = $preCalculatedValue;
+        } else {
+            $price = $this->getLowestInstallmentPrice($amount);
+        }
+
+        if ($this->getCurrency() === 'HRK') {
             return
                 __(
                     '%1 %2 / %3 %4',
