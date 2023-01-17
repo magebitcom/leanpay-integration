@@ -11,6 +11,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use function GuzzleHttp\Psr7\str;
 
 class InstallmentHelper extends AbstractHelper
 {
@@ -131,13 +132,14 @@ class InstallmentHelper extends AbstractHelper
      * @param Installment $resourceModel
      */
     public function __construct(
-        Data $dataHelper,
-        SerializerInterface $serializer,
+        Data                  $dataHelper,
+        SerializerInterface   $serializer,
         StoreManagerInterface $storeManager,
-        Context $context,
-        ViewBlockConfig $blockConfig,
-        Installment $resourceModel
-    ) {
+        Context               $context,
+        ViewBlockConfig       $blockConfig,
+        Installment           $resourceModel
+    )
+    {
         $this->dataHelper = $dataHelper;
         $this->serializer = $serializer;
         $this->storeManager = $storeManager;
@@ -327,7 +329,7 @@ class InstallmentHelper extends AbstractHelper
         if (!$price) {
             return '';
         }
-        if ($group){
+        if ($group) {
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
@@ -406,7 +408,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrency(): string
     {
-        return $this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+        return (string)$this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
             ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
@@ -473,14 +475,14 @@ class InstallmentHelper extends AbstractHelper
     public function getTransitionPrice(string $price): string
     {
         $convertedPrice = $price * self::TRANSITION_CONVERSION_RATE;
-        return (string) round($convertedPrice,2);
+        return (string)round($convertedPrice, 2);
     }
 
     /**
      * @param string $price
      * @return string
      */
-    public function getTransitionPriceHkrToEur (string $price): string
+    public function getTransitionPriceHkrToEur(string $price): string
     {
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
         return (string)round($convertedPrice, 2);
