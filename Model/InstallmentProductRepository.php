@@ -4,17 +4,18 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Model;
 
 use Magento\Framework\App\ObjectManager;
-use Leanpay\Payment\Api\Data\InstallmentInterface;
+use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Leanpay\Payment\Api\InstallmentRepositoryInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Leanpay\Payment\Api\Data\InstallmentInterfaceFactory;
-use Leanpay\Payment\Api\Data\InstallmentSearchResultsInterfaceFactory;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Leanpay\Payment\Api\Data\InstallmentProductInterface;
+use Leanpay\Payment\Api\Data\InstallmentProductInterfaceFactory;
+use Leanpay\Payment\Api\InstallmentProductRepositoryInterface;
+use Leanpay\Payment\Api\Data\InstallmentProductSearchResultsInterfaceFactory;
 
-class InstallmentRepository implements InstallmentRepositoryInterface
+class InstallmentProductRepository implements InstallmentProductRepositoryInterface
 {
     /**
      * @var ResourceModel\Installment
@@ -27,39 +28,46 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     private $modelFactory;
 
     /**
-     * @var PageCollectionProcessor|CollectionProcessorInterface
+     * @var SearchCriteriaBuilderFactory
+     */
+    private $criteriaBuilderFactory;
+
+    /**
+     * @var InstallmentCollectionProcessor
      */
     private $collectionProcessor;
 
     /**
-     * InstallmentRepository constructor.
+     *  InstallmentProductRepository constructor
      *
-     * @param ResourceModel\Installment $resourceModel
-     * @param ResourceModel\Installment\CollectionFactory $collectionFactory
-     * @param InstallmentInterfaceFactory $modelFactory
+     * @param ResourceModel\InstallmentProduct $resourceModel
+     * @param ResourceModel\InstallmentProduct\CollectionFactory $collectionFactory
+     * @param InstallmentProductInterfaceFactory $modelFactory
      */
     public function __construct(
-        ResourceModel\Installment $resourceModel,
-        ResourceModel\Installment\CollectionFactory $collectionFactory,
-        InstallmentInterfaceFactory $modelFactory,
-        InstallmentSearchResultsInterfaceFactory $searchResultsFactory,
-        CollectionProcessorInterface $collectionProcessor = null
+        ResourceModel\InstallmentProduct                   $resourceModel,
+        ResourceModel\InstallmentProduct\CollectionFactory $collectionFactory,
+        InstallmentProductInterfaceFactory                 $modelFactory,
+        SearchCriteriaBuilderFactory                       $criteriaBuilderFactory,
+        InstallmentProductSearchResultsInterfaceFactory    $searchResultsFactory,
+        SearchCriteria                                     $collectionProcessor = null
     ) {
         $this->modelFactory = $modelFactory;
         $this->resourceModel = $resourceModel;
         $this->collectionFactory = $collectionFactory;
+        $this->criteriaBuilderFactory = $criteriaBuilderFactory;
         $this->searchResultsFactory = $searchResultsFactory;
-        $this->collectionProcessor = $collectionProcessor ?? $this->getCollectionProcessor();
+        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
-     * Get installment by Id
+     * Get VendorProduct by Id
      *
-     * @param int|string $id
+     * @param int $id
      * @return InstallmentInterface|null
      * @throws NoSuchEntityException
      */
-    public function get($id)
+    public function get(int $id)
     {
         $model = $this->modelFactory->create();
         $this->resourceModel->load($model, $id);
@@ -72,13 +80,13 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
-     * Save installment
+     * Save VendorProduct
      *
      * @param InstallmentInterface $installment
      * @return InstallmentInterface|void
      * @throws CouldNotSaveException
      */
-    public function save(InstallmentInterface $installment)
+    public function save(InstallmentProductInterface $installment)
     {
         try {
             $this->resourceModel->save($installment);
@@ -88,7 +96,7 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
-     * Get installment list
+     * Get VendorProduct list
      *
      * @param SearchCriteriaInterface $searchCriteria
      * @return SearchCriteriaInterface[]
@@ -107,13 +115,13 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
-     * Delete installment
+     * Delete VendorProduct
      *
      * @param InstallmentInterface $installment
      * @return bool
      * @throws CouldNotDeleteException
      */
-    public function delete(InstallmentInterface $installment)
+    public function delete(InstallmentProductInterface $installment)
     {
         try {
             $this->resourceModel->delete($installment);
@@ -125,31 +133,51 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     }
 
     /**
-     * Delete installment by id
+     * Delete VendorProduct by id
      *
-     * @param int|string $id
+     * @param int $id
      * @return bool
      * @throws CouldNotDeleteException
      * @throws NoSuchEntityException
      */
-    public function deleteById($id)
+    public function deleteById(int $id)
     {
         return $this->delete($this->get($id));
     }
 
     /**
-     * Get empty installment
+     * Get empty VendorProduct
      *
      * @return InstallmentInterface
      */
-    public function newModel()
+    public function newModel(): InstallmentProductInterface
     {
         return $this->modelFactory->create();
     }
 
     /**
-     * @return PageCollectionProcessor|CollectionProcessorInterface
+     * Gets VendorProduct by groupId
+     *
+     * @param string $groupId
+     * @return InstallmentProductInterface
      */
+    public function getByGroupId(string $groupId, string $country = 'si'): ?InstallmentProductInterface
+    {
+        $criteria = $this->criteriaBuilderFactory->create();
+        $criteria = $criteria
+            ->addFilter(InstallmentProductInterface::GROUP_ID, $groupId)
+            ->addFilter(InstallmentProduct::COUNTRY, $country)
+            ->create();
+
+        $result = $this->getList($criteria)->getItems();
+
+        if (empty($result)){
+            return null;
+        }
+
+        return reset($result);
+    }
+
     private function getCollectionProcessor()
     {
         if (!$this->collectionProcessor) {

@@ -10,6 +10,62 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Leanpay\Payment\Model\Api\SearchCriteria\CollectionProcessor\InstallmentProductFilterProcessor"
+                 type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
+        <arguments>
+            <argument name="customFilters" xsi:type="array">
+                <item name="store_id" xsi:type="object">
+                    Leanpay\Payment\Api\SearchCriteria\CollectionProcessor\FilterProcessor\InstallmentProductStoreFilter
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Leanpay\Payment\Model\Api\SearchCriteria\CollectionProcessor\InstallmentFilterProcessor"
+                 type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
+        <arguments>
+            <argument name="customFilters" xsi:type="array">
+                <item name="store_id" xsi:type="object">
+                    Leanpay\Payment\Api\SearchCriteria\CollectionProcessor\FilterProcessor\InstallmentProductStoreFilter
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Leanpay\Payment\Model\Api\SearchCriteria\InstallmentCollectionProcessor"
+                 type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">
+                    Leanpay\Payment\Model\Api\SearchCriteria\CollectionProcessor\InstallmentFilterProcessor
+                </item>
+                <item name="sorting" xsi:type="object">
+                    Magento\Framework\Api\SearchCriteria\CollectionProcessor\SortingProcessor
+                </item>
+                <item name="pagination" xsi:type="object">
+                    Magento\Framework\Api\SearchCriteria\CollectionProcessor\PaginationProcessor
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Leanpay\Payment\Model\Api\SearchCriteria\InstallmentProductCollectionProcessor"
+                 type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">
+                    Leanpay\Payment\Model\Api\SearchCriteria\CollectionProcessor\InstallmentProductFilterProcessor
+                </item>
+                <item name="sorting" xsi:type="object">
+                    Magento\Framework\Api\SearchCriteria\CollectionProcessor\SortingProcessor
+                </item>
+                <item name="pagination" xsi:type="object">
+                    Magento\Framework\Api\SearchCriteria\CollectionProcessor\PaginationProcessor
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
     <!-- DI Injections -->
     <type name="Leanpay\Payment\Logger\Handler">
         <arguments>
@@ -41,6 +97,24 @@
 
     <!-- Preferences -->
     <preference for="Leanpay\Payment\Api\Data\InstallmentInterface" type="Leanpay\Payment\Model\Installment"/>
-    <preference for="Leanpay\Payment\Api\InstallmentRepositoryInterface" type="Leanpay\Payment\Model\InstallmentRepository"/>
+    <preference for="Leanpay\Payment\Api\InstallmentRepositoryInterface"
+                type="Leanpay\Payment\Model\InstallmentRepository"/>
+    <preference for="Leanpay\Payment\Api\Data\InstallmentProductInterface"
+                type="Leanpay\Payment\Model\InstallmentProduct"/>
+    <preference for="Leanpay\Payment\Api\InstallmentProductRepositoryInterface"
+                type="Leanpay\Payment\Model\InstallmentProductRepository"/>
+    <preference for="Leanpay\Payment\Api\Data\InstallmentProductSearchResultsInterface"
+                type="Leanpay\Payment\Model\InstallmentProductSearchResults"/>
+    <preference for="Leanpay\Payment\Api\Data\InstallmentSearchResultsInterface"
+                type="Leanpay\Payment\Model\InstallmentSearchResults"/>
     <preference for="Leanpay\Payment\Api\RequestInterface" type="Leanpay\Payment\Model\Request"/>
+
+    <!-- Comand line -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="import" xsi:type="object">Leanpay\Payment\Console\Import</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
