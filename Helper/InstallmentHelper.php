@@ -299,7 +299,7 @@ class InstallmentHelper extends AbstractHelper
             $group = $this->getGroup();
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $group, $this->getCurrency());
+        return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
     }
 
     /**
@@ -329,7 +329,8 @@ class InstallmentHelper extends AbstractHelper
         if (!$price) {
             return '';
         }
-        if ($group) {
+
+        if ($group){
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
@@ -478,6 +479,7 @@ class InstallmentHelper extends AbstractHelper
         return (string)round($convertedPrice, 2);
     }
 
+
     /**
      * @param string $price
      * @return string
@@ -575,7 +577,7 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if ($this->getCurrency() === 'HRK') {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             return __(
                 'od %1 %2 / %3 %4 mjesečno',
                 $price,
@@ -601,7 +603,7 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if ($this->getCurrency() === 'HRK') {
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
             return
                 __(
                     '%1 %2 / %3 %4',

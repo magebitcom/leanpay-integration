@@ -66,23 +66,25 @@ class DefaultPriceBox extends FinalPriceBox
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
      */
     public function __construct(
-        StoreManagerInterface $storeManager,
-        InstallmentProductRepositoryInterface  $productRepository,
+        StoreManagerInterface           $storeManager,
+        Context                         $context,
+        SaleableInterface               $saleableItem,
+        PriceInterface                  $price,
+        RendererPool                    $rendererPool,
+        Data                            $helper,
+        InstallmentHelper               $installmentHelper,
+        SerializerInterface             $serializer,
+        InstallmentProductRepositoryInterface $productRepository,
         SearchCriteriaBuilderFactory $criteriaBuilderFactory,
-        Context $context,
-        SaleableInterface $saleableItem,
-        PriceInterface $price,
-        RendererPool $rendererPool,
-        Data $helper,
-        InstallmentHelper $installmentHelper,
-        SerializerInterface $serializer,
-        array $data = [],
-        SalableResolverInterface $salableResolver = null,
+        array                           $data = [],
+        SalableResolverInterface        $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
         $this->productRepo = $productRepository;
         $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->storeManager = $storeManager;
+        $this->productRepo = $productRepository;
+        $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->helper = $helper;
         $this->installmentHelper = $installmentHelper;
         $this->serializer = $serializer;

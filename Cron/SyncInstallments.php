@@ -86,9 +86,8 @@ class SyncInstallments
         Manager                               $manager,
         InstallmentHelper                     $installmentHelper,
         InstallmentProductRepositoryInterface $installmentProductRepository,
-        \Magento\Store\Model\App\Emulation    $emulation
-    )
-    {
+        \Magento\Store\Model\App\Emulation $emulation
+    ) {
         $this->logger = $logger;
         $this->curlClient = $curl;
         $this->helper = $helper;
@@ -110,8 +109,8 @@ class SyncInstallments
         if ($this->helper->isActive()) {
             $urls = $this->helper->getInstallmentURL();
             $apiKeys = $this->helper->getAllLeanpayApiKeys();
-            foreach ($apiKeys as $currency => $apiKey) {
-                $this->syncInstallments($urls[$currency], $apiKey['key'], $currency, $apiKey['store_id']);
+            foreach ($apiKeys as $apiType => $apiKey) {
+                $this->syncInstallments($urls[$apiType], $apiKey['key'], $apiType, $apiKey['store_id']);
             }
         }
         Profiler::stop('leanpay_sync_installment');
@@ -122,7 +121,7 @@ class SyncInstallments
      * @param $apiKey
      * @param $apiType
      */
-    public function syncInstallments($url, $apiKey, $currency, $store_id = 0)
+    public function syncInstallments($url, $apiKey, $apiType, $store_id = 0)
     {
         try {
             if ($apiKey) {

@@ -509,7 +509,7 @@ class Data extends AbstractHelper
 
     /**
      * Gets all unique api keys
-     * This is still based on
+     *
      * @return array
      */
     public function getAllLeanpayApiKeys(): array
@@ -530,7 +530,7 @@ class Data extends AbstractHelper
                     \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 );
-                $apiKeys[$currencyType] = ['key' => $apiKey, 'store_id' => $store->getId()];
+                $apiKeys[$endpointType] = ['key' => $apiKey, 'store_id' => $store->getId()];
             }
         }
         return $apiKeys;
