@@ -9,6 +9,7 @@ interface InstallmentInterface
     public const GROUP_ID = 'group_id';
     public const GROUP_NAME = 'group_name';
     public const CURRENCY_CODE = 'currency_code';
+    public const API_TYPE = 'api_type';
     public const LOAN_AMOUNT = 'loan_amount';
     public const INSTALLMENT_PERIOD = 'installment_period';
     public const INSTALLMENT_AMOUNT = 'installment_amount';
@@ -40,6 +41,13 @@ interface InstallmentInterface
      * @return string|null
      */
     public function getCurrencyCode();
+
+    /**
+     * Get API type
+     *
+     * @return string|null
+     */
+    public function getApiType();
 
     /**
      * Get loan amount
@@ -93,6 +101,14 @@ interface InstallmentInterface
      * @return self
      */
     public function setCurrencyCode($currencyCode);
+
+    /**
+     * Set api type
+     *
+     * @param string $apiType
+     * @return self
+     */
+    public function setApiType($apiType);
 
     /**
      * Set loan amount

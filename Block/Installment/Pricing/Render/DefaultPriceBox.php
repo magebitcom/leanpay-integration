@@ -17,6 +17,7 @@ use Magento\Framework\Pricing\Render\RendererPool;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Store\Model\StoreManagerInterface;
 
 class DefaultPriceBox extends FinalPriceBox
 {
@@ -36,8 +37,14 @@ class DefaultPriceBox extends FinalPriceBox
     private $serializer;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+
+    /**
      * DefaultPriceBox constructor.
-     *
+     * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param SaleableInterface $saleableItem
      * @param PriceInterface $price
@@ -50,6 +57,7 @@ class DefaultPriceBox extends FinalPriceBox
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
      */
     public function __construct(
+        StoreManagerInterface           $storeManager,
         Context                         $context,
         SaleableInterface               $saleableItem,
         PriceInterface                  $price,
@@ -63,6 +71,7 @@ class DefaultPriceBox extends FinalPriceBox
         SalableResolverInterface        $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
+        $this->storeManager = $storeManager;
         $this->productRepo = $productRepository;
         $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->helper = $helper;
@@ -100,11 +109,19 @@ class DefaultPriceBox extends FinalPriceBox
      */
     public function getAmount(): float
     {
-        return $this->getSaleableItem()
+        $amount = $this->getSaleableItem()
             ->getPriceInfo()
             ->getPrice(FinalPrice::PRICE_CODE)
             ->getAmount()
             ->getValue();
+
+        $currencyCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+
+        if (in_array($currencyCode, InstallmentHelper::ALLOWED_CURRENCIES)) {
+           $amount = (float)$this->installmentHelper->getTransitionPrice((string)$amount, $currencyCode);
+        }
+
+        return $amount;
     }
 
     /**

@@ -214,29 +214,14 @@ class Data extends AbstractHelper
         return (int)$this->storeManager->getStore()->getId();
     }
 
-    public function getCurrencyType(): string
-    {
-        $currencyType = $this->scopeConfig->getValue(
-            self::LEANPAY_CONFIG_CURRENCY,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->getStoreId()
-        );
-
-        if (!$currencyType) {
-            $currencyType = 'EUR';
-        }
-
-        return (string)$currencyType;
-    }
-
     /**
      * @return string
      */
     public function getBaseUrl(): string
     {
-        $currencyType = $this->getCurrencyType();
+        $currencyType = $this->getApiType();
 
-        if ($currencyType === 'EUR') {
+        if ($currencyType === self::API_ENDPOINT_SLOVENIA) {
             if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
                 return (string)self::LEANPAY_BASE_URL;
             }
@@ -274,6 +259,20 @@ class Data extends AbstractHelper
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                 $this->getStoreId()
             )
+        );
+    }
+
+    /**
+     * Get Leanpay api type
+     *
+     * @return string
+     */
+    public function getApiType(): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
         );
     }
 
@@ -478,20 +477,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get Leanpay api type
-     *
-     * @return string
-     */
-    public function getApiType(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->getStoreId()
-        );
-    }
-
-    /**
      * Gets all unique api keys
      *
      * @return array
@@ -509,12 +494,12 @@ class Data extends AbstractHelper
                 )
             );
             if (!in_array($apiKey, $apiKeys)) {
-                $currencyType = $this->scopeConfig->getValue(
-                    self::LEANPAY_CONFIG_CURRENCY,
+                $endpointType = $this->scopeConfig->getValue(
+                    self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
                     \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 );
-                $apiKeys[$currencyType] = ['key' => $apiKey, 'store_id' => $store->getId()];
+                $apiKeys[$endpointType] = ['key' => $apiKey, 'store_id' => $store->getId()];
             }
         }
         return $apiKeys;

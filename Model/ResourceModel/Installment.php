@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Model\ResourceModel;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
+use Leanpay\Payment\Helper\Data;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class Installment extends AbstractDb
@@ -25,7 +26,7 @@ class Installment extends AbstractDb
      * @param string $group
      * @return string
      */
-    public function getLowestInstallment($price, $group, $currency = 'EUR')
+    public function getLowestInstallment($price, $group, $apiType = Data::API_ENDPOINT_SLOVENIA)
     {
         if (!$price) {
             return '';
@@ -34,13 +35,13 @@ class Installment extends AbstractDb
         $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'ASC');
         $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
         $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
-        $whereStatementCurrency = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::CURRENCY_CODE);
+        $whereStatementApiType = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::API_TYPE);
         $select = $this->getConnection()
             ->select()
             ->from(InstallmentInterface::TABLE_NAME, [InstallmentInterface::INSTALLMENT_AMOUNT])
             ->where($whereStatement, round($price))
             ->where($whereStatementGroup, $group)
-            ->where($whereStatementCurrency, $currency)
+            ->where($whereStatementApiType, $apiType)
             ->order($orderStatement);
 
         return $this->getConnection()->fetchOne($select);

@@ -98,7 +98,8 @@ class InstallmentHelper extends AbstractHelper
      */
     public const TRANSITION_CONVERSION_RATE = [
         'HRK' => '7.53450',
-        'RON' => '4.93000'
+        'RON' => '4.93000',
+        'EUR' => '1'
     ];
 
     public const ALLOWED_CURRENCIES = [
@@ -125,9 +126,13 @@ class InstallmentHelper extends AbstractHelper
      */
     private $serializer;
 
+    protected $dataHelper;
+
     /**
      * InstallmentHelper constructor.
      *
+     * @param Data $dataHelper
+     * @param SerializerInterface $serializer
      * @param StoreManagerInterface $storeManager
      * @param Context $context
      * @param ViewBlockConfig $blockConfig
@@ -280,8 +285,16 @@ class InstallmentHelper extends AbstractHelper
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
-        $min = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MIN, ScopeInterface::SCOPE_STORE, $scopeId);
-        $max = $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MAX, ScopeInterface::SCOPE_STORE, $scopeId);
+        $min = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MIN,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+        $max = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MAX,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
 
         if (!$price) {
             return '';
@@ -295,7 +308,7 @@ class InstallmentHelper extends AbstractHelper
             $group = $this->getGroup();
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $group, $this->getCurrency());
+        return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
     }
 
     /**
@@ -326,10 +339,6 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
         if ($group){
-            return $this->resourceModel->getToolTipData($price, $group, $useTerm);
-        }
-
-        if ($group) {
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
@@ -408,7 +417,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrency(): string
     {
-        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        return $this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+            ScopeInterface::SCOPE_STORE,
+            $this->storeManager->getStore()->getId()
+        );
     }
 
     /**
@@ -423,7 +435,7 @@ class InstallmentHelper extends AbstractHelper
         } elseif ($this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
             return 'RON';
         } else {
-            return '€';
+            return 'EUR';
         }
     }
 
@@ -434,7 +446,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function allowDownPayment(): bool
     {
-        return $this->getCurrency() == "EUR";
+        return $this->dataHelper->getApiType() === Data::API_ENDPOINT_SLOVENIA;
     }
 
     /**
@@ -565,7 +577,8 @@ class InstallmentHelper extends AbstractHelper
 
         if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
             return
-                __('%1 %2 / %3 %4',
+                __(
+                    '%1 %2 / %3 %4',
                     $price,
                     $this->getCurrencyCode(),
                     $this->getTransitionPrice($price, $this->getCurrency()),

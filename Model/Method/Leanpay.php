@@ -212,11 +212,13 @@ class Leanpay extends AbstractMethod
             return false;
         }
 
-        $currency = $this->helper->getCurrencyType();
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+        if ($this->helper->getApiType() === PaymentData::API_ENDPOINT_CROATIA && $baseCode == "HRK") {
+            return true;
+        }
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));
-        if ($currency != $baseCode && !array_key_exists($currency, $rates)) {
+        if (!array_key_exists('EUR', $rates)) {
             return false;
         }
 
@@ -237,16 +239,12 @@ class Leanpay extends AbstractMethod
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-
-        $currency = $this->helper->getCurrencyType();
-
-        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), $currency);
-
+        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
         $orderItems = $order->getAllVisibleItems();
 
         // Development testing value
         $additionData = [
-            'vendorTransactionId' => $order->getQuoteId() * 15892,
+            'vendorTransactionId' => $order->getQuoteId() * 586213,
             'amount' => $amount,
             'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),
@@ -269,7 +267,7 @@ class Leanpay extends AbstractMethod
                     $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
-                        'price' => $order->getStore()->getBaseCurrency()->convert($price, $currency),
+                        'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
                         'qty' => $item->getQtyOrdered()
                     ];
                 }

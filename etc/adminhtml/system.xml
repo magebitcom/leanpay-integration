@@ -21,7 +21,7 @@
                     <label>Instructions</label>
                 </field>
 
-                <field id="leanpay_currency"
+                <field id="api_endpoint_type"
                        translate="label"
                        sortOrder="1"
                        type="select"
@@ -29,8 +29,8 @@
                        showInWebsite="1"
                        showInStore="1"
                        canRestore="1">
-                    <label>Currency type</label>
-                    <source_model>Leanpay\Payment\Model\Config\Source\CurrencyType</source_model>
+                    <label>API Endpoint Type</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\ApiEndpointType</source_model>
                 </field>
 
                 <field id="currency"

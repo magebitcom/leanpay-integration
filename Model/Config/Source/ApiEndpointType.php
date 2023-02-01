@@ -15,10 +15,10 @@ namespace Leanpay\Payment\Model\Config\Source;
 use Magento\Framework\Data\OptionSourceInterface;
 
 
-class CurrencyType implements OptionSourceInterface
+class ApiEndpointType implements OptionSourceInterface
 {
     /**
-     * Return array of leanpay languages
+     * Return array of leanpay API endpoint types
      *
      * @return array
      */
@@ -26,12 +26,12 @@ class CurrencyType implements OptionSourceInterface
     {
         return [
             [
-                'value' => 'EUR',
-                'label' => __('EUR')
+                'value' => 'SLO',
+                'label' => __('SLO')
             ],
             [
-                'value' => 'HRK',
-                'label' => __('HRK')
+                'value' => 'CRO',
+                'label' => __('CRO')
             ],
             [
                 'value' => 'RON',

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin;
 
-use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Model\Method\Leanpay;
 use Magento\Payment\Model\Checks\TotalMinMax;
 use Magento\Payment\Model\MethodInterface;
@@ -11,13 +10,6 @@ use Magento\Quote\Model\Quote;
 
 class TotalMinMaxPlugin
 {
-    protected $leanpayHelper;
-
-    public function __construct(
-        Data $leanpayHelper
-    ) {
-        $this->leanpayHelper = $leanpayHelper;
-    }
 
     /**
      * Adds extra check to isApplicable
@@ -39,9 +31,8 @@ class TotalMinMaxPlugin
             return $proceed($paymentMethod, $quote);
         }
 
-        $total = $quote->getStore()->getBaseCurrency()->convert(
-            $total = $quote->getBaseGrandTotal(), $this->leanpayHelper->getCurrencyType()
-        );
+        $total = $quote->getStore()->getBaseCurrency()->convert($total = $quote->getBaseGrandTotal(), 'EUR');
+
         $minTotal = $paymentMethod->getConfigData(TotalMinMax::MIN_ORDER_TOTAL);
         $maxTotal = $paymentMethod->getConfigData(TotalMinMax::MAX_ORDER_TOTAL);
 
