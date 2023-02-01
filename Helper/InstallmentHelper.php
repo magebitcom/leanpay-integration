@@ -428,38 +428,6 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $text
-     * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getTranslation($text): string
-    {
-        $translationArray = [
-            'Hitro in enostavno obročno odplačevanje' => 'Brz i jednostavan izračun rata',
-            'Že od' => 'Već od',
-            'Vaš mesečni obrok' => 'mjesečno',
-            'Izračun obrokov' => 'Klikni za izračun',
-            'Želim čim nižji obrok' => 'Želim što niži iznos rate',
-            'Odplačati želim čim prej' => 'Želim otplatiti što prije',
-            'Želim si izbrati svoje obroke' => 'Želim sam odabarati broj rata',
-            'Informativni znesek za plačilo' => '',
-            'Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ' => 'Leanpay omogućuje brzo i jednostavno plaćanje na rate preko interneta. ',
-            'Za obročno plačilo v košarici izberi Leanpay. ' => 'Za plaćanje na rate u košarici odaberite Leanpay kao vrstu plaćanja. ',
-            'Informativni izračun ne vključuje stroškov ocene tveganja.' => 'Informativni izračun ne uključuje troškove procjene rizika.',
-            'Preveri svoj limit' => 'Provjerite svoj limit',
-            'Več informacij' => 'Više informacija',
-        ];
-        if ($this->getCurrency() == 'HRK' && isset($translationArray[$text])) {
-            return $translationArray[$text];
-        } elseif ($this->getCurrency() == 'RON' && isset($translationArray[$text])) {
-            return $translationArray[$text];
-        } else {
-            return $text;
-        }
-    }
-
-    /**
      * @return bool
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
