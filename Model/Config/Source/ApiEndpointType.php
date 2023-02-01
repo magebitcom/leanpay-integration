@@ -33,6 +33,10 @@ class ApiEndpointType implements OptionSourceInterface
                 'value' => 'CRO',
                 'label' => __('CRO')
             ],
+            [
+                'value' => 'RON',
+                'label' => __('RON')
+            ],
         ];
     }
 }
