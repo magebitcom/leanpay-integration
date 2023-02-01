@@ -20,6 +20,10 @@ class Languages implements OptionSourceInterface
                 'label' => __('Slovenian')
             ],
             [
+                'value' => 'ro',
+                'label' => __('Romanian')
+            ],
+            [
                 'value' => 'en',
                 'label' => __('English')
             ],
