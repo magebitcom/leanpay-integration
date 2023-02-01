@@ -54,7 +54,7 @@ class Data extends AbstractHelper
     public const LEANPAY_INSTALLMENT_URL_DEV = [
         'EUR' => 'https://lapp.leanpay.si/vendor/installment-plans',
         'HRK' => 'https://lapp.leanpay.hr/vendor/installment-plans',
-        'RON' => 'https://tmp-test-admin.leanpay.ro/vendor/installment-plans'
+        'RON' => 'https://stage-app.leanpay.ro/vendor/installment-plans'
     ];
 
 
