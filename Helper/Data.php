@@ -29,7 +29,7 @@ class Data extends AbstractHelper
     public const LEANPAY_CONFIG_API_ENDPOINT_TYPE = 'payment/leanpay/api_endpoint_type';
 
     public const API_ENDPOINT_SLOVENIA = 'SLO';
-    public const API_ENDPOINT_ROMANIA = 'RO';
+    public const API_ENDPOINT_ROMANIA = 'RON';
     public const API_ENDPOINT_CROATIA = 'CRO';
     /**
      *  Post Token URL
@@ -52,9 +52,9 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL_DEV = [
-        'EUR' => 'https://lapp.leanpay.si/vendor/installment-plans',
-        'HRK' => 'https://lapp.leanpay.hr/vendor/installment-plans',
-        'RON' => 'https://stage-app.leanpay.ro/vendor/installment-plans'
+        'SLO' => 'https://lapp.leanpay.si/vendor/installment-plans',
+        'CRO' => 'https://lapp.leanpay.hr/vendor/installment-plans',
+        'RON' => 'https://stage-app.leanpay.ro/vendor/installment-plans',
     ];
 
 
