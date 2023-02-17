@@ -485,14 +485,6 @@ class InstallmentHelper extends AbstractHelper
             'value' => $values,
             'currency' => $this->getCurrencyCode(),
         ];
-        if ($this->getCurrency() !='EUR') {
-        $convertedValues = [];
-        foreach ($list as $value) {
-            $convertedValues[] = $value[InstallmentInterface::INSTALLMENT_AMOUNT] / self::TRANSITION_CONVERSION_RATE[$this->getCurrencyCode()];
-        }
-        $data['convertedCurrency'] = 'EUR';
-        $data['convertedValues'] = $convertedValues;
-    }
         return (string)$this->serializer->serialize($data);
     }
 
@@ -509,15 +501,6 @@ class InstallmentHelper extends AbstractHelper
         $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
         $amount = $data[InstallmentInterface::INSTALLMENT_AMOUNT];
 
-        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
-            return __('%1 x %2%3 / %4%5',
-                $term,
-                $amount,
-                $this->getCurrencyCode(),
-                $this->getTransitionPrice($amount, $this->getCurrency()),
-                'EUR'
-            );
-        }
         return __('%1 x %2%3', $term, $amount, $this->getCurrencyCode());
     }
 
@@ -549,15 +532,6 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
-            return __(
-                'od %1 %2 / %3 %4 mjesečno',
-                $price,
-                $this->getCurrencyCode(),
-                $this->getTransitionPrice($price, $this->getCurrency()),
-                'EUR'
-            );
-        }
         return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
     }
 
@@ -575,16 +549,6 @@ class InstallmentHelper extends AbstractHelper
             $price = $this->getLowestInstallmentPrice($amount);
         }
 
-        if (in_array($this->getCurrency(), self::ALLOWED_CURRENCIES)) {
-            return
-                __(
-                    '%1 %2 / %3 %4',
-                    $price,
-                    $this->getCurrencyCode(),
-                    $this->getTransitionPrice($price, $this->getCurrency()),
-                    'EUR'
-                );
-        }
         return __('%1 %2', $price, $this->getCurrencyCode());
     }
 }
