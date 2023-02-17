@@ -31,6 +31,7 @@ class Data extends AbstractHelper
     public const API_ENDPOINT_SLOVENIA = 'SLO';
     public const API_ENDPOINT_ROMANIA = 'RON';
     public const API_ENDPOINT_CROATIA = 'CRO';
+    public const API_ALLOWED_METHODS = [Data::API_ENDPOINT_CROATIA, Data::API_ENDPOINT_ROMANIA, Data::API_ENDPOINT_SLOVENIA];
     /**
      *  Post Token URL
      *

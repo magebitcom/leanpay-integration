@@ -213,7 +213,7 @@ class Leanpay extends AbstractMethod
         }
 
         $baseCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
-        if ($this->helper->getApiType() === PaymentData::API_ENDPOINT_CROATIA && $baseCode == "HRK") {
+        if (in_array($this->helper->getApiType(),PaymentData::API_ALLOWED_METHODS)) {
             return true;
         }
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
