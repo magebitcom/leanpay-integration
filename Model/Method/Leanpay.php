@@ -244,7 +244,7 @@ class Leanpay extends AbstractMethod
 
         // Development testing value
         $additionData = [
-            'vendorTransactionId' => $order->getQuoteId() *213123123123,
+            'vendorTransactionId' => $order->getQuoteId(),
             'amount' => $amount,
             'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),
