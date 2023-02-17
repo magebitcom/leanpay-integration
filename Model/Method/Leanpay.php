@@ -239,12 +239,12 @@ class Leanpay extends AbstractMethod
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), 'EUR');
+        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), $order->_data["order_currency_code"]);
         $orderItems = $order->getAllVisibleItems();
 
         // Development testing value
         $additionData = [
-            'vendorTransactionId' => $order->getQuoteId() * 586213,
+            'vendorTransactionId' => $order->getQuoteId() *213123123123,
             'amount' => $amount,
             'vendorFirstName' => $order->getCustomerFirstname() ?: $order->getBillingAddress()->getFirstname(),
             'vendorLastName' => $order->getCustomerLastname() ?: $order->getBillingAddress()->getLastname(),
