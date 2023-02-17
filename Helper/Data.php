@@ -23,7 +23,8 @@ class Data extends AbstractHelper
     public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
     public const LEANPAY_BASE_URL_RO = 'https://vendor.leanpay.ro/';
-    public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-vendor.leanpay.ro/';
+    public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-app.leanpay.ro/';
+
 
     public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
     public const LEANPAY_CONFIG_API_ENDPOINT_TYPE = 'payment/leanpay/api_endpoint_type';
@@ -45,6 +46,17 @@ class Data extends AbstractHelper
      * http://static.leanpay.com/api-docs/docs.html#integration-steps-checkout-page-post
      */
     public const LEANPAY_CHECKOUT_URL = 'vendor/checkout';
+
+    public const LEANPAY_ALLOWED_BASE_URL = [
+        self::API_ENDPOINT_SLOVENIA => self::LEANPAY_BASE_URL,
+        self::API_ENDPOINT_CROATIA => self::LEANPAY_BASE_URL_HR,
+        self::API_ENDPOINT_ROMANIA => self::LEANPAY_BASE_URL_RO
+    ];
+    public const LEANPAY_ALLOWED_BASE_URL_DEV = [
+        self::API_ENDPOINT_SLOVENIA => self::LEANPAY_BASE_URL_DEV,
+        self::API_ENDPOINT_CROATIA => self::LEANPAY_BASE_URL_DEV_HR,
+        self::API_ENDPOINT_ROMANIA => self::LEANPAY_BASE_URL_DEV_RO
+    ];
 
 
     /**
@@ -222,19 +234,11 @@ class Data extends AbstractHelper
     {
         $currencyType = $this->getApiType();
 
-        if ($currencyType === self::API_ENDPOINT_SLOVENIA) {
-            if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-                return (string)self::LEANPAY_BASE_URL;
-            }
-
-            return (string)self::LEANPAY_BASE_URL_DEV;
-        }
-
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return (string)self::LEANPAY_BASE_URL_HR;
+            return (string)self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
         }
 
-        return (string)self::LEANPAY_BASE_URL_DEV_HR;
+        return (string)self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
     }
 
     /**

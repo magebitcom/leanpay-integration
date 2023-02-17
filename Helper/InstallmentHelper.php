@@ -98,12 +98,12 @@ class InstallmentHelper extends AbstractHelper
      */
     public const TRANSITION_CONVERSION_RATE = [
         'HRK' => '7.53450',
-        'RON' => '1',
+        'RON' => '6.4100',
         'EUR' => '1'
     ];
 
     public const ALLOWED_CURRENCIES = [
-        'HRK', 'RON'
+        'HRK'
     ];
 
     /**
