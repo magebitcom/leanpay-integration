@@ -23,13 +23,14 @@ $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
 $fontSize = $helper->getFontSize($viewKey);
 $color = $helper->getInstallmentColor();
+$amount = (int)$block->getAmount();
 ?>
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
     <?php if ($price && $canShow): ?>
         <div class="installment-price"
              style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
                  font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
-            <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($block->getAmount(), $price)); ?>
+            <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($amount, $price)); ?>
         </div>
     <?php endif; ?>
 <?php else: ?>
@@ -40,7 +41,7 @@ $color = $helper->getInstallmentColor();
             $fontSize ?>px;">
                 <div class="installment-plans">
                     <div class="installment-block-wrapper">
-                        <?php $list = $helper->getInstallmentList($block->getAmount(), $vendorProductName); ?>
+                        <?php $list = $helper->getInstallmentList($amount, $vendorProductName); ?>
                         <span class="installment-block">
                             <?= $escaper->escapeHtml(__($helper->getTranslation('Hitro in enostavno obročno odplačevanje'))); ?>
                         </span>
@@ -49,7 +50,7 @@ $color = $helper->getInstallmentColor();
                               style="background-color:<?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()); ?>;">
                             <?= $escaper->escapeHtml(__($helper->getTranslation('Že od'))); ?>
                             <strong>
-                                <?= $escaper->escapeHtml($helper->getProductPriceBlock($block->getAmount(), $price)); ?>
+                                <?= $escaper->escapeHtml($helper->getProductPriceBlock($amount, $price)); ?>
                             </strong>
                         </span>
                         <span class="installment-message"
@@ -65,7 +66,7 @@ $color = $helper->getInstallmentColor();
                             <div class="installment-deposit">
                             <span class="deposit">
                                 <?= $escaper->escapeHtml(
-                                    __('+ %1 € polog', $helper->getDownPaymentRule($block->getAmount()))
+                                    __('+ %1 € polog', $helper->getDownPaymentRule($amount))
                                 ); ?>
                             </span>
                             </div>
@@ -91,18 +92,18 @@ $color = $helper->getInstallmentColor();
                         </div>
                         <div class="installment-plans">
                             <div class="installment-lowest-amount">
-                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), true)): ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($amount, true)): ?>
                                     <span class="installment-lowest-message">
                                      <?= $escaper->escapeHtml(__($helper->getTranslation('Želim čim nižji obrok'))); ?>
-                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), true, $vendorProductName)); ?></strong>
+                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($amount, true, $vendorProductName)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="installment-lowest-term">
-                                <?php if ($helper->shouldRenderTooltipPriceBlock($block->getAmount(), false)): ?>
+                                <?php if ($helper->shouldRenderTooltipPriceBlock($amount, false)): ?>
                                     <span class="installment-lowest-message">
                                         <?= $escaper->escapeHtml(__($helper->getTranslation('Odplačati želim čim prej'))); ?>
-                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($block->getAmount(), false, $vendorProductName)); ?></strong>
+                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($amount, false, $vendorProductName)); ?></strong>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -148,7 +149,7 @@ $color = $helper->getInstallmentColor();
             </div>
         </div>
         <div class="installment-slider-data" style="display: none; visibility: hidden;">
-            <?= $helper->getJsonConfig($block->getAmount(), $vendorProductName) ?: ''; ?>
+            <?= $helper->getJsonConfig($amount, $vendorProductName) ?: ''; ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>
