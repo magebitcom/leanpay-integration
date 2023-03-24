@@ -8,9 +8,13 @@ use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Phrase;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use function GuzzleHttp\Psr7\str;
 
 class InstallmentHelper extends AbstractHelper
 {
@@ -278,10 +282,10 @@ class InstallmentHelper extends AbstractHelper
     /**
      * Get lowest installment price
      *
-     * @param string $price
+     * @param float|int $price
      * @return string
      */
-    public function getLowestInstallmentPrice($price, $group = '')
+    public function getLowestInstallmentPrice(float|int $price, $group = '')
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
@@ -317,7 +321,7 @@ class InstallmentHelper extends AbstractHelper
      * @param float $price
      * @return array
      */
-    public function getInstallmentList($price, $group = '')
+    public function getInstallmentList(float $price, $group = '')
     {
         if ($group) {
             return $this->resourceModel->getInstallmentList($price, $group);
@@ -333,11 +337,12 @@ class InstallmentHelper extends AbstractHelper
      * @param bool $useTerm
      * @return string
      */
-    public function getToolTipData($price, $useTerm, $group = '')
+    public function getToolTipData(float $price, $useTerm, $group = '')
     {
         if (!$price) {
             return '';
         }
+
         if ($group){
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
@@ -391,7 +396,7 @@ class InstallmentHelper extends AbstractHelper
      * @param float $price
      * @return mixed
      */
-    public function getDownPaymentRule($price): int
+    public function getDownPaymentRule(float $price): int
     {
         switch ($price) {
             case ($price >= 1000 && $price <= 1999.99):
@@ -417,7 +422,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrency(): string
     {
-        return $this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+        return (string)$this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
             ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
@@ -489,13 +494,14 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $amount
+     * @param float $amount
      * @param false $useTerm
-     * @return \Magento\Framework\Phrase
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @param string $group
+     * @return Phrase
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getTooltipPriceBlock($amount, $useTerm = false, $group = ''): \Magento\Framework\Phrase
+    public function getTooltipPriceBlock(float $amount, $useTerm = false, $group = ''): \Magento\Framework\Phrase
     {
         $data = $this->getToolTipData($amount, $useTerm, $group);
         $term = $data[InstallmentInterface::INSTALLMENT_PERIOD];
@@ -505,11 +511,11 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $amount
+     * @param float $amount
      * @param false $useTerm
      * @return bool
      */
-    public function shouldRenderTooltipPriceBlock($amount, $useTerm = false): bool
+    public function shouldRenderTooltipPriceBlock(float $amount, $useTerm = false): bool
     {
         $data = $this->getToolTipData($amount, $useTerm);
         return isset(
@@ -519,12 +525,13 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $amount
-     * @return \Magento\Framework\Phrase
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @param float $amount
+     * @param int $preCalculatedValue
+     * @return Phrase
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getCategoryPriceBlock($amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
+    public function getCategoryPriceBlock(float $amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
     {
         if ($preCalculatedValue) {
             $price = $preCalculatedValue;
@@ -536,12 +543,13 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * @param $amount
-     * @return \Magento\Framework\Phrase
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @param float $amount
+     * @param int $preCalculatedValue
+     * @return Phrase
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getProductPriceBlock($amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
+    public function getProductPriceBlock(float $amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
     {
         if ($preCalculatedValue) {
             $price = $preCalculatedValue;

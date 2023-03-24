@@ -213,7 +213,8 @@ class SyncInstallments
         $installmentProductCache = [];
         $connection = $this->resource->getConnection();
 
-        foreach (reset($parse) as $group) {
+        $array = (array)$parse;
+        foreach (reset($array) as $group) {
             if (is_object($group) && $group->groupId && $group->loanAmounts) {
                 foreach ($group->loanAmounts as $amount) {
                     if (is_object($amount) && is_array($amount->possibleInstallments)) {

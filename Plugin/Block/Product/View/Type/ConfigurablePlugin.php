@@ -81,10 +81,11 @@ class ConfigurablePlugin
      */
     private function getHtmlFromCache($amount): string
     {
-        if (!isset($this->templateCache[$amount])) {
-            $this->templateCache[$amount] = $this->template->setData('amount', $amount)->toHtml();
+        $int = intval(round($amount));
+        if (!isset($this->templateCache[$int])) {
+            $this->templateCache[$int] = $this->template->setData('amount', $amount)->toHtml();
         }
 
-        return $this->templateCache[$amount];
+        return $this->templateCache[$int];
     }
 }

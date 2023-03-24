@@ -22,7 +22,7 @@ class Installment extends AbstractDb
     /**
      * Get lowest installment
      *
-     * @param string $price
+     * @param float|int $price
      * @param string $group
      * @return string
      */
@@ -39,7 +39,7 @@ class Installment extends AbstractDb
         $select = $this->getConnection()
             ->select()
             ->from(InstallmentInterface::TABLE_NAME, [InstallmentInterface::INSTALLMENT_AMOUNT])
-            ->where($whereStatement, round($price))
+            ->where($whereStatement, intval(round($price)))
             ->where($whereStatementGroup, $group)
             ->where($whereStatementApiType, $apiType)
             ->order($orderStatement);
@@ -55,7 +55,7 @@ class Installment extends AbstractDb
      * @param bool $useAmount
      * @return string
      */
-    public function getToolTipData($price, $group, $useAmount = true)
+    public function getToolTipData(float $price, $group, $useAmount = true)
     {
         if (!$price) {
             return '';
@@ -92,7 +92,7 @@ class Installment extends AbstractDb
      * @param string $group
      * @return array
      */
-    public function getInstallmentList($price, $group)
+    public function getInstallmentList(float $price, $group)
     {
         if (!$price) {
             return [];

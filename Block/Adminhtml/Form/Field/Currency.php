@@ -63,6 +63,6 @@ class Currency extends Field
             );
         }
 
-        return sprintf(__('1 %1$s equals %3$s %2$f'), $baseCode, number_format((float)$rates['EUR'], 4), 'EUR');
+        return sprintf('1 %1$s equals %3$s %2$f', $baseCode, number_format((float)$rates['EUR'], 4), 'EUR');
     }
 }

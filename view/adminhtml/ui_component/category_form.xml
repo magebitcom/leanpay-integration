@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <fieldset name="leanpay_promotions">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -90,7 +91,6 @@
                 </settings>
             </field>
         </container>
-        
         <field name="leanpay_category_vendor_code">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Leanpay\Payment\Model\Config\Source\VendorAttribute</item>

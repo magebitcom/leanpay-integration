@@ -227,6 +227,21 @@ class Data extends AbstractHelper
         return (int)$this->storeManager->getStore()->getId();
     }
 
+    public function getCurrencyType(): string
+    {
+        $currencyType = $this->scopeConfig->getValue(
+            self::LEANPAY_CONFIG_CURRENCY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+
+        if (!$currencyType) {
+            $currencyType = 'EUR';
+        }
+
+        return (string)$currencyType;
+    }
+
     /**
      * @return string
      */
