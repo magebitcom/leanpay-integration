@@ -13,7 +13,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
@@ -85,7 +85,7 @@ abstract class AbstractAction implements ActionInterface
     protected $invoiceSender;
 
     /**
-     * @var DriverInterface
+     * @var File
      */
     protected $driver;
 
@@ -108,7 +108,7 @@ abstract class AbstractAction implements ActionInterface
      * AbstractAction constructor.
      * @param JsonFactory $resultJsonFactory
      * @param ResultRedirectFactory $resultRedirectFactory
-     * @param DriverInterface $driver
+     * @param File $driver
      * @param Session $checkoutSession
      * @param Data $helper
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
@@ -124,7 +124,7 @@ abstract class AbstractAction implements ActionInterface
     public function __construct(
         JsonFactory $resultJsonFactory,
         ResultRedirectFactory $resultRedirectFactory,
-        DriverInterface $driver,
+        File $driver,
         Session $checkoutSession,
         Data $helper,
         SearchCriteriaBuilder $searchCriteriaBuilder,

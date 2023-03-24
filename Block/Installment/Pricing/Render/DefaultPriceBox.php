@@ -41,6 +41,15 @@ class DefaultPriceBox extends FinalPriceBox
      */
     private $storeManager;
 
+    /**
+     * @var \Magento\Framework\Api\SearchCriteriaBuilder
+     */
+    private $searchCriteria;
+
+    /**
+     * @var InstallmentProductRepositoryInterface
+     */
+    private $productRepo;
 
     /**
      * DefaultPriceBox constructor.
@@ -71,6 +80,8 @@ class DefaultPriceBox extends FinalPriceBox
         SalableResolverInterface        $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
+        $this->productRepo = $productRepository;
+        $this->searchCriteria = $criteriaBuilderFactory->create();
         $this->storeManager = $storeManager;
         $this->productRepo = $productRepository;
         $this->searchCriteria = $criteriaBuilderFactory->create();

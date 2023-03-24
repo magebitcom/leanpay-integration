@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Console;
 
 use Leanpay\Payment\Cron\SyncInstallments;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Magento\Framework\App\State as AppState;
+use Magento\Framework\Exception\LocalizedException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Import extends Command
@@ -40,8 +39,8 @@ class Import extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @param SyncInstallments $installments
-     * @return int|void
+     * @return void
+     * @throws LocalizedException
      */
     protected function execute(
         InputInterface  $input,
@@ -49,7 +48,7 @@ class Import extends Command
     ) {
         $this->appState->setAreaCode('frontend');
         $output->writeln('Importing Started Leanpay... ');
-         $this->installments->execute();
+        $this->installments->execute();
         $output->writeln('Importing Completed Leanpay... ');
     }
 
