@@ -272,10 +272,10 @@ class InstallmentHelper extends AbstractHelper
     /**
      * Get lowest installment price
      *
-     * @param float|int $price
+     * @param float $price
      * @return string
      */
-    public function getLowestInstallmentPrice(float|int $price, $group = '')
+    public function getLowestInstallmentPrice(float $price, $group = '')
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
