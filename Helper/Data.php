@@ -22,15 +22,17 @@ class Data extends AbstractHelper
     public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
     public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
+    public const LEANPAY_BASE_URL_RO = 'https://vendor.leanpay.ro/';
+    public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-app.leanpay.ro/';
+
 
     public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
-
     public const LEANPAY_CONFIG_API_ENDPOINT_TYPE = 'payment/leanpay/api_endpoint_type';
 
     public const API_ENDPOINT_SLOVENIA = 'SLO';
-
+    public const API_ENDPOINT_ROMANIA = 'RON';
     public const API_ENDPOINT_CROATIA = 'CRO';
-
+    public const API_ALLOWED_METHODS = [Data::API_ENDPOINT_CROATIA, Data::API_ENDPOINT_ROMANIA, Data::API_ENDPOINT_SLOVENIA];
     /**
      *  Post Token URL
      *
@@ -45,6 +47,17 @@ class Data extends AbstractHelper
      */
     public const LEANPAY_CHECKOUT_URL = 'vendor/checkout';
 
+    public const LEANPAY_ALLOWED_BASE_URL = [
+        self::API_ENDPOINT_SLOVENIA => self::LEANPAY_BASE_URL,
+        self::API_ENDPOINT_CROATIA => self::LEANPAY_BASE_URL_HR,
+        self::API_ENDPOINT_ROMANIA => self::LEANPAY_BASE_URL_RO
+    ];
+    public const LEANPAY_ALLOWED_BASE_URL_DEV = [
+        self::API_ENDPOINT_SLOVENIA => self::LEANPAY_BASE_URL_DEV,
+        self::API_ENDPOINT_CROATIA => self::LEANPAY_BASE_URL_DEV_HR,
+        self::API_ENDPOINT_ROMANIA => self::LEANPAY_BASE_URL_DEV_RO
+    ];
+
 
     /**
      * Leanpay installment URL
@@ -52,8 +65,9 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL_DEV = [
-        self::API_ENDPOINT_SLOVENIA => 'https://lapp.leanpay.si/vendor/installment-plans',
-        self::API_ENDPOINT_CROATIA => 'https://lapp.leanpay.hr/vendor/installment-plans'
+        'SLO' => 'https://lapp.leanpay.si/vendor/installment-plans',
+        'CRO' => 'https://lapp.leanpay.hr/vendor/installment-plans',
+        'RON' => 'https://stage-app.leanpay.ro/vendor/installment-plans',
     ];
 
 
@@ -63,8 +77,9 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = [
-        self::API_ENDPOINT_SLOVENIA => 'https://app.leanpay.si/vendor/installment-plans',
-        self::API_ENDPOINT_CROATIA => 'https://app.leanpay.hr/vendor/installment-plans'
+        'EUR' => 'https://app.leanpay.si/vendor/installment-plans',
+        'HRK' => 'https://app.leanpay.hr/vendor/installment-plans',
+        'RON' => 'https://app.leanpay.ro/vendor/installment-plans'
     ];
 
     /**
@@ -142,25 +157,7 @@ class Data extends AbstractHelper
     public const LEANPAY_PROMOS_MFP_CART_SIZE = 'leanpay_promos/mfp/cart_size';
     public const LEANPAY_PROMOS_MFP_COUNTRY = 'leanpay_promos/mfp/product_country';
 
-    /**
-     * Multiple financin producs names
-     */
-    public const REGULAR_PRODUCT = 'regular_product';
-    public const ZERO_APR = 'zero_apr';
-    public const ZERO_PERCENT = 'zero_percent';
-    public const HR_VENDOR_PRODUCT_ONE = 'hr_one';
-    public const HR_VENDOR_PRODUCT_TWO = 'hr_two';
-    /**
-     * Multiple financing products codes
-     * @var array
-     */
-    protected $vendorProductCodes = [
-        self::REGULAR_PRODUCT => '4b6d131f-aa07-4dd9-9620-763b0352839b',
-        self::ZERO_APR => '2ea1b9c0-696b-402f-ba95-c5802e0d4d7e',
-        self::ZERO_PERCENT => '983e35c2-dfe5-4ee6-b480-5d7a859179c1',
-        self::HR_VENDOR_PRODUCT_ONE => 'e8884a49-c537-4f51-8599-167702732ad9',
-        self::HR_VENDOR_PRODUCT_TWO => '17ac4e4a-5b1f-4dba-aa05-00395ea8fc0b'
-    ];
+
     /**
      * Leanpay responses from api
      *
@@ -252,19 +249,11 @@ class Data extends AbstractHelper
     {
         $currencyType = $this->getApiType();
 
-        if ($currencyType === self::API_ENDPOINT_SLOVENIA) {
-            if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-                return (string)self::LEANPAY_BASE_URL;
-            }
-
-            return (string)self::LEANPAY_BASE_URL_DEV;
-        }
-
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return (string)self::LEANPAY_BASE_URL_HR;
+            return (string)self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
         }
 
-        return (string)self::LEANPAY_BASE_URL_DEV_HR;
+        return (string)self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
     }
 
     /**

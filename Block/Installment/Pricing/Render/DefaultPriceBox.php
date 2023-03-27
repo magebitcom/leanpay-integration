@@ -126,8 +126,10 @@ class DefaultPriceBox extends FinalPriceBox
             ->getAmount()
             ->getValue();
 
-        if ($this->storeManager->getStore()->getCurrentCurrency()->getCode() === "HRK") {
-           $amount = (float)$this->installmentHelper->getTransitionPriceHkrToEur((string)$amount);
+        $currencyCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+
+        if (in_array($currencyCode, InstallmentHelper::ALLOWED_CURRENCIES)) {
+           $amount = (float)$this->installmentHelper->getTransitionPrice((string)$amount, $currencyCode);
         }
 
         return $amount;
