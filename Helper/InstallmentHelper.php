@@ -282,10 +282,10 @@ class InstallmentHelper extends AbstractHelper
     /**
      * Get lowest installment price
      *
-     * @param float|int $price
+     * @param float $price
      * @return string
      */
-    public function getLowestInstallmentPrice(float|int $price, $group = '')
+    public function getLowestInstallmentPrice(float $price, $group = '')
     {
         $scopeId = $this->storeManager->getStore()->getId();
 
@@ -436,7 +436,7 @@ class InstallmentHelper extends AbstractHelper
     public function getCurrencyCode(): string
     {
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
-            return 'HRK';
+            return 'EUR';
         } elseif ($this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
             return 'RON';
         } else {
@@ -465,6 +465,17 @@ class InstallmentHelper extends AbstractHelper
         }
 
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE[$currencyCode];
+        return (string)round($convertedPrice, 2);
+    }
+
+
+    /**
+     * @param string $price
+     * @return string
+     */
+    public function getTransitionPriceHkrToEur(string $price): string
+    {
+        $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
         return (string)round($convertedPrice, 2);
     }
 
