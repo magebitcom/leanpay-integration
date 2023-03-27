@@ -431,7 +431,7 @@ class InstallmentHelper extends AbstractHelper
     public function getCurrencyCode(): string
     {
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
-            return 'HRK';
+            return 'EUR';
         } elseif ($this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
             return 'RON';
         } else {
