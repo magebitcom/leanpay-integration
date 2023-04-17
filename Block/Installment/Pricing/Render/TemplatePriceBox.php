@@ -95,9 +95,9 @@ class TemplatePriceBox extends Template
      * Returns lowest installment price
      *
      * @param string $group
-     * @return float
+     * @return string
      */
-    public function getLowestInstallmentPrice(string $group = ''): float
+    public function getLowestInstallmentPrice(string $group = ''): string
     {
         return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount());
     }
