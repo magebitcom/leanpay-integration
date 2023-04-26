@@ -32,13 +32,16 @@ class Installment extends AbstractDb
             return '';
         }
 
+        $connection = $this->getConnection();
+        $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+
         $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_AMOUNT, 'ASC');
-        $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
-        $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
-        $whereStatementApiType = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::API_TYPE);
+        $whereStatement = sprintf('%s.%s=?', $table, InstallmentInterface::LOAN_AMOUNT);
+        $whereStatementGroup = sprintf('%s.%s=?', $table, InstallmentInterface::GROUP_NAME);
+        $whereStatementApiType = sprintf('%s.%s=?', $table, InstallmentInterface::API_TYPE);
         $select = $this->getConnection()
             ->select()
-            ->from(InstallmentInterface::TABLE_NAME, [InstallmentInterface::INSTALLMENT_AMOUNT])
+            ->from($table, [InstallmentInterface::INSTALLMENT_AMOUNT])
             ->where($whereStatement, intval(round($price)))
             ->where($whereStatementGroup, $group)
             ->where($whereStatementApiType, $apiType)
@@ -66,13 +69,16 @@ class Installment extends AbstractDb
         } else {
             $orderStatement = sprintf('%s %s', InstallmentInterface::INSTALLMENT_PERIOD, 'ASC');
         }
-        $whereStatement = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::LOAN_AMOUNT);
-        $whereStatementGroup = sprintf('%s.%s=?', InstallmentInterface::TABLE_NAME, InstallmentInterface::GROUP_NAME);
+
+        $connection = $this->getConnection();
+        $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+        $whereStatement = sprintf('%s.%s=?', $table, InstallmentInterface::LOAN_AMOUNT);
+        $whereStatementGroup = sprintf('%s.%s=?', $table, InstallmentInterface::GROUP_NAME);
 
         $select = $this->getConnection()
             ->select()
             ->from(
-                InstallmentInterface::TABLE_NAME,
+                $table,
                 [
                     InstallmentInterface::INSTALLMENT_AMOUNT,
                     InstallmentInterface::INSTALLMENT_PERIOD
