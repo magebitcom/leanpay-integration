@@ -2,6 +2,7 @@ define(
     [
         'jquery',
         'jquery-ui-modules/slider',
+        'jquery/ui-modules/widgets/slider',
         'Leanpay_Payment/js/vendor/jquery.ui.touch-punch.min'
     ],
     function ($) {
