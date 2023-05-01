@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Leanpay\Payment\Cron;
@@ -77,14 +78,14 @@ class SyncInstallments
      * @param InstallmentHelper $installmentHelper
      */
     public function __construct(
-        Curl                                  $curl,
-        Data                                  $helper,
-        ManagerInterface                      $eventManager,
-        LoggerInterface                       $logger,
-        InstallmentRepositoryInterface        $repository,
-        ResourceConnection                    $resource,
-        Manager                               $manager,
-        InstallmentHelper                     $installmentHelper,
+        Curl $curl,
+        Data $helper,
+        ManagerInterface $eventManager,
+        LoggerInterface $logger,
+        InstallmentRepositoryInterface $repository,
+        ResourceConnection $resource,
+        Manager $manager,
+        InstallmentHelper $installmentHelper,
         InstallmentProductRepositoryInterface $installmentProductRepository,
         \Magento\Store\Model\App\Emulation $emulation
     ) {
@@ -139,7 +140,7 @@ class SyncInstallments
                     if ($parse->groups) {
                         $models = $this->extractInstallmentData($parse);
                         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
-                        $connection->delete($table, 'api_type = \''.$apiType.'\'');
+                        $connection->delete($table, 'api_type = \'' . $apiType . '\'');
                         $this->saveAllModels($models, $apiType);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
@@ -213,7 +214,7 @@ class SyncInstallments
         $installmentProductCache = [];
         $connection = $this->resource->getConnection();
 
-        $array = (array)$parse;
+        $array = (array) $parse;
         foreach (reset($array) as $group) {
             if (is_object($group) && $group->groupId && $group->loanAmounts) {
                 foreach ($group->loanAmounts as $amount) {
@@ -227,7 +228,10 @@ class SyncInstallments
                             $models[$index][InstallmentInterface::INSTALLMENT_PERIOD] = $installment->numberOfMonths;
                             $countryCode = $group->currencyCode;
                             if (!isset($installmentProductCache[$group->groupId . $countryCode])) {
-                                $isStored = $this->installmentProductRepository->getByGroupId($group->groupId, $countryCode);
+                                $isStored = $this->installmentProductRepository->getByGroupId(
+                                    $group->groupId,
+                                    $countryCode
+                                );
 
                                 if (!$isStored) {
                                     $vendorProduct = $this->installmentProductRepository->newModel();
@@ -237,7 +241,7 @@ class SyncInstallments
                                     $this->installmentProductRepository->save($vendorProduct);
                                 }
 
-                                $installmentProductCache[$group->groupId. $countryCode] = true;
+                                $installmentProductCache[$group->groupId . $countryCode] = true;
                             }
 
                             $index++;
@@ -246,6 +250,7 @@ class SyncInstallments
                 }
             }
         }
+
         return $models;
     }
 }

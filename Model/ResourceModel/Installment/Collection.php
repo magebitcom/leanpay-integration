@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Leanpay\Payment\Model\ResourceModel\Installment;
@@ -33,17 +34,20 @@ class Collection extends AbstractCollection
     public function getAllGroups()
     {
         $connection = $this->getConnection();
-        $table =$connection->getTableName(InstallmentInterface::TABLE_NAME);
+        $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+
         $orderStatement = sprintf(
             '%s %s',
             $connection->getTableName(InstallmentInterface::LOAN_AMOUNT),
             'ASC'
         );
+
         $whereStatement = sprintf(
             '%s.%s=?',
             $table,
             InstallmentInterface::LOAN_AMOUNT
         );
+
         $select = $connection
             ->select()
             ->from($table, [InstallmentInterface::GROUP_NAME])

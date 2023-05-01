@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Leanpay\Payment\Helper;
@@ -32,7 +33,11 @@ class Data extends AbstractHelper
     public const API_ENDPOINT_SLOVENIA = 'SLO';
     public const API_ENDPOINT_ROMANIA = 'RON';
     public const API_ENDPOINT_CROATIA = 'CRO';
-    public const API_ALLOWED_METHODS = [Data::API_ENDPOINT_CROATIA, Data::API_ENDPOINT_ROMANIA, Data::API_ENDPOINT_SLOVENIA];
+    public const API_ALLOWED_METHODS = [
+        Data::API_ENDPOINT_CROATIA,
+        Data::API_ENDPOINT_ROMANIA,
+        Data::API_ENDPOINT_SLOVENIA
+    ];
     /**
      *  Post Token URL
      *
@@ -204,15 +209,14 @@ class Data extends AbstractHelper
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        Context                                                         $context,
-        EncryptorInterface                                              $encryptor,
-        DateTime                                                        $dateTime,
-        \Magento\Framework\App\ResourceConnection                       $connection,
+        Context $context,
+        EncryptorInterface $encryptor,
+        DateTime $dateTime,
+        \Magento\Framework\App\ResourceConnection $connection,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        \Magento\Store\Model\StoreManagerInterface                      $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface              $scopeConfig
-    )
-    {
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+    ) {
         $this->connection = $connection;
         $this->dateTime = $dateTime;
         $this->encryptor = $encryptor;
@@ -224,7 +228,7 @@ class Data extends AbstractHelper
 
     public function getStoreId(): int
     {
-        return (int)$this->storeManager->getStore()->getId();
+        return (int) $this->storeManager->getStore()->getId();
     }
 
     public function getCurrencyType(): string
@@ -239,7 +243,7 @@ class Data extends AbstractHelper
             $currencyType = 'EUR';
         }
 
-        return (string)$currencyType;
+        return (string) $currencyType;
     }
 
     /**
@@ -250,10 +254,10 @@ class Data extends AbstractHelper
         $currencyType = $this->getApiType();
 
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return (string)self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
+            return (string) self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
         }
 
-        return (string)self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
+        return (string) self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
     }
 
     /**
@@ -263,7 +267,7 @@ class Data extends AbstractHelper
      */
     public function isActive(): bool
     {
-        return (bool)$this->scopeConfig->getValue(self::LEANPAY_IS_ACTIVE_PATH);
+        return (bool) $this->scopeConfig->getValue(self::LEANPAY_IS_ACTIVE_PATH);
     }
 
     /**
@@ -273,7 +277,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayApiKey(): string
     {
-        return (string)$this->encryptor->decrypt(
+        return (string) $this->encryptor->decrypt(
             $this->scopeConfig->getValue(
                 self::LEANPAY_API_CONFIG_API_KEY_PATH,
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
@@ -303,7 +307,7 @@ class Data extends AbstractHelper
      */
     public function getInstructions(): string
     {
-        return (string)$this->scopeConfig->getValue(
+        return (string) $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_INSTRUCTIONS_PATH,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -375,7 +379,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayLanguage(): string
     {
-        return (string)$this->scopeConfig->getValue(
+        return (string) $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_LANG_PATH,
             ScopeInterface::SCOPE_STORE
         );
@@ -388,7 +392,7 @@ class Data extends AbstractHelper
      */
     private function getSecretWord(): string
     {
-        return (string)$this->encryptor->decrypt(
+        return (string) $this->encryptor->decrypt(
             $this->scopeConfig->getValue(
                 self::LEANPAY_API_CONFIG_SECRET_WORD_PATH,
                 ScopeInterface::SCOPE_STORE,
@@ -404,7 +408,7 @@ class Data extends AbstractHelper
      */
     private function getEnvironmentMode(): string
     {
-        return (string)$this->scopeConfig->getValue(
+        return (string) $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_MODE_PATH,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -416,7 +420,7 @@ class Data extends AbstractHelper
      */
     public function getCountryCode(): string
     {
-        return (string)$this->scopeConfig->getValue(
+        return (string) $this->scopeConfig->getValue(
             self::LEANPAY_PROMOS_MFP_COUNTRY,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -430,7 +434,7 @@ class Data extends AbstractHelper
      */
     public function getMagentoCheckoutUrl(): string
     {
-        return (string)$this->scopeConfig->getValue(
+        return (string) $this->scopeConfig->getValue(
             self::LEANPAY_MAGENTO_CHECKOUT_URL,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -506,7 +510,7 @@ class Data extends AbstractHelper
         $apiKeys = [];
         $stores = $this->storeManager->getStores();
         foreach ($stores as $store) {
-            $apiKey = (string)$this->encryptor->decrypt(
+            $apiKey = (string) $this->encryptor->decrypt(
                 $this->scopeConfig->getValue(
                     self::LEANPAY_API_CONFIG_API_KEY_PATH,
                     \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
@@ -533,14 +537,14 @@ class Data extends AbstractHelper
     public function getLeanpayPromosMFPName(int $storeId = 0): string
     {
         if ($storeId) {
-            return (string)$this->scopeConfig->getValue(
+            return (string) $this->scopeConfig->getValue(
                 self::LEANPAY_PROMOS_MFP_PRODUCT_NAME,
                 ScopeInterface::SCOPE_STORE,
                 $storeId
             );
         }
 
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
     }
 
     /**
@@ -550,7 +554,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosMFPStartDate(): string
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_START_DATE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_START_DATE);
     }
 
     /**
@@ -560,7 +564,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosMFPEndDate(): string
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_END_DATE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_END_DATE);
     }
 
     /**
@@ -571,10 +575,14 @@ class Data extends AbstractHelper
     public function getLeanpayPromosMFPCartSize(int $storeId = 0): string
     {
         if ($storeId) {
-            return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE, ScopeInterface::SCOPE_STORE, $storeId);
+            return (string) $this->scopeConfig->getValue(
+                self::LEANPAY_PROMOS_MFP_CART_SIZE,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
         }
 
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
     }
 
     /**
@@ -584,7 +592,8 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosVendorCode(): string
     {
-        $storeId = (int)$this->storeManager->getStore()->getId();
+        $storeId = (int) $this->storeManager->getStore()->getId();
+
         return $this->getLeanpayPromosMFPName($storeId);
     }
 
@@ -595,8 +604,8 @@ class Data extends AbstractHelper
         }
         $data = [];
         $data[] = $product;
-        return $this->getPromoCode($data);
 
+        return $this->getPromoCode($data);
     }
 
 
@@ -637,7 +646,6 @@ class Data extends AbstractHelper
         $productCount = 0;
 
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
-
             if (is_array($handler)) {
                 $items = $handler;
             } else {
@@ -662,7 +670,7 @@ class Data extends AbstractHelper
 
                 $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
-                if (!$vendorCode){
+                if (!$vendorCode) {
                     continue;
                 }
 
@@ -695,10 +703,10 @@ class Data extends AbstractHelper
                     ];
                 }
 
-                if (sizeof($validOption) > 0){
+                if (sizeof($validOption) > 0) {
                     $allSame = true;
-                    foreach ($validOption as $option){
-                        if(!reset($validOption)['code'] == $option['code']){
+                    foreach ($validOption as $option) {
+                        if (!reset($validOption)['code'] == $option['code']) {
                             $allSame = false;
                             break;
                         }
@@ -713,8 +721,8 @@ class Data extends AbstractHelper
             });
 
             // checks if there are two items or more and rule have exclusive only allowed
-            if ($productCount > 1 && !$incluse){
-                if(!$allSame){
+            if ($productCount > 1 && !$incluse) {
+                if (!$allSame) {
                     $validOption = [];
                 }
             }
@@ -765,7 +773,11 @@ class Data extends AbstractHelper
                 // To improve scaling of the program calculating all required cateogries to compare
                 $ids = implode(',', array_unique($ids));
                 $table = $this->connection->getTableName('catalog_category_product');
-                $string = sprintf('select category_id from %s where product_id in (%s) group by category_id', $table, $ids);
+                $string = sprintf(
+                    'select category_id from %s where product_id in (%s) group by category_id',
+                    $table,
+                    $ids
+                );
                 $categoriesToCompare = $this->connection->getConnection()->fetchCol($string);
 
                 if (!empty($categoriesToCompare)) {
@@ -789,7 +801,9 @@ class Data extends AbstractHelper
                             $categoryEnd = strtotime($category->getData('leanpay_category_end_date') ?? '');
                             $categoryIsTime = $category->getData('leanpay_category_time_based');
                             $categoryPriority = $category->getData('leanpay_category_priority');
-                            $categoryIsExclusive = $category->getData('leanpay_category_exclusive_inclusive') == 'inclusive' ? true : false;
+                            $categoryIsExclusive = $category->getData(
+                                'leanpay_category_exclusive_inclusive'
+                            ) == 'inclusive' ? true : false;
                             $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
                             $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
                             if ($categoryIsTime) {
@@ -833,7 +847,7 @@ class Data extends AbstractHelper
     private function validateGlobal($handler)
     {
         try {
-            $storeId = (int)$this->storeManager->getStore()->getId();
+            $storeId = (int) $this->storeManager->getStore()->getId();
             $requiredSize = $this->getLeanpayPromosMFPCartSize($storeId) ?? 0;
             $requiredDateStart = strtotime($this->getLeanpayPromosMFPStartDate());
             $requiredDateEnd = strtotime($this->getLeanpayPromosMFPEndDate());
@@ -847,7 +861,7 @@ class Data extends AbstractHelper
             $amount = 0.00;
 
             if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
-                $amount = (float)$handler->getStore()->getBaseCurrency()->convert(
+                $amount = (float) $handler->getStore()->getBaseCurrency()->convert(
                     $handler->getBaseGrandTotal(),
                     'EUR'
                 );

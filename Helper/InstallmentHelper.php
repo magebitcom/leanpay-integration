@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Leanpay\Payment\Helper;
@@ -14,6 +15,7 @@ use Magento\Framework\Phrase;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+
 use function GuzzleHttp\Psr7\str;
 
 class InstallmentHelper extends AbstractHelper
@@ -143,12 +145,12 @@ class InstallmentHelper extends AbstractHelper
      * @param Installment $resourceModel
      */
     public function __construct(
-        Data                  $dataHelper,
-        SerializerInterface   $serializer,
+        Data $dataHelper,
+        SerializerInterface $serializer,
         StoreManagerInterface $storeManager,
-        Context               $context,
-        ViewBlockConfig       $blockConfig,
-        Installment           $resourceModel
+        Context $context,
+        ViewBlockConfig $blockConfig,
+        Installment $resourceModel
     ) {
         $this->dataHelper = $dataHelper;
         $this->serializer = $serializer;
@@ -165,7 +167,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getGroup(): string
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP, ScopeInterface::SCOPE_STORE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -175,7 +177,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getInstallmentColor()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_COLOR);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_COLOR);
     }
 
     /**
@@ -185,7 +187,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getHomepageFontSize()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_HOMEPAGE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_HOMEPAGE);
     }
 
     /**
@@ -195,7 +197,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCatalogFontSize()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE);
     }
 
     /**
@@ -205,7 +207,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getProductFontSize()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE);
     }
 
     /**
@@ -215,7 +217,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getMoreInfoURL()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MORE_INFO);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MORE_INFO);
     }
 
     /**
@@ -225,7 +227,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCheckYourLimitURL()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT);
     }
 
     /**
@@ -235,7 +237,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getAllowedViews()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
     }
 
     /**
@@ -245,7 +247,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getBackgroundColor()
     {
-        return (string)$this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
+        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
     }
 
     /**
@@ -343,7 +345,7 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        if ($group){
+        if ($group) {
             return $this->resourceModel->getToolTipData($price, $group, $useTerm);
         }
 
@@ -382,7 +384,7 @@ class InstallmentHelper extends AbstractHelper
                 break;
         }
 
-        return (string)$result;
+        return (string) $result;
     }
 
     /**
@@ -422,7 +424,8 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCurrency(): string
     {
-        return (string)$this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY,
+        return (string) $this->scopeConfig->getValue(
+            Data::LEANPAY_CONFIG_CURRENCY,
             ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
@@ -465,7 +468,8 @@ class InstallmentHelper extends AbstractHelper
         }
 
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE[$currencyCode];
-        return (string)round($convertedPrice, 2);
+
+        return (string) round($convertedPrice, 2);
     }
 
 
@@ -476,7 +480,8 @@ class InstallmentHelper extends AbstractHelper
     public function getTransitionPriceHkrToEur(string $price): string
     {
         $convertedPrice = $price / self::TRANSITION_CONVERSION_RATE;
-        return (string)round($convertedPrice, 2);
+
+        return (string) round($convertedPrice, 2);
     }
 
     /**
@@ -501,7 +506,8 @@ class InstallmentHelper extends AbstractHelper
             'value' => $values,
             'currency' => $this->getCurrencyCode(),
         ];
-        return (string)$this->serializer->serialize($data);
+
+        return (string) $this->serializer->serialize($data);
     }
 
     /**
@@ -529,6 +535,7 @@ class InstallmentHelper extends AbstractHelper
     public function shouldRenderTooltipPriceBlock(float $amount, $useTerm = false): bool
     {
         $data = $this->getToolTipData($amount, $useTerm);
+
         return isset(
             $data[InstallmentInterface::INSTALLMENT_AMOUNT],
             $data[InstallmentInterface::INSTALLMENT_PERIOD]
