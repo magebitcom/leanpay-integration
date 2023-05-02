@@ -121,16 +121,30 @@ class TemplatePriceBox extends Template
      * @param string $code
      * @return string|void
      */
-    public function getInstallmentVendorName(string $code = ''){
-        if (!$code){
+    public function getInstallmentVendorName(string $code = '')
+    {
+        if (!$code) {
             return '';
         }
 
-        $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
-            ->setPageSize(1)
-            ->setCurrentPage(1)
-            ->create();
-        $items = $this->productRepo->getList($search);
+        try {
+            $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
+                ->setPageSize(1)
+                ->setCurrentPage(1)
+                ->create();
+
+            $items = $this->productRepo->getList($search)->getItems();
+
+            if (empty($items)) {
+                return '';
+            }
+
+            foreach ($items as $item) {
+                return $item->getData(InstallmentProductInterface::GROUP_NAME);
+            }
+        } catch (LocalizedException $exception) {
+            return '';
+        }
     }
 
     /**
