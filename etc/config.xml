@@ -12,7 +12,6 @@
                 <order_status>sale</order_status>
                 <allowspecific>0</allowspecific>
                 <mode>DEV_MODE</mode>
-                <language>sl</language>
                 <leanpay_base_url>https://app.leanpay.si</leanpay_base_url>
                 <leanpay_base_url_dev>https://lapp.leanpay.si</leanpay_base_url_dev>
                 <installment_cron>0 2 * * *</installment_cron>

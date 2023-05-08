@@ -51,12 +51,6 @@
                     </tooltip>
                 </field>
 
-                <field id="language" translate="label" sortOrder="1" type="select" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
-                    <label>Leanpay Language</label>
-                    <source_model>Leanpay\Payment\Model\Config\Source\Languages</source_model>
-                </field>
-
                 <field id="checkout_url" translate="label comment" sortOrder="1" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Checkout URL to redirect after failure</label>
