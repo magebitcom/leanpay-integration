@@ -197,6 +197,7 @@ class AddMFPsAttributes implements DataPatchInterface, PatchRevertableInterface 
         /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
         $categoryAttributesToRemove = [
+            'leanpay_category_priority',
             'leanpay_category_time_based',
             'leanpay_category_time_based',
             'leanpay_category_start_date',
