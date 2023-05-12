@@ -15,8 +15,9 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
+use Magento\Framework\Setup\Patch\PatchRevertableInterface;
 
-class AddMFPsAttributes implements DataPatchInterface {
+class AddMFPsAttributes implements DataPatchInterface, PatchRevertableInterface {
     /**
      * ModuleDataSetupInterface
      *
@@ -191,4 +192,32 @@ class AddMFPsAttributes implements DataPatchInterface {
         }
     }
 
+    public function revert()
+    {
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
+        $categoryAttributesToRemove = [
+            'leanpay_category_time_based',
+            'leanpay_category_time_based',
+            'leanpay_category_start_date',
+            'leanpay_category_end_date',
+            'leanpay_category_vendor_code',
+            'leanpay_category_exclusive_inclusive'
+        ];
+        foreach ($categoryAttributesToRemove as $attribute) {
+            $eavSetup->removeAttribute(Category::ENTITY, $attribute);
+        }
+
+        $productAttributesToRemove = [
+            'leanpay_product_priority',
+            'leanpay_product_time_based',
+            'leanpay_product_start_date',
+            'leanpay_product_end_date',
+            'leanpay_product_vendor_code',
+            'leanpay_product_exclusive_inclusive'
+        ];
+        foreach ($productAttributesToRemove as $attribute) {
+            $eavSetup->removeAttribute(Product::ENTITY, $attribute);
+        }
+    }
 }

@@ -31,7 +31,7 @@ class TotalMinMaxPlugin
             return $proceed($paymentMethod, $quote);
         }
 
-        $total = $quote->getStore()->getBaseCurrency()->convert($total = $quote->getBaseGrandTotal(), 'EUR');
+        $total = $quote->getGrandTotal();
 
         $minTotal = $paymentMethod->getConfigData(TotalMinMax::MIN_ORDER_TOTAL);
         $maxTotal = $paymentMethod->getConfigData(TotalMinMax::MAX_ORDER_TOTAL);
