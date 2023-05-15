@@ -66,18 +66,18 @@ class DefaultPriceBox extends FinalPriceBox
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
      */
     public function __construct(
-        StoreManagerInterface           $storeManager,
-        Context                         $context,
-        SaleableInterface               $saleableItem,
-        PriceInterface                  $price,
-        RendererPool                    $rendererPool,
-        Data                            $helper,
-        InstallmentHelper               $installmentHelper,
-        SerializerInterface             $serializer,
+        StoreManagerInterface $storeManager,
+        Context $context,
+        SaleableInterface $saleableItem,
+        PriceInterface $price,
+        RendererPool $rendererPool,
+        Data $helper,
+        InstallmentHelper $installmentHelper,
+        SerializerInterface $serializer,
         InstallmentProductRepositoryInterface $productRepository,
         SearchCriteriaBuilderFactory $criteriaBuilderFactory,
-        array                           $data = [],
-        SalableResolverInterface        $salableResolver = null,
+        array $data = [],
+        SalableResolverInterface $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
         $this->productRepo = $productRepository;
@@ -129,7 +129,7 @@ class DefaultPriceBox extends FinalPriceBox
         $currencyCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
 
         if (in_array($currencyCode, InstallmentHelper::ALLOWED_CURRENCIES)) {
-           $amount = (float)$this->installmentHelper->getTransitionPrice((string)$amount, $currencyCode);
+            $amount = (float) $this->installmentHelper->getTransitionPrice((string) $amount, $currencyCode);
         }
 
         return $amount;
@@ -139,12 +139,13 @@ class DefaultPriceBox extends FinalPriceBox
      * @param string $code
      * @return string|void
      */
-    public function getInstallmentVendorName(string $code = ''){
-        if (!$code){
+    public function getInstallmentVendorName(string $code = '')
+    {
+        if (!$code) {
             return '';
         }
 
-        try{
+        try {
             $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
                 ->setPageSize(1)
                 ->setCurrentPage(1)
@@ -152,15 +153,14 @@ class DefaultPriceBox extends FinalPriceBox
 
             $items = $this->productRepo->getList($search)->getItems();
 
-            if (empty($items)){
+            if (empty($items)) {
                 return '';
             }
 
-            foreach ($items as $item){
+            foreach ($items as $item) {
                 return $item->getData(InstallmentProductInterface::GROUP_NAME);
             }
-
-        }catch (LocalizedException $exception){
+        } catch (LocalizedException $exception) {
             return '';
         }
     }

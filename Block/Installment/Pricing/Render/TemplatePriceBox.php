@@ -11,6 +11,7 @@ use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template;
+use Magento\Checkout\Model\Cart;
 
 class TemplatePriceBox extends Template
 {
@@ -43,6 +44,8 @@ class TemplatePriceBox extends Template
      * @var \Magento\Framework\Api\SearchCriteriaBuilder
      */
     private $searchCriteria;
+    private \Magento\Framework\Registry $registry;
+    private Cart $cart;
 
     /**
      * TemplatePriceBox constructor.
@@ -60,6 +63,8 @@ class TemplatePriceBox extends Template
         SerializerInterface $serializer,
         InstallmentProductRepositoryInterface $productRepository,
         SearchCriteriaBuilderFactory $criteriaBuilderFactory,
+        \Magento\Framework\Registry $registry,
+        Cart $cart,
         array $data = []
     ) {
         $this->productRepo = $productRepository;
@@ -69,6 +74,8 @@ class TemplatePriceBox extends Template
         $this->serializer = $serializer;
         $data['view_key'] = InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
         parent::__construct($context, $data);
+        $this->registry = $registry;
+        $this->cart = $cart;
     }
 
     /**
@@ -78,7 +85,13 @@ class TemplatePriceBox extends Template
      */
     public function getAmount()
     {
-        return $this->getData('amount');
+        $amount = $this->getData('amount');
+
+        if ($this->getData('is_checkout')) {
+            return $this->cart->getQuote()->getGrandTotal();
+        }
+
+        return $amount;
     }
 
     /**
@@ -88,20 +101,18 @@ class TemplatePriceBox extends Template
      */
     public function getCacheKey()
     {
-        return parent::getCacheKey() . ($this->getData('amount'));
+        return parent::getCacheKey() . ($this->getAmount());
     }
 
     /**
      * Returns lowest installment price
      *
-     * @param string $group
      * @return string
      */
     public function getLowestInstallmentPrice(string $group = ''): string
     {
-        return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount());
+        return $this->installmentHelper->getLowestInstallmentPrice($this->getAmount(), $group);
     }
-
 
     /**
      * Retreves financila product, used in all view except checkout place order
@@ -111,7 +122,7 @@ class TemplatePriceBox extends Template
     public function getFinancialProduct(): string
     {
         try {
-            return $this->helper->getProductPromoCode($this->getSaleableItem());
+            return $this->helper->getProductPromoCode($this->registry->registry('current_product'));
         } catch (LocalizedException $exception) {
             return '';
         }
@@ -121,16 +132,30 @@ class TemplatePriceBox extends Template
      * @param string $code
      * @return string|void
      */
-    public function getInstallmentVendorName(string $code = ''){
-        if (!$code){
+    public function getInstallmentVendorName(string $code = '')
+    {
+        if (!$code) {
             return '';
         }
 
-        $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
-            ->setPageSize(1)
-            ->setCurrentPage(1)
-            ->create();
-        $items = $this->productRepo->getList($search);
+        try {
+            $search = $this->searchCriteria->addFilter(InstallmentProductInterface::GROUP_ID, $code)
+                ->setPageSize(1)
+                ->setCurrentPage(1)
+                ->create();
+
+            $items = $this->productRepo->getList($search)->getItems();
+
+            if (empty($items)) {
+                return '';
+            }
+
+            foreach ($items as $item) {
+                return $item->getData(InstallmentProductInterface::GROUP_NAME);
+            }
+        } catch (LocalizedException $exception) {
+            return '';
+        }
     }
 
     /**
