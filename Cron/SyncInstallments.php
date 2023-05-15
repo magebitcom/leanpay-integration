@@ -138,7 +138,7 @@ class SyncInstallments
 
                     $parse = json_decode($data);
                     if ($parse->groups) {
-                        $models = $this->extractInstallmentData($parse);
+                        $models = $this->extractInstallmentData($parse, $apiType);
                         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
                         $connection->delete($table, 'api_type = \'' . $apiType . '\'');
                         $this->saveAllModels($models, $apiType);
@@ -206,7 +206,7 @@ class SyncInstallments
      * @param array $parse
      * @return array
      */
-    private function extractInstallmentData($parse)
+    private function extractInstallmentData($parse, $apiType)
     {
         $models = [];
         $index = 0;
@@ -238,6 +238,7 @@ class SyncInstallments
                                     $vendorProduct->setGroupId($group->groupId);
                                     $groupName = $group->groupName;
                                     $vendorProduct->setGroupName($groupName);
+                                    $vendorProduct->setCountry($apiType);
                                     $this->installmentProductRepository->save($vendorProduct);
                                 }
 

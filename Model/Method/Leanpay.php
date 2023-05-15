@@ -251,8 +251,7 @@ class Leanpay extends AbstractMethod
             'vendorAddress' => current($address->getStreet()),
             'vendorZip' => $address->getPostcode(),
             'vendorCity' => $address->getCity(),
-            'vendorPhoneNumber' => $address->getTelephone(),
-            'language' => $this->helper->getLeanpayLanguage()
+            'vendorPhoneNumber' => $address->getTelephone()
         ];
 
         if ($promoProduct = $this->getPromoCode($order)) {
