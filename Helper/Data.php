@@ -15,6 +15,8 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Leanpay\Payment\Model\InstallmentProductRepository;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 
 class Data extends AbstractHelper
 {
@@ -196,6 +198,8 @@ class Data extends AbstractHelper
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $storeManager;
+    private InstallmentProductRepository $installmentProductRepository;
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
      * Data constructor.
@@ -210,7 +214,9 @@ class Data extends AbstractHelper
         \Magento\Framework\App\ResourceConnection $connection,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        InstallmentProductRepository $installmentProductRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->connection = $connection;
         $this->dateTime = $dateTime;
@@ -218,6 +224,8 @@ class Data extends AbstractHelper
         $this->catalogCategoryFactory = $categoryCollectionFactory;
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
+        $this->installmentProductRepository = $installmentProductRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         parent::__construct($context);
     }
 
@@ -598,7 +606,7 @@ class Data extends AbstractHelper
      */
     public function getPromoCode($handler): string
     {
-        if ((!$handler instanceof OrderInterface && !$handler instanceof CartInterface) xor is_array($handler)) {
+        if ((!$handler instanceof OrderInterface && !$handler instanceof CartInterface && !$handler instanceof Quote) xor is_array($handler)) {
             return '';
         }
 
@@ -650,10 +658,18 @@ class Data extends AbstractHelper
                 }
                 $productCount++;
 
-                $productValue = $product->getData('leanpay_product_financing_product_value');
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
                 if (!$vendorCode) {
                     continue;
+                }
+
+                # Check if current product promo code is assigned to the current store api type
+                if ($productInstalmments = $this->getProductInstallmentByVendorCode($vendorCode)) {
+                    foreach ($productInstalmments as $productInstalmment) {
+                        if ($productInstalmment->getData('country') != $this->getApiType()){
+                            continue 2;
+                        }
+                    }
                 }
 
                 $incluse = $product->getData('leanpay_product_exclusive_inclusive') == 'inclusive' ? 1 : 0;
@@ -663,10 +679,6 @@ class Data extends AbstractHelper
                 $end = strtotime($product->getData('leanpay_product_end_date') ?? '');
                 $start = strtotime($product->getData('leanpay_product_start_date') ?? '');
                 $isTime = $product->getData('leanpay_product_time_based');
-
-                if ($productValue > $product->getFinalPrice()) {
-                    return $result;
-                }
 
                 if ($isTime) {
                     $currentTime = strtotime($this->dateTime->gmtDate());
@@ -857,5 +869,21 @@ class Data extends AbstractHelper
         } catch (Exception $exception) {
             return false;
         }
+    }
+    function getProductInstallmentByVendorCode(string $vendorCode) {
+        $searchCriteriaBuilder = $this->searchCriteriaBuilder;
+        $searchCriteria = $searchCriteriaBuilder->addFilter(
+            'group_id',
+            $vendorCode,
+            'eq'
+        )->create();
+
+        $result = $this->installmentProductRepository->getList($searchCriteria)->getItems();
+
+        if (empty($result)){
+            return null;
+        }
+
+        return $result;
     }
 }

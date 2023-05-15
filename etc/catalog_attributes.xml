@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Catalog:etc/catalog_attributes.xsd">
+    <group name="quote_item">
+        <attribute name="leanpay_product_vendor_code"/>
+        <attribute name="leanpay_product_exclusive_inclusive"/>
+        <attribute name="leanpay_product_priority"/>
+        <attribute name="leanpay_product_end_date"/>
+        <attribute name="leanpay_product_start_date"/>
+        <attribute name="leanpay_product_time_based"/>
+    </group>
+</config>
