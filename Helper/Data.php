@@ -25,7 +25,7 @@ class Data extends AbstractHelper
     public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
     public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
-    public const LEANPAY_BASE_URL_RO = 'https://vendor.leanpay.ro/';
+    public const LEANPAY_BASE_URL_RO = 'https://app.leanpay.ro/';
     public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-app.leanpay.ro/';
 
 
