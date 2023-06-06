@@ -803,12 +803,22 @@ class Data extends AbstractHelper
                         'leanpay_category_vendor_code',
                         'leanpay_category_exclusive_inclusive'
                     ];
-                    $categories = $collection->addIdFilter($categoriesToCompare)
+                    $categories = $collection
+                        ->addIdFilter($categoriesToCompare)
                         ->addAttributeToSelect($requiredAttributes)
-                        ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
+                        ->setStoreId($this->getStoreId())
                         ->getItems();
+                    if(empty($categories)) {
+                        $categories = $collection->addIdFilter($categoriesToCompare)
+                            ->addAttributeToSelect($requiredAttributes)
+                            ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
+                            ->getItems();
+                    }
                     if (!empty($categories)) {
                         foreach ($categories as $category) {
+                            if (empty($category->getData('leanpay_category_vendor_code'))) {
+                                continue;
+                            }
                             $categoryStart = strtotime($category->getData('leanpay_category_start_date') ?? '');
                             $categoryEnd = strtotime($category->getData('leanpay_category_end_date') ?? '');
                             $categoryIsTime = $category->getData('leanpay_category_time_based');

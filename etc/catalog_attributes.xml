@@ -8,4 +8,13 @@
         <attribute name="leanpay_product_start_date"/>
         <attribute name="leanpay_product_time_based"/>
     </group>
+    <group name="catalog_category">
+        <attribute name="leanpay_category_financing_product_value"/>
+        <attribute name="leanpay_category_priority"/>
+        <attribute name="leanpay_category_time_based"/>
+        <attribute name="leanpay_category_start_date"/>
+        <attribute name="leanpay_category_end_date"/>
+        <attribute name="leanpay_category_vendor_code"/>
+        <attribute name="leanpay_category_exclusive_inclusive"/>
+    </group>
 </config>
