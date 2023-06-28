@@ -84,7 +84,7 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = [
-        'EUR' => 'https://app.leanpay.si/vendor/installment-plans',
+        'SLO' => 'https://app.leanpay.si/vendor/installment-plans',
         'HRK' => 'https://app.leanpay.hr/vendor/installment-plans',
         'RON' => 'https://app.leanpay.ro/vendor/installment-plans'
     ];
