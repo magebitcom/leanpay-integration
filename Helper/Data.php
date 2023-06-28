@@ -120,11 +120,6 @@ class Data extends AbstractHelper
     public const LEANPAY_CONFIG_MODE_PATH = 'payment/leanpay/mode';
 
     /**
-     * Leanpay Language configuration path
-     */
-    public const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
-
-    /**
      * Leanpay is active configuration path
      */
     public const LEANPAY_IS_ACTIVE_PATH = 'payment/leanpay/active';
@@ -378,19 +373,6 @@ class Data extends AbstractHelper
     public function getTokenUrl(): string
     {
         return $this->getBaseUrl() . self::LEANPAY_TOKEN_URL;
-    }
-
-    /**
-     * Get Leanpay Language
-     *
-     * @return string
-     */
-    public function getLeanpayLanguage(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_CONFIG_LANG_PATH,
-            ScopeInterface::SCOPE_STORE
-        );
     }
 
     /**
