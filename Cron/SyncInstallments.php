@@ -67,6 +67,11 @@ class SyncInstallments
     private $emulation;
 
     /**
+     * @var InstallmentProductRepositoryInterface
+     */
+    private $installmentProductRepository;
+
+    /**
      * SyncInstallments constructor.
      * @param Curl $curl
      * @param Data $helper
