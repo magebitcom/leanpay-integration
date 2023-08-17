@@ -143,11 +143,11 @@ class SyncInstallments
 
                     $parse = json_decode($data);
                     if ($parse->groups) {
-                        $models = $this->extractInstallmentData($parse, $apiType);
                         $installmentsTable = $connection->getTableName(InstallmentInterface::TABLE_NAME);
                         $productsTable = $connection->getTableName(InstallmentProductInterface::TABLE_NAME);
                         $connection->delete($installmentsTable, 'api_type = \'' . $apiType . '\'');
                         $connection->delete($productsTable, 'country = \'' . $apiType . '\'');
+                        $models = $this->extractInstallmentData($parse, $apiType);
                         $this->saveAllModels($models, $apiType);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }
