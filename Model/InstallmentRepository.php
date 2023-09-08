@@ -32,6 +32,16 @@ class InstallmentRepository implements InstallmentRepositoryInterface
     private $collectionProcessor;
 
     /**
+     * @var CollectionFactory
+     */
+    private  $collectionFactory;
+
+    /**
+     * @var InstallmentProductSearchResultsInterfaceFactory
+     */
+    private $searchResultsFactory;
+
+    /**
      * InstallmentRepository constructor.
      *
      * @param ResourceModel\Installment $resourceModel

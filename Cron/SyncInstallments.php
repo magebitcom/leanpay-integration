@@ -67,6 +67,11 @@ class SyncInstallments
     private $emulation;
 
     /**
+     * @var InstallmentProductRepositoryInterface
+     */
+    private $installmentProductRepository;
+
+    /**
      * SyncInstallments constructor.
      * @param Curl $curl
      * @param Data $helper
@@ -138,9 +143,11 @@ class SyncInstallments
 
                     $parse = json_decode($data);
                     if ($parse->groups) {
+                        $installmentsTable = $connection->getTableName(InstallmentInterface::TABLE_NAME);
+                        $productsTable = $connection->getTableName(InstallmentProductInterface::TABLE_NAME);
+                        $connection->delete($installmentsTable, 'api_type = \'' . $apiType . '\'');
+                        $connection->delete($productsTable, 'country = \'' . $apiType . '\'');
                         $models = $this->extractInstallmentData($parse, $apiType);
-                        $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
-                        $connection->delete($table, 'api_type = \'' . $apiType . '\'');
                         $this->saveAllModels($models, $apiType);
                         $this->cacheManager->clean([Type::TYPE_IDENTIFIER]);
                     }

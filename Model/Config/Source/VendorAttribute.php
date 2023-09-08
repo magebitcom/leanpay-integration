@@ -10,6 +10,9 @@ use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 
 class VendorAttribute extends AbstractSource
 {
+    private \Magento\Framework\Api\SearchCriteriaBuilder $criteriaBuilder;
+    private InstallmentProductRepositoryInterface $installmentProductRepository;
+
     /***
      * @param InstallmentProductRepositoryInterface $installmentProductRepository
      * @param SearchCriteriaBuilderFactory $criteriaBuilderFactory

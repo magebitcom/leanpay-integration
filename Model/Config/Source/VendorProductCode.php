@@ -15,6 +15,9 @@ use Magento\Framework\Setup\Patch\DataPatchInterface;
  */
 class VendorProductCode implements OptionSourceInterface
 {
+    private \Magento\Framework\Api\SearchCriteriaBuilder $criteriaBuilder;
+    private InstallmentProductRepositoryInterface $installmentProductRepository;
+
     /***
      * @param InstallmentProductRepositoryInterface $installmentProductRepository
      * @param SearchCriteriaBuilderFactory $criteriaBuilderFactory

@@ -12,6 +12,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Checkout\Model\Cart;
+use Magento\Quote\Model\Quote;
 
 class TemplatePriceBox extends Template
 {

@@ -118,7 +118,7 @@ class Api extends AbstractAction
 
         $this->invoiceSender->send($invoice);
 
-        $order->addStatusHistoryComment(__('Notified customer about invoice #%1.', $invoice->getId()))
+        $order->addCommentToStatusHistory(__('Notified customer about invoice #%1.', $invoice->getId()))
             ->setIsCustomerNotified(true);
 
         $order->setStatus(Order::STATE_PROCESSING);
