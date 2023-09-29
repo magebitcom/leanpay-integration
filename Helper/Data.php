@@ -719,19 +719,6 @@ class Data extends AbstractHelper
                 if (!$allSame) {
                     $validOption = [];
                 }
-
-                if ($productCount !== sizeof($validOption)) {
-                    $validOption = [];
-                }
-
-                // check if there is more than 1 product with different exclusive program
-                $exclusiveItems = array_filter($validOption, function ($item) {
-                    return $item["inclusive"] === 0;
-                });
-
-                if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
-                    $validOption = [];
-                }
             }
 
             //check if two items with same priority colide
@@ -762,6 +749,7 @@ class Data extends AbstractHelper
      */
     private function validateCategory($handler)
     {
+        $result = '';
         $validOption = [];
         $ids = [];
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
@@ -840,41 +828,20 @@ class Data extends AbstractHelper
                         }
                         if (!empty($validOption) && is_array($validOption)) {
                             usort($validOption, function ($a, $b) {
-                                // First, sort by [inclusive], descending order (true first)
-                                $inclusiveComparison = ($a['inclusive'] === $b['inclusive']) ? 0 : ($a['inclusive'] ? -1 : 1);
-
-                                // If [inclusive] values are the same, sort by [priority], descending order
-                                if ($inclusiveComparison === 0) {
-                                    return ($a['priority'] > $b['priority']) ? -1 : 1;
-                                }
-
-                                return $inclusiveComparison;
+                                return ($a['priority'] > $b['priority']) ? -1 : 1;
                             });
 
-                            if ($validOption[0]['inclusive'] === true) {
-                                return $validOption[0]['code'];
+                            foreach ($validOption as $item) {
+                                $result = $item['code'];
+                                break;
                             }
-
-                            // check if there is more than 1 category with different exclusive program
-                            $exclusiveItems = array_filter($validOption, function ($item) {
-                                return $item["inclusive"] === false;
-                            });
-
-                           if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
-                               return '';
-                           }
-
-                            //if there is an item from exclusive category and item without financing plan
-                            if ($validOption[0]['inclusive'] === false && sizeof($items) !== sizeof($validOption)) {
-                                return '';
-                            }
-
-                            return $validOption[0]['code'];
                         }
                     }
                 }
             }
         }
+
+        return $result;
     }
 
     /**
