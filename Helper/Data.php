@@ -25,7 +25,7 @@ class Data extends AbstractHelper
     public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
     public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
-    public const LEANPAY_BASE_URL_RO = 'https://vendor.leanpay.ro/';
+    public const LEANPAY_BASE_URL_RO = 'https://app.leanpay.ro/';
     public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-app.leanpay.ro/';
 
 
@@ -84,7 +84,7 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL = [
-        'EUR' => 'https://app.leanpay.si/vendor/installment-plans',
+        'SLO' => 'https://app.leanpay.si/vendor/installment-plans',
         'HRK' => 'https://app.leanpay.hr/vendor/installment-plans',
         'RON' => 'https://app.leanpay.ro/vendor/installment-plans'
     ];
@@ -118,11 +118,6 @@ class Data extends AbstractHelper
      * Leanpay Magento 1 secret word path in Database
      */
     public const LEANPAY_CONFIG_MODE_PATH = 'payment/leanpay/mode';
-
-    /**
-     * Leanpay Language configuration path
-     */
-    public const LEANPAY_CONFIG_LANG_PATH = 'payment/leanpay/language';
 
     /**
      * Leanpay is active configuration path
@@ -378,19 +373,6 @@ class Data extends AbstractHelper
     public function getTokenUrl(): string
     {
         return $this->getBaseUrl() . self::LEANPAY_TOKEN_URL;
-    }
-
-    /**
-     * Get Leanpay Language
-     *
-     * @return string
-     */
-    public function getLeanpayLanguage(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_CONFIG_LANG_PATH,
-            ScopeInterface::SCOPE_STORE
-        );
     }
 
     /**
@@ -737,6 +719,19 @@ class Data extends AbstractHelper
                 if (!$allSame) {
                     $validOption = [];
                 }
+
+                if ($productCount !== sizeof($validOption)) {
+                    $validOption = [];
+                }
+
+                // check if there is more than 1 product with different exclusive program
+                $exclusiveItems = array_filter($validOption, function ($item) {
+                    return $item["inclusive"] === 0;
+                });
+
+                if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
+                    $validOption = [];
+                }
             }
 
             //check if two items with same priority colide
@@ -767,7 +762,6 @@ class Data extends AbstractHelper
      */
     private function validateCategory($handler)
     {
-        $result = '';
         $validOption = [];
         $ids = [];
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
@@ -803,12 +797,22 @@ class Data extends AbstractHelper
                         'leanpay_category_vendor_code',
                         'leanpay_category_exclusive_inclusive'
                     ];
-                    $categories = $collection->addIdFilter($categoriesToCompare)
+                    $categories = $collection
+                        ->addIdFilter($categoriesToCompare)
                         ->addAttributeToSelect($requiredAttributes)
-                        ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
+                        ->setStoreId($this->getStoreId())
                         ->getItems();
+                    if(empty($categories)) {
+                        $categories = $collection->addIdFilter($categoriesToCompare)
+                            ->addAttributeToSelect($requiredAttributes)
+                            ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
+                            ->getItems();
+                    }
                     if (!empty($categories)) {
                         foreach ($categories as $category) {
+                            if (empty($category->getData('leanpay_category_vendor_code'))) {
+                                continue;
+                            }
                             $categoryStart = strtotime($category->getData('leanpay_category_start_date') ?? '');
                             $categoryEnd = strtotime($category->getData('leanpay_category_end_date') ?? '');
                             $categoryIsTime = $category->getData('leanpay_category_time_based');
@@ -836,20 +840,41 @@ class Data extends AbstractHelper
                         }
                         if (!empty($validOption) && is_array($validOption)) {
                             usort($validOption, function ($a, $b) {
-                                return ($a['priority'] > $b['priority']) ? -1 : 1;
+                                // First, sort by [inclusive], descending order (true first)
+                                $inclusiveComparison = ($a['inclusive'] === $b['inclusive']) ? 0 : ($a['inclusive'] ? -1 : 1);
+
+                                // If [inclusive] values are the same, sort by [priority], descending order
+                                if ($inclusiveComparison === 0) {
+                                    return ($a['priority'] > $b['priority']) ? -1 : 1;
+                                }
+
+                                return $inclusiveComparison;
                             });
 
-                            foreach ($validOption as $item) {
-                                $result = $item['code'];
-                                break;
+                            if ($validOption[0]['inclusive'] === true) {
+                                return $validOption[0]['code'];
                             }
+
+                            // check if there is more than 1 category with different exclusive program
+                            $exclusiveItems = array_filter($validOption, function ($item) {
+                                return $item["inclusive"] === false;
+                            });
+
+                           if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
+                               return '';
+                           }
+
+                            //if there is an item from exclusive category and item without financing plan
+                            if ($validOption[0]['inclusive'] === false && sizeof($items) !== sizeof($validOption)) {
+                                return '';
+                            }
+
+                            return $validOption[0]['code'];
                         }
                     }
                 }
             }
         }
-
-        return $result;
     }
 
     /**

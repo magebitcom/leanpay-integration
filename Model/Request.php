@@ -60,8 +60,7 @@ class Request implements RequestInterface
             'vendorLastName' => '',
             'vendorAddress' => '',
             'vendorZip' => '',
-            'vendorCity' => '',
-            'language' => 'en'
+            'vendorCity' => ''
         ];
 
         $this->curl->setTimeout(30);

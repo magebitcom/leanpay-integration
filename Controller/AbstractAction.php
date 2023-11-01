@@ -164,18 +164,12 @@ abstract class AbstractAction implements ActionInterface
      */
     public function findOrder(string $id)
     {
-        $filters[] = $this->filterBuilder
-            ->setField('quote_id')
-            ->setConditionType('eq')
-            ->setValue($id)
-            ->create();
-
-        $this->searchCriteriaBuilder->addFilters($filters);
+        $this->searchCriteriaBuilder->addFilter('quote_id', $id)->addFilter('status', 'canceled, closed', 'nin');
 
         $searchCriteria = $this->searchCriteriaBuilder->create();
         $order = $this->orderRepository->getList($searchCriteria)->getItems();
         /** @var Order $order */
-        $order = current($order);
+        $order = end($order);
 
         if (!$order || $order && !$order->getId()) {
             throw new NotFoundException(__('Can\'t find order'));

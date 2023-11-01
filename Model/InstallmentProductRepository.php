@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Model;
 
+use Leanpay\Payment\Model\ResourceModel\InstallmentProduct\CollectionFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaInterface;
@@ -36,6 +37,16 @@ class InstallmentProductRepository implements InstallmentProductRepositoryInterf
      * @var InstallmentCollectionProcessor
      */
     private $collectionProcessor;
+
+    /**
+     * @var CollectionFactory
+     */
+    private  $collectionFactory;
+
+    /**
+     * @var InstallmentProductSearchResultsInterfaceFactory
+     */
+    private $searchResultsFactory;
 
     /**
      *  InstallmentProductRepository constructor

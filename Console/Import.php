@@ -39,17 +39,19 @@ class Import extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws LocalizedException
      */
     protected function execute(
         InputInterface  $input,
         OutputInterface $output
-    ) {
+    ): int
+    {
         $this->appState->setAreaCode('frontend');
         $output->writeln('Importing Started Leanpay... ');
         $this->installments->execute();
         $output->writeln('Importing Completed Leanpay... ');
+        return 0;
     }
 
     /**

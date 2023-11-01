@@ -28,8 +28,8 @@ class Api extends AbstractAction
     {
         $responseBody = $this->driver->fileGetContents('php://input');
         $result = $this->resultRawFactory->create()->setContents('');
-
         if (empty($responseBody)) {
+            $this->logger->error('Response: ' . $responseBody);
             return $result;
         }
 
@@ -43,8 +43,8 @@ class Api extends AbstractAction
         );
 
         if ($leanpayData['md5Signature'] != $md5Secret) {
-            $this->logger->addError('Response: ' . $responseBody);
-            $this->logger->addError('My md5: ' . $md5Secret);
+            $this->logger->error('Response: ' . $responseBody);
+            $this->logger->error('My md5: ' . $md5Secret);
             return $result;
         }
 
@@ -61,7 +61,7 @@ class Api extends AbstractAction
                     break;
             }
         } catch (Exception $exception) {
-            $this->logger->addError(
+            $this->logger->error(
                 'There was error while trying to parse Leanpay API data: ' . $exception->getMessage()
             );
         }
@@ -118,7 +118,7 @@ class Api extends AbstractAction
 
         $this->invoiceSender->send($invoice);
 
-        $order->addStatusHistoryComment(__('Notified customer about invoice #%1.', $invoice->getId()))
+        $order->addCommentToStatusHistory(__('Notified customer about invoice #%1.', $invoice->getId()))
             ->setIsCustomerNotified(true);
 
         $order->setStatus(Order::STATE_PROCESSING);
