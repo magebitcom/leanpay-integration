@@ -454,7 +454,7 @@ class InstallmentHelper extends AbstractHelper
      */
     public function allowDownPayment(): bool
     {
-        return $this->dataHelper->getApiType() === Data::API_ENDPOINT_SLOVENIA;
+        return false;
     }
 
     /**
