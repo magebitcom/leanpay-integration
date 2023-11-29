@@ -33,5 +33,11 @@
                 <group>SPLET - REDNA PONUDBA</group>
             </leanpay_installment>
         </payment>
+        <leanpay_promos>
+            <aropd>
+                <module_enabled>0</module_enabled>
+                <cron_frequency>daily</cron_frequency>
+            </aropd>
+        </leanpay_promos>
     </default>
 </config>

@@ -5,5 +5,8 @@
         <job name="leanpay_sync_installment" instance="Leanpay\Payment\Cron\SyncInstallments" method="execute">
             <config_path>payment/leanpay/installment_cron</config_path>
         </job>
+        <job name="leanpay_remove_expired_promotions" instance="Leanpay\Payment\Cron\RemoveExpiredPromotions" method="execute">
+            <config_path>payment/leanpay/promotion_cron</config_path>
+        </job>
     </group>
 </config>

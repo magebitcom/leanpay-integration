@@ -114,6 +114,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="import" xsi:type="object">Leanpay\Payment\Console\Import</item>
+                <item name="promotions" xsi:type="object">Leanpay\Payment\Console\RemoveExpiredPromotionsCommand</item>
             </argument>
         </arguments>
     </type>
