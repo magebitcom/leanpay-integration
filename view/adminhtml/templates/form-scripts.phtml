@@ -5,17 +5,15 @@
         'domReady!'
     ], function ($, form) {
         $(document).ready(function () {
-            setTimeout(function () {
 
-                $(document).on('click', 'div[data-index="leanpay-promotions"]', function() {
-                    form.showHideAttr();
-                });
-
-                $(document).on('change', '[name="product[leanpay_product_time_based]"]', function() {
-                    form.showHideAttr();
-                });
+            $(document).on('click', 'div[data-index="leanpay-promotions"]', function() {
                 form.showHideAttr();
-            },7000);
+            });
+
+            $(document).on('change', '[name="product[leanpay_product_time_based]"]', function() {
+                form.showHideAttr();
+            });
+            form.showHideAttr();
         });
     });
 </script>
