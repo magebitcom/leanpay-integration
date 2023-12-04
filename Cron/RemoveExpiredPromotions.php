@@ -46,7 +46,6 @@ class RemoveExpiredPromotions
             $storeIds[] = $store->getId();
         }
 
-        // Store scope
         try {
             foreach ($storeIds as $storeId) {
                 $searchCriteria = $this->searchCriteriaBuilder
@@ -55,7 +54,7 @@ class RemoveExpiredPromotions
                     ->create();
                 $products = $this->productRepository->getList($searchCriteria)->getItems();
                 foreach ($products as $product) {
-                    $this->resetLeanpayProductAttributes($product);
+                    $this->resetLeanpayProductAttributes($product, $storeId);
                 }
             }
         } catch (\Exception $e) {
@@ -65,10 +64,12 @@ class RemoveExpiredPromotions
 
     /**
      * @param $product
+     * @param $storeId
      * @return void
      */
-    private function resetLeanpayProductAttributes($product): void
+    private function resetLeanpayProductAttributes($product, $storeId): void
     {
+        $product->setStoreId($storeId);
         $product->setData(self::LEANPAY_PRODUCT_PRIORITY, null);
         $product->setData(self::LEANPAY_PRODUCT_TIME_BASED, null);
         $product->setData(self::LEANPAY_PRODUCT_START_DATE, null);
