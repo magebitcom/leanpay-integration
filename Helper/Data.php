@@ -23,7 +23,7 @@ class Data extends AbstractHelper
 
     public const LEANPAY_BASE_URL = 'https://app.leanpay.si/';
     public const LEANPAY_BASE_URL_HR = 'https://app.leanpay.hr/';
-    public const LEANPAY_BASE_URL_DEV = 'https://lapp.leanpay.si/';
+    public const LEANPAY_BASE_URL_DEV = 'https://stage-app.leanpay.si/';
     public const LEANPAY_BASE_URL_DEV_HR = 'https://lapp.leanpay.hr/';
     public const LEANPAY_BASE_URL_RO = 'https://app.leanpay.ro/';
     public const LEANPAY_BASE_URL_DEV_RO = 'https://stage-app.leanpay.ro/';
@@ -72,7 +72,7 @@ class Data extends AbstractHelper
      * https://docs.leanpay.com/api-integracija/API/custom/installment-plans-credit-calculation
      */
     public const LEANPAY_INSTALLMENT_URL_DEV = [
-        'SLO' => 'https://lapp.leanpay.si/vendor/installment-plans',
+        'SLO' => 'https://stage-app.leanpay.si/vendor/installment-plans',
         'CRO' => 'https://lapp.leanpay.hr/vendor/installment-plans',
         'RON' => 'https://stage-app.leanpay.ro/vendor/installment-plans',
     ];
