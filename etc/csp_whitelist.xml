@@ -5,7 +5,7 @@
             <values>
                 <value id="leanpay_hr_dev" type="host">https://lapp.leanpay.hr</value>
                 <value id="leanpay_hr" type="host">https://app.leanpay.hr</value>
-                <value id="leanpay_si_dev" type="host">https://lapp.leanpay.si</value>
+                <value id="leanpay_si_dev" type="host">https://stage-app.leanpay.si</value>
                 <value id="leanpay_si" type="host">https://app.leanpay.si</value>
                 <value id="leanpay_ro_dev" type="host">https://stage-app.leanpay.ro</value>
                 <value id="leanpay_ro" type="host">https://vendor.leanpay.ro</value>
