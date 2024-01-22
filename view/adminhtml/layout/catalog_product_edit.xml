@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="main.col">
+            <block class="Magento\Framework\View\Element\Template" template="Leanpay_Payment::form-scripts.phtml"
+                   name="test_form_scripts"/>
+        </referenceContainer>
+    </body>
+</page>
