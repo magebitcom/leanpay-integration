@@ -2,7 +2,7 @@
     "name": "leanpay/payment",
     "description": "N/A",
     "require": {
-        "php": ">=7.2.13",
+        "php": ">=8.2.0",
         "magento/framework": ">=103.0.7"
     },
     "type": "magento2-module",
