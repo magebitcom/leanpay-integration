@@ -39,7 +39,7 @@
                 <cron_frequency>daily</cron_frequency>
             </aropd>
         </leanpay_promos>
-        <!-- Fix broken checkout caused by Magento 2.4.7-p1 update -->
+        <!-- Fix broken checkout caused by Magento 2.4.7 update -->
         <csp>
             <mode>
                 <storefront_checkout_index_index>
