@@ -1,3 +1,12 @@
-<script>
-    window.leanpayConfig = <?= /* @noEscape */ $block->getConfig(); ?>;
-</script>
+<?php
+/** @var \Leanpay\Payment\Block\LeanpayConfig $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<?php
+$scriptString = <<<script
+window.leanpayConfig = {$block->getConfig()};
+script;
+?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
