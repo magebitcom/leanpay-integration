@@ -134,6 +134,11 @@
                     <label>Show installment price in following pages</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\ViewBlockConfig</source_model>
                 </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="1020" showInDefault="1"
+                       showInWebsite="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
             </group>
             <group id="leanpay_installment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1"
                    showInStore="1">
