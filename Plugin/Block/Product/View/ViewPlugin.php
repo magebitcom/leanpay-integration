@@ -48,8 +48,9 @@ class ViewPlugin
     public function afterGetJsonConfig(ProductView $subject, $result)
     {
         try {
-            // Only enrich on product view pages as in ConfigurablePlugin
-            if ($subject->getRequest()->getControllerName() !== 'product') {
+            // Only PDP: enforce full action name to avoid category/listing pages
+            $request = $subject->getRequest();
+            if ($request->getFullActionName() !== 'catalog_product_view') {
                 return $result;
             }
 

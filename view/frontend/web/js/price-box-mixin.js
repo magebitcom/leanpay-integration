@@ -36,6 +36,11 @@ define([
                 var self = this;
                 self._ensureInstallmentCache();
 
+                // Guard: only on PDP pages
+                if (!$('body').hasClass('catalog-product-view')) {
+                    return;
+                }
+
                 var intAmount = Math.round(amount);
 
                 // Prefer pre-rendered map from priceConfig when available
@@ -93,6 +98,11 @@ define([
             {
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
                     priceTemplate = mageTemplate(this.options.priceTemplate);
+
+                // Guard: only on PDP pages
+                if (!$('body').hasClass('catalog-product-view')) {
+                    return;
+                }
 
                 _.each(this.cache.displayPrices, function (price, priceCode) {
                     price.final = _.reduce(price.adjustments, function (memo, amount) {
