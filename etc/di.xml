@@ -83,6 +83,9 @@
     </type>
 
     <!-- Plugins -->
+    <type name="Magento\Catalog\Block\Product\View">
+        <plugin name="LeanpayInstallmentViewPlugin" type="Leanpay\Payment\Plugin\Block\Product\View\ViewPlugin" sortOrder="10"/>
+    </type>
     <type name="Magento\Payment\Model\Checks\TotalMinMax">
         <plugin name="TotalMinMaxLeanpay" type="Leanpay\Payment\Plugin\TotalMinMaxPlugin" sortOrder="1"/>
     </type>
