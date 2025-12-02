@@ -25,7 +25,7 @@ class RemoveExpiredPromotionsCommand extends Command
     public function __construct(
         AppState $appState,
         RemoveExpiredPromotions $removeExpiredPromotions,
-        string $name = null
+        ?string $name = null
     ) {
         $this->appState = $appState;
         $this->removeExpiredPromotions = $removeExpiredPromotions;

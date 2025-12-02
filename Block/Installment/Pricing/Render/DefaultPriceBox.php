@@ -77,8 +77,8 @@ class DefaultPriceBox extends FinalPriceBox
         InstallmentProductRepositoryInterface $productRepository,
         SearchCriteriaBuilderFactory $criteriaBuilderFactory,
         array $data = [],
-        SalableResolverInterface $salableResolver = null,
-        MinimalPriceCalculatorInterface $minimalPriceCalculator = null
+        ?SalableResolverInterface $salableResolver = null,
+        ?MinimalPriceCalculatorInterface $minimalPriceCalculator = null
     ) {
         $this->productRepo = $productRepository;
         $this->searchCriteria = $criteriaBuilderFactory->create();

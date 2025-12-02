@@ -28,7 +28,7 @@ class ProductsListPlugin
         ProductsList $subject,
         callable $proceed,
         Product $product,
-        $priceType = null,
+        ?string $priceType = null,
         $renderZone = Render::ZONE_ITEM_LIST,
         array $arguments = []
     ) {

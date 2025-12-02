@@ -53,7 +53,7 @@ class InstallmentRepository implements InstallmentRepositoryInterface
         ResourceModel\Installment\CollectionFactory $collectionFactory,
         InstallmentInterfaceFactory $modelFactory,
         InstallmentSearchResultsInterfaceFactory $searchResultsFactory,
-        CollectionProcessorInterface $collectionProcessor = null
+        ?CollectionProcessorInterface $collectionProcessor = null
     ) {
         $this->modelFactory = $modelFactory;
         $this->resourceModel = $resourceModel;
