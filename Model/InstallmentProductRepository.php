@@ -61,7 +61,7 @@ class InstallmentProductRepository implements InstallmentProductRepositoryInterf
         InstallmentProductInterfaceFactory                 $modelFactory,
         SearchCriteriaBuilderFactory                       $criteriaBuilderFactory,
         InstallmentProductSearchResultsInterfaceFactory    $searchResultsFactory,
-        SearchCriteria                                     $collectionProcessor = null
+        ?SearchCriteria                                     $collectionProcessor = null
     ) {
         $this->modelFactory = $modelFactory;
         $this->resourceModel = $resourceModel;

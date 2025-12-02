@@ -168,10 +168,10 @@ class Leanpay extends AbstractMethod
         Session                    $checkoutSession,
         Request                    $request,
         OrderRepositoryInterface   $orderRepository,
-        AbstractResource           $resource = null,
-        AbstractDb                 $resourceCollection = null,
+        ?AbstractResource           $resource = null,
+        ?AbstractDb                 $resourceCollection = null,
         array                      $data = [],
-        DirectoryHelper            $directory = null
+        ?DirectoryHelper            $directory = null
     ) {
         parent::__construct(
             $context,
@@ -204,7 +204,7 @@ class Leanpay extends AbstractMethod
      * @return bool
      * @throws NoSuchEntityException|LocalizedException
      */
-    public function isAvailable(CartInterface $quote = null)
+    public function isAvailable(?CartInterface $quote = null)
     {
         $isActive = parent::isAvailable($quote);
 
@@ -277,7 +277,7 @@ class Leanpay extends AbstractMethod
 
         $state = Order::STATE_CANCELED;
 
-        if (!$leanpayTokenData['error']) {
+        if (isset($leanpayTokenData['error']) && !$leanpayTokenData['error'] && isset($leanpayTokenData['token'])) {
             $state = Order::STATE_NEW;
             $this->checkoutSession->setToken($leanpayTokenData['token']);
         }

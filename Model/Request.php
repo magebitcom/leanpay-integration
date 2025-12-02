@@ -74,7 +74,7 @@ class Request implements RequestInterface
             $this->curl->post($this->helper->getTokenUrl(), $jsonData);
             $response = json_decode($this->curl->getBody(), true);
 
-            $response = array_filter($response, static function($var){return $var !== null;} );
+            $response = is_array($response) ? array_filter($response, static function($var){return $var !== null;}) : [];
 
             return array_merge($response, [
                 'error' => false

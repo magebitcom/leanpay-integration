@@ -587,7 +587,7 @@ class Data extends AbstractHelper
         return $this->getLeanpayPromosMFPName($storeId);
     }
 
-    public function getProductPromoCode(ProductInterface $product = null)
+    public function getProductPromoCode(?ProductInterface $product = null)
     {
         if (!$product) {
             return '';
