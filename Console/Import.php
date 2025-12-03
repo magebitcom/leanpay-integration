@@ -29,7 +29,7 @@ class Import extends Command
     public function __construct(
         SyncInstallments $installments,
         AppState $appState,
-        string $name = null
+        ?string $name = null
     ) {
         $this->installments = $installments;
         $this->appState = $appState;
