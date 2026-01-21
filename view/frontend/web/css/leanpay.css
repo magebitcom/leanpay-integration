@@ -1,8 +1,145 @@
 /** General Purpose **/
+/* Legacy: Logo replaced with payment method title in checkout template
 .leanpay img.payment-logo {
     vertical-align: middle;
     margin-right: 5px;
     height: 35px;
+}
+*/
+
+.leanpay .payment-method-name {
+    font-weight: 600;
+    font-size: 1em;
+}
+
+/** PLP Installment Price **/
+.installment-price.plp-installment {
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.installment-price.plp-installment .installment-logo {
+    width: auto;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/** PDP Installment Block **/
+.installment-pdp-block {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.installment-pdp-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+.installment-pdp-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.installment-pdp-price {
+    font-weight: 600;
+}
+
+/* Mobile-first: base styles for mobile */
+.installment-price-amount {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.installment-price-count {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.installment-price-from {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.installment-price-month {
+    font-size: 14px;
+}
+
+@media screen and (min-width: 768px) {
+    .installment-price-month {
+        font-size: 16px;
+    }
+}
+
+
+.installment-pdp-period {
+    display: flex;
+    gap: 8px;
+    opacity: 0.9;
+}
+
+.installment-pdp-period .installment-logo {
+    vertical-align: bottom;
+}
+
+.installment-pdp-logo {
+    flex-shrink: 0;
+}
+
+.installment-pdp-logo .installment-logo {
+    width: auto;
+    height: auto;
+    display: block;
+}
+
+.installment-calculate-btn {
+    background-color: #ffffff;
+    opacity: 0.9;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #EB5A7A;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.installment-calculate-btn:hover,
+.installment-calculate-btn:active,
+.installment-calculate-btn:focus {
+    opacity: 1;
+    color: #EB5A7A;
+    background-color: #fff;
+}
+
+.installment-calculate-btn:active {
+   opacity: 0.8;
+}
+
+.installment-calculate-arrow {
+    width: 16px;
+    height: 16px;
+    display: block;
+    color: #EB5A7A;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.installment-calculate-btn.active .installment-calculate-arrow {
+    transform: rotate(180deg);
 }
 
 .installment-logo-wrapper {
@@ -40,7 +177,8 @@
 }
 
 .leanpay .instructions {
-    margin: 0;
+    margin: 8px 0 0 0;
+    display: block;
 }
 
 .installment-additional-wrapper .installment-tooltip.hidden {
@@ -89,8 +227,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
+
     -webkit-box-align: start;
     -ms-flex-align: start;
     align-items: flex-start;
@@ -103,18 +240,98 @@
 .installment-additional-wrapper .installment-tooltip {
     -webkit-box-shadow: -2px -1px 10px 3px #a7a7a7;
     box-shadow: -2px -1px 10px 3px #a7a7a7;
-    border-radius: 3px;
+    border-radius: 4px;
     background: #ffffff;
     position: absolute;
     z-index: 1000;
     padding: 15px;
     max-width: 75%;
+    transition: all 0.3s ease;
 }
+
+/* Tooltip when opened via Calculate button */
+.installment-wrapper.tooltip-opened .installment-tooltip {
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 12px;
+    padding: 20px;
+    max-width: 100%;
+    display: block;
+    background: #ffffff;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-title img {
+    height: 30px;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-title-price {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #333;
+}
+
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-slider-term {
+    margin: 16px 20px;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-quick-information {
+    margin: 15px 0;
+    font-size: 14px;
+    color: #767676;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-links {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e4e4e4;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    text-align: center;
+    background-color: #EB5A7A;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.installment-link-arrow {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex-shrink: 0;
+}
+
+
 
 .installment-wrapper {
     position: relative;
-    border-top: 1px solid #e4e4e4;
+    transition: all 0.3s ease;
 }
+
+.installment-tooltip-header {
+    display: none;
+}
+
+.installment-wrapper.tooltip-opened {
+    border-top: none;
+}
+
 
 .installment-additional-wrapper .installment-title,
 .installment-slider-term .term-html,
@@ -127,6 +344,12 @@
     margin: 5px 0;
 }
 
+.installment-additional-wrapper .installment-quick-information .link  {
+    text-decoration: underline;
+    color: #333333;
+    font-weight: 600;
+}
+
 .installment-wrapper-start {
     position: absolute;
     top: -11px;
@@ -137,11 +360,6 @@
 
 .installment-deposit {
     color: #9c9b9b;
-}
-
-.installment-links a:last-child {
-    border-left: 1px solid #a7a7a7;
-    padding-left: 5px;
 }
 
 .installment-info img {
@@ -158,6 +376,115 @@
 
 .installment-slider-term .installment-slider {
     margin: 10px;
+}
+
+.installment-wrapper.tooltip-opened .installment-slider-term {
+    position: relative;
+    padding: 34px 0 22px;
+    margin: 20px 0;
+}
+
+/* Slider track */
+.installment-wrapper.tooltip-opened .installment-slider.ui-slider-horizontal {
+    background: #F8ACB6;
+    height: 6px;
+    border: none;
+    border-radius: 3px;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Slider filled range */
+.installment-wrapper.tooltip-opened .installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
+    height: 6px;
+    background: #EB5A7A;
+    border-radius: 3px;
+}
+
+/* Slider handle */
+.installment-wrapper.tooltip-opened .installment-slider .ui-slider-handle.ui-state-default.ui-corner-all {
+    height: 16px;
+    width: 16px;
+    top: -6px;
+    background: #EB5A7A;
+    margin-left: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+    z-index: 4;
+}
+
+/* Ticks + labels */
+.installment-wrapper.tooltip-opened .installment-slider-scale {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: 32px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.installment-wrapper.tooltip-opened .installment-slider-tick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.installment-wrapper.tooltip-opened .installment-slider-tick-label {
+    font-size: 14px;
+    color: #777;
+    line-height: 1;
+}
+
+.installment-wrapper.tooltip-opened .installment-slider-tick-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #F8ACB6;
+    /* white ring so dots don't visually connect with the track */
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+
+/* Remove ring only for the "last active" dot (the one under the handle). CSS-only. */
+.installment-wrapper.tooltip-opened .installment-slider-tick.active:has(+ .installment-slider-tick:not(.active)) .installment-slider-tick-dot,
+.installment-wrapper.tooltip-opened .installment-slider-tick.active:last-child .installment-slider-tick-dot {
+    box-shadow: none;
+}
+
+/* Only highlight the "last active" label (the one under the handle) */
+.installment-wrapper.tooltip-opened .installment-slider-tick.active:has(+ .installment-slider-tick:not(.active)) .installment-slider-tick-label,
+.installment-wrapper.tooltip-opened .installment-slider-tick.active:last-child .installment-slider-tick-label {
+    color: #ffffff;
+    background: #EB5A7A;
+    padding: 2px 4px;
+    margin-top: -4px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.installment-wrapper.tooltip-opened .installment-slider-tick.active .installment-slider-tick-dot {
+    background: #EB5A7A;
+}
+
+
+.installment-wrapper.tooltip-opened .installment-slider-selected-unit {
+    position: absolute;
+    top: 50px;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #777;
+    pointer-events: none;
+    white-space: nowrap;
+    margin-left: 4px;
 }
 
 .installment-slider-term .total-html {
@@ -181,13 +508,13 @@
     height: 20px;
     width: 20px;
     top: -5px;
-    background: #F58466;
+    background: #EB5A7A;
     cursor: pointer;
 }
 
 .installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
     height: 10px;
-    background: #F58466;
+    background: #EB5A7A;
 }
 
 /** Checkout **/
@@ -237,18 +564,215 @@
     order: 2;
 }
 
-.checkout-index-index .installment-logo{
-    top: 0;
-    height: 30px;
-}
-
 .checkout-index-index .installment-min-price {
     display: flex;
     flex-wrap: wrap;
 }
 
+.checkout-index-index .payment-method-title {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.checkout-index-index .payment-method-title > .radio {
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.checkout-index-index .payment-method-title > .label {
+    display: inline-flex;
+    align-items: center;
+    flex: 1;
+}
+
+.checkout-index-index .payment-method-title .installment-checkout-wrapper {
+    width: 100%;
+    order: 2;
+}
+
+.checkout-index-index .payment-method-title .instructions {
+    width: 100%;
+    margin-top: 0;
+    order: 3;
+}
+
+.checkout-index-index .installment-title-price {
+    margin-left: auto;
+}
+
+@media screen and (max-width: 767px) {
+    .installment-pdp-content {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-row-gap: 8px;
+        grid-column-gap: 4px;
+        align-items: start;
+    }
+
+    .installment-pdp-content .installment-pdp-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .installment-pdp-content .installment-pdp-left img {
+        width: 50px;
+    }
+
+    .installment-calculate-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+        margin-top: 4px;
+    }
+
+    .installment-calculate-arrow {
+        display: none;
+    }
+
+    .installment-wrapper.tooltip-opened {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10000;
+    }
+
+    .installment-wrapper.tooltip-opened::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 100%;
+        padding: 0;
+        border-radius: 0;
+        margin: 0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 10001;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e4e4e4;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip-close {
+        background: none;
+        border: none;
+        font-size: 28px;
+        line-height: 1;
+        color: #333;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip-close:hover {
+        opacity: 0.7;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip-close span {
+        line-height: 1;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip > .installment-title {
+        padding: 0 20px;
+        margin-bottom: 16px;
+        margin-top: 20px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip .installment-title-price {
+        font-size: 1em;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider-term {
+        padding: 20px 0 16px;
+        margin: 16px 0;
+        touch-action: pan-x;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip .installment-quick-information {
+        padding: 0 20px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-tooltip .installment-links {
+        padding: 0 20px 20px;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider {
+        touch-action: pan-x;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider .ui-slider-handle {
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+
+    .installment-wrapper.tooltip-opened .installment-tooltip .installment-links a {
+        text-align: center;
+        background-color: #EB5A7A;
+        padding: 12px 0;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        width: auto;
+    }
+
+    /* Keep the last tick/label and selected pill inside bounds */
+    .installment-wrapper.tooltip-opened .installment-slider.ui-slider-horizontal {
+        margin: 0 12px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider-scale {
+        top: -4px;
+        left: 12px;
+        right: 12px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider-selected {
+        top: -12px;
+    }
+
+    .installment-wrapper.tooltip-opened .installment-slider-selected-unit {
+        top: 42px;
+        margin-left: 12px;
+     }
+
+}
+
 @media screen and (min-width: 1200px) {
-    .checkout-index-index .installment-info{
+    .checkout-index-index .installment-info {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -274,8 +798,7 @@
     .checkout-index-index .installment-additional-wrapper {
         -webkit-box-orient: horizontal;
         -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-        flex-direction: row;
+
         max-width: 540px;
     }
 }
