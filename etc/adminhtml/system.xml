@@ -146,12 +146,12 @@
                 <field id="color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Color</label>
-                    <comment>Leanpay: #F58466</comment>
+                    <comment>Leanpay: #EB5A7A</comment>
                 </field>
                 <field id="background_color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Background color</label>
-                    <comment>Leanpay: #F58466</comment>
+                    <comment>Leanpay: #EB5A7A</comment>
                 </field>
                 <field id="font_size_homepage" translate="label comment" sortOrder="20" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
