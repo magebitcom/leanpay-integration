@@ -92,7 +92,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <span class="installment-price-from">
-                                        <?= $escaper->escapeHtml(__('from') . ' '); ?>
+                                        <?= $escaper->escapeHtml(__('od ') ); ?>
                                     </span>
                                     <span class="installment-price-amount">
                                         <?= $escaper->escapeHtml($helper->getProductPriceOnly($amount, $price)); ?>
@@ -116,8 +116,8 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Calculate')); ?>">
-                            <?= $escaper->escapeHtml(__('Calculate')); ?>
+                        <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Izračunaj')); ?>">
+                            <?= $escaper->escapeHtml(__('Izračunaj')); ?>
                             <img class="installment-calculate-arrow"
                                  src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/dropdown.svg'); ?>"
                                  alt=""
