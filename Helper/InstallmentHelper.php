@@ -319,6 +319,36 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Default installment count for current amount, clamped to max available period.
+     *
+     * If configured default is higher than what is available, fallback to max available period.
+     */
+    public function getEffectiveDefaultInstallmentCount(float $amount, string $group = ''): int
+    {
+        $defaultCount = $this->getDefaultInstallmentCount();
+        $targetGroup = $group ?: $this->getGroup();
+
+        $installmentList = $this->resourceModel->getInstallmentList($amount, $targetGroup);
+        if (empty($installmentList)) {
+            return $defaultCount;
+        }
+
+        $maxPeriod = 0;
+        foreach ($installmentList as $item) {
+            if (!isset($item[InstallmentInterface::INSTALLMENT_PERIOD])) {
+                continue;
+            }
+            $maxPeriod = max($maxPeriod, (int) $item[InstallmentInterface::INSTALLMENT_PERIOD]);
+        }
+
+        if ($maxPeriod > 0 && $defaultCount > $maxPeriod) {
+            return $maxPeriod;
+        }
+
+        return $defaultCount;
+    }
+
+    /**
      * Check if amount is within threshold (<= threshold)
      *
      * @param float $amount
@@ -436,7 +466,6 @@ class InstallmentHelper extends AbstractHelper
      * Get lowest installment price
      *
      * @param float $price
-     * @param string $group
      * @return string
      */
     public function getLowestInstallmentPrice(float $price, $group = '')
@@ -465,26 +494,27 @@ class InstallmentHelper extends AbstractHelper
         if (!$group) {
             $group = $this->getGroup();
         }
-        // If amount is within threshold, return price for default installment count
+
+        // If amount is within threshold, return installment amount for configured default count
         if ($this->isWithinThreshold($price)) {
-            $defaultCount = $this->getDefaultInstallmentCount();
+            $defaultCount = $this->getEffectiveDefaultInstallmentCount($price, (string) $group);
             $installmentList = $this->resourceModel->getInstallmentList($price, $group);
 
-            // Search for installment matching the default count
             foreach ($installmentList as $installmentData) {
-                if (isset($installmentData[InstallmentInterface::INSTALLMENT_PERIOD]) &&
-                    isset($installmentData[InstallmentInterface::INSTALLMENT_AMOUNT]) &&
-                    (int)$installmentData[InstallmentInterface::INSTALLMENT_PERIOD] === $defaultCount) {
+                if (!isset(
+                    $installmentData[InstallmentInterface::INSTALLMENT_PERIOD],
+                    $installmentData[InstallmentInterface::INSTALLMENT_AMOUNT]
+                )) {
+                    continue;
+                }
+
+                if ((int) $installmentData[InstallmentInterface::INSTALLMENT_PERIOD] === (int) $defaultCount) {
                     return (string) $installmentData[InstallmentInterface::INSTALLMENT_AMOUNT];
                 }
             }
-
-            // Fallback: if exact match not found, return lowest installment
-            return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
         }
 
-        // For amounts above threshold, return lowest installment price
-        return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
+        return (string) $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
     }
 
     /**
@@ -496,41 +526,11 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getInstallmentList(float $price, $group = '')
     {
-        if (!$price) {
-            return [];
+        if ($group) {
+            return $this->resourceModel->getInstallmentList($price, $group);
         }
 
-        // Determine which group to use
-        $targetGroup = $group ?: $this->getGroup();
-
-        // Get full installment list
-        $installmentList = $this->resourceModel->getInstallmentList($price, $targetGroup);
-
-        // If amount is within threshold, return only the default installment
-        if ($this->isWithinThreshold($price)) {
-            $defaultCount = $this->getDefaultInstallmentCount();
-
-            // Search for installment matching the default count
-            foreach ($installmentList as $period => $installmentData) {
-                if (isset($installmentData[InstallmentInterface::INSTALLMENT_PERIOD]) &&
-                    (int)$installmentData[InstallmentInterface::INSTALLMENT_PERIOD] === $defaultCount) {
-                    // Return array with single entry matching the default count
-                    return [$period => $installmentData];
-                }
-            }
-
-            // Fallback: if exact match not found, return first available installment
-            if (!empty($installmentList)) {
-                $firstKey = array_key_first($installmentList);
-                return [$firstKey => $installmentList[$firstKey]];
-            }
-
-            // Final fallback: return empty array
-            return [];
-        }
-
-        // For amounts above threshold, return full list
-        return $installmentList;
+        return $this->resourceModel->getInstallmentList($price, $this->getGroup());
     }
 
     /**
@@ -682,11 +682,26 @@ class InstallmentHelper extends AbstractHelper
     public function getJsonConfig($amount, $group = '')
     {
         $list = $this->getInstallmentList($amount, $group);
+        if (empty($list)) {
+            return '';
+        }
         $list = array_values($list);
         $values = [];
         $listLength = count($list);
         for ($index = 0; $index < $listLength; $index++) {
             $values[] = $index;
+        }
+
+        $defaultIndex = 0;
+        $targetGroup = $group ?: $this->getGroup();
+        $defaultCount = $this->getEffectiveDefaultInstallmentCount((float) $amount, (string) $targetGroup);
+        foreach ($list as $idx => $row) {
+            if (isset($row[InstallmentInterface::INSTALLMENT_PERIOD]) &&
+                (int) $row[InstallmentInterface::INSTALLMENT_PERIOD] === (int) $defaultCount
+            ) {
+                $defaultIndex = (int) $idx;
+                break;
+            }
         }
 
         $data = [
@@ -695,6 +710,7 @@ class InstallmentHelper extends AbstractHelper
             'data' => $list,
             'value' => $values,
             'currency' => $this->getCurrencyCode(),
+            'defaultIndex' => $defaultIndex,
         ];
 
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
@@ -834,7 +850,14 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getMaxInstallmentPeriod(float $amount, $group = ''): int
     {
-        $installmentList = $this->getInstallmentList($amount, $group);
+        if (!$amount) {
+            return 0;
+        }
+
+        // Important: return max available period even when amount is under threshold.
+        // Under-threshold selection (default installment count) is handled elsewhere.
+        $targetGroup = $group ?: $this->getGroup();
+        $installmentList = $this->resourceModel->getInstallmentList($amount, $targetGroup);
         $maxPeriod = 0;
 
         foreach ($installmentList as $item) {

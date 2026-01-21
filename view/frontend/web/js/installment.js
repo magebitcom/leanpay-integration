@@ -110,6 +110,22 @@ define(
 
                     // Map period -> slider index
                     var maxIndex = installmentData.max || 0;
+                    // Special case: only 1 option (maxIndex === 0). Still render a single tick label.
+                    if (maxIndex <= 0) {
+                        var onlyPeriod = null;
+                        if (installmentData.data && installmentData.data.length) {
+                            onlyPeriod = parseInt(installmentData.data[0].installment_period, 10);
+                        }
+                        if (!isNaN(onlyPeriod) && onlyPeriod !== null) {
+                            $scale.append(
+                                '<div class="installment-slider-tick active" data-index="0" style="left:0%">' +
+                                '  <span class="installment-slider-tick-label">' + onlyPeriod + '</span>' +
+                                '  <span class="installment-slider-tick-dot"></span>' +
+                                '</div>'
+                            );
+                        }
+                        return;
+                    }
                     periods.forEach(function (period) {
                         var idx = -1;
                         for (var k = 0; k < installmentData.data.length; k++) {
@@ -138,6 +154,12 @@ define(
                     }
                     var maxIndex = installmentData.max || 0;
                     if (maxIndex <= 0) {
+                        // Only one option: keep the (single) tick active and position unit at start.
+                        $sliderTerm.find('.installment-slider-tick').addClass('active');
+                        var $unitSingle = $sliderTerm.find('.installment-slider-selected-unit');
+                        if ($unitSingle.length) {
+                            $unitSingle.css({ 'left': '0px' });
+                        }
                         return;
                     }
                     var clamped = Math.max(0, Math.min(maxIndex, id));

@@ -59,8 +59,10 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                 <?php
                 $list = $helper->getInstallmentList($amount, $vendorProductName);
                 $maxPeriod = $helper->getMaxInstallmentPeriod($amount, $vendorProductName);
-                $currentPeriod = $helper->getInstallmentPeriodForPrice($amount, $price, $vendorProductName);
                 $isWithinThreshold = $helper->isWithinThreshold($amount);
+                $currentPeriod = $isWithinThreshold
+                    ? $helper->getEffectiveDefaultInstallmentCount($amount, (string) $vendorProductName)
+                    : $helper->getInstallmentPeriodForPrice($amount, $price, $vendorProductName);
                 ?>
                 <div class="installment-pdp-block"
                      style="background-color: <?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()) ?>;
@@ -69,9 +71,13 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                     <div class="installment-pdp-content">
                     <div class="installment-pdp-left">
                         <img class=""
-                                 src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/leanpay_short_logo.png'); ?>"
-                                 alt=""
-                                 aria-hidden="true"/>
+                             src="<?= /* @noEscape */ $block->getViewFileUrl(
+                                 $isWithinThreshold
+                                     ? 'Leanpay_Payment::images/leanpat_short_logo_0.png'
+                                     : 'Leanpay_Payment::images/leanpay_short_logo.png'
+                             ); ?>"
+                             alt=""
+                             aria-hidden="true"/>
                     </div>
                         <div class="installment-pdp-text">
                             <div class="installment-pdp-price">
@@ -81,7 +87,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                     </span>
                                     <?php if ($currentPeriod > 0): ?>
                                         <span class="installment-price-count">
-                                            <?= $escaper->escapeHtml(' x ' . $currentPeriod . ' ' . __('obroki')); ?>
+                                            <?= $escaper->escapeHtml(' x ' . $currentPeriod . ' ' . ($currentPeriod === 1 ? __('obrok') : __('obroki'))); ?>
                                         </span>
                                     <?php endif; ?>
                                 <?php else: ?>
@@ -110,15 +116,13 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <?php if (!$isWithinThreshold): ?>
-                            <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Calculate')); ?>">
-                                <?= $escaper->escapeHtml(__('Calculate')); ?>
-                                <img class="installment-calculate-arrow"
-                                     src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/dropdown.svg'); ?>"
-                                     alt=""
-                                     aria-hidden="true"/>
-                            </button>
-                        <?php endif; ?>
+                        <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Calculate')); ?>">
+                            <?= $escaper->escapeHtml(__('Calculate')); ?>
+                            <img class="installment-calculate-arrow"
+                                 src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/dropdown.svg'); ?>"
+                                 alt=""
+                                 aria-hidden="true"/>
+                        </button>
                     </div>
                 </div>
                 <div class="installment-mouse">

@@ -35,6 +35,11 @@ class UpdateInstallmentAppearanceDefaults implements DataPatchInterface
             'old' => '15',
             'new' => '12',
         ],
+        [
+            'path' => 'payment/leanpay_installment/font_size_homepage',
+            'old' => '15',
+            'new' => '12',
+        ],
     ];
 
     /**
