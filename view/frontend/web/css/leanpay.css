@@ -117,13 +117,14 @@
     opacity: 0.9;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
-    padding: 12px 16px;
+    padding: 4px 8px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     color: #EB5A7A;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     flex-shrink: 0;
     transition: background-color 0.2s ease;
@@ -143,12 +144,13 @@
 }
 
 .installment-calculate-arrow {
-    width: 16px;
-    height: 16px;
+    width: 30px;
+    height: 30px;
     display: block;
     color: #EB5A7A;
     transition: transform 0.2s ease;
     flex-shrink: 0;
+    transform: rotate(90deg);
 }
 
 .installment-calculate-btn.active .installment-calculate-arrow {
@@ -321,6 +323,10 @@
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
+}
+
+.installment-wrapper.tooltip-opened .installment-tooltip .installment-links a:hover {
+    opacity: 0.9;
 }
 
 .installment-link-arrow {
@@ -643,7 +649,7 @@
     }
 
     .installment-calculate-arrow {
-        display: none;
+        display: block;
     }
 
     .installment-wrapper.tooltip-opened {
