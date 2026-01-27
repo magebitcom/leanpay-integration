@@ -80,6 +80,36 @@ class InstallmentHelper extends AbstractHelper
      */
     public const LEANPAY_INSTALLMENT_MAX = 'payment/leanpay/max_order_total';
 
+    /**
+     * Leanpay Installment amount threshold
+     */
+    public const LEANPAY_INSTALLMENT_AMOUNT_THRESHOLD = 'payment/leanpay_installment/advanced/amount_threshold';
+
+    /**
+     * Leanpay Installment default installment count for amounts <= threshold
+     */
+    public const LEANPAY_INSTALLMENT_DEFAULT_COUNT = 'payment/leanpay_installment/advanced/default_installment_count';
+
+    /**
+     * Leanpay Installment under threshold text
+     */
+    public const LEANPAY_INSTALLMENT_UNDER_THRESHOLD_TEXT = 'payment/leanpay_installment/advanced/under_threshold_text';
+
+    /**
+     * Leanpay Installment PLP background color
+     */
+    public const LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR = 'payment/leanpay_installment/advanced/plp_background_color';
+
+    /**
+     * Leanpay Installment PDP text color
+     */
+    public const LEANPAY_INSTALLMENT_PDP_TEXT_COLOR = 'payment/leanpay_installment/advanced/pdp_text_color';
+
+    /**
+     * Leanpay Installment tooltip quick information text (PDP)
+     */
+    public const LEANPAY_INSTALLMENT_QUICK_INFORMATION = 'payment/leanpay_installment/advanced/quick_information';
+
 
     /**
      * Installment view options
@@ -251,6 +281,157 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Get amount threshold
+     *
+     * @return float|null
+     */
+    public function getAmountThreshold()
+    {
+        $threshold = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_AMOUNT_THRESHOLD,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        if ($threshold === null || $threshold === '') {
+            return 300.0; // Default threshold
+        }
+
+        return (float) $threshold;
+    }
+
+    /**
+     * Get default installment count for amounts <= threshold
+     *
+     * @return int
+     */
+    public function getDefaultInstallmentCount(): int
+    {
+        $count = $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_DEFAULT_COUNT,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        if ($count === null || $count === '') {
+            return 3; // Default count
+        }
+
+        return (int) $count;
+    }
+
+    /**
+     * Default installment count for current amount, clamped to max available period.
+     *
+     * If configured default is higher than what is available, fallback to max available period.
+     */
+    public function getEffectiveDefaultInstallmentCount(float $amount, string $group = ''): int
+    {
+        $defaultCount = $this->getDefaultInstallmentCount();
+        $targetGroup = $group ?: $this->getGroup();
+
+        $installmentList = $this->resourceModel->getInstallmentList($amount, $targetGroup);
+        if (empty($installmentList)) {
+            return $defaultCount;
+        }
+
+        $maxPeriod = 0;
+        foreach ($installmentList as $item) {
+            if (!isset($item[InstallmentInterface::INSTALLMENT_PERIOD])) {
+                continue;
+            }
+            $maxPeriod = max($maxPeriod, (int) $item[InstallmentInterface::INSTALLMENT_PERIOD]);
+        }
+
+        if ($maxPeriod > 0 && $defaultCount > $maxPeriod) {
+            return $maxPeriod;
+        }
+
+        return $defaultCount;
+    }
+
+    /**
+     * Check if amount is within threshold (<= threshold)
+     *
+     * @param float $amount
+     * @return bool
+     */
+    public function isWithinThreshold(float $amount): bool
+    {
+        $threshold = $this->getAmountThreshold();
+        return $amount <= $threshold;
+    }
+
+    /**
+     * Check if amount meets threshold requirement
+     *
+     * @param float $amount
+     * @return bool
+     */
+    public function meetsAmountThreshold(float $amount): bool
+    {
+        $threshold = $this->getAmountThreshold();
+
+        if ($threshold === null) {
+            return true; // No threshold set, show for all amounts
+        }
+
+        return $amount >= $threshold;
+    }
+
+    /**
+     * Get under threshold text
+     *
+     * @return string
+     */
+    public function getUnderThresholdText(): string
+    {
+        $text = (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_UNDER_THRESHOLD_TEXT,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return (string) preg_replace('/\bEUR\b/u', '€', $text);
+    }
+
+    /**
+     * Get PLP background color
+     *
+     * @return string
+     */
+    public function getPlpBackgroundColor(): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Get PDP text color
+     *
+     * @return string
+     */
+    public function getPdpTextColor(): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_PDP_TEXT_COLOR,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Get tooltip quick information (PDP)
+     */
+    public function getQuickInformation(): string
+    {
+        $value = (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_QUICK_INFORMATION,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return $value;
+    }
+
+    /**
      * Check if can show installment
      *
      * @param string $view
@@ -314,13 +495,33 @@ class InstallmentHelper extends AbstractHelper
             $group = $this->getGroup();
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
+        // If amount is within threshold, return installment amount for configured default count
+        if ($this->isWithinThreshold($price)) {
+            $defaultCount = $this->getEffectiveDefaultInstallmentCount($price, (string) $group);
+            $installmentList = $this->resourceModel->getInstallmentList($price, $group);
+
+            foreach ($installmentList as $installmentData) {
+                if (!isset(
+                    $installmentData[InstallmentInterface::INSTALLMENT_PERIOD],
+                    $installmentData[InstallmentInterface::INSTALLMENT_AMOUNT]
+                )) {
+                    continue;
+                }
+
+                if ((int) $installmentData[InstallmentInterface::INSTALLMENT_PERIOD] === (int) $defaultCount) {
+                    return (string) $installmentData[InstallmentInterface::INSTALLMENT_AMOUNT];
+                }
+            }
+        }
+
+        return (string) $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
     }
 
     /**
      * Get installment list
      *
      * @param float $price
+     * @param string $group
      * @return array
      */
     public function getInstallmentList(float $price, $group = '')
@@ -439,11 +640,11 @@ class InstallmentHelper extends AbstractHelper
     public function getCurrencyCode(): string
     {
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
-            return 'EUR';
+            return '€';
         } elseif ($this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
             return 'RON';
         } else {
-            return 'EUR';
+            return '€';
         }
     }
 
@@ -481,11 +682,26 @@ class InstallmentHelper extends AbstractHelper
     public function getJsonConfig($amount, $group = '')
     {
         $list = $this->getInstallmentList($amount, $group);
+        if (empty($list)) {
+            return '';
+        }
         $list = array_values($list);
         $values = [];
         $listLength = count($list);
         for ($index = 0; $index < $listLength; $index++) {
             $values[] = $index;
+        }
+
+        $defaultIndex = 0;
+        $targetGroup = $group ?: $this->getGroup();
+        $defaultCount = $this->getEffectiveDefaultInstallmentCount((float) $amount, (string) $targetGroup);
+        foreach ($list as $idx => $row) {
+            if (isset($row[InstallmentInterface::INSTALLMENT_PERIOD]) &&
+                (int) $row[InstallmentInterface::INSTALLMENT_PERIOD] === (int) $defaultCount
+            ) {
+                $defaultIndex = (int) $idx;
+                break;
+            }
         }
 
         $data = [
@@ -494,6 +710,7 @@ class InstallmentHelper extends AbstractHelper
             'data' => $list,
             'value' => $values,
             'currency' => $this->getCurrencyCode(),
+            'defaultIndex' => $defaultIndex,
         ];
 
         if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
@@ -560,6 +777,17 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCategoryPriceBlock(float $amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
     {
+        // Check if amount meets threshold
+        if (!$this->meetsAmountThreshold($amount)) {
+            $underThresholdText = $this->getUnderThresholdText();
+            if ($underThresholdText) {
+                return __($underThresholdText, $amount);
+            }
+            // Fallback to just showing the amount if no custom text is configured
+            return __((string) $amount);
+        }
+
+        // Amount meets threshold, show installment price
         if ($preCalculatedValue) {
             $price = $preCalculatedValue;
         } else {
@@ -570,13 +798,138 @@ class InstallmentHelper extends AbstractHelper
             return __(
                 'od %1 %2 / %3 %4 mjesečno',
                 $price,
-                'EUR',
+                '€',
                 $this->getTransitionPrice($price, 'HRK'),
                 'HRK'
             );
         }
 
         return __('ali od %1 %2 / mesec', $price, $this->getCurrencyCode());
+    }
+
+    /**
+     * Get installment period for a given price
+     *
+     * @param float $amount
+     * @param float|string $installmentPrice
+     * @param string $group
+     * @return int
+     */
+    public function getInstallmentPeriodForPrice(float $amount, $installmentPrice, $group = ''): int
+    {
+        $installmentList = $this->getInstallmentList($amount, $group);
+        $installmentPriceFloat = (float) $installmentPrice;
+
+        // Search for installment matching the price
+        foreach ($installmentList as $item) {
+            if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD]) &&
+                isset($item[InstallmentInterface::INSTALLMENT_AMOUNT])) {
+                $itemAmount = (float) $item[InstallmentInterface::INSTALLMENT_AMOUNT];
+
+                // Compare with small tolerance for floating point precision
+                if (abs($itemAmount - $installmentPriceFloat) < 0.01) {
+                    return (int) $item[InstallmentInterface::INSTALLMENT_PERIOD];
+                }
+            }
+        }
+
+        // If within threshold and no match found, use default count
+        if ($this->isWithinThreshold($amount)) {
+            return $this->getDefaultInstallmentCount();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Get maximum installment period from list
+     *
+     * @param float $amount
+     * @param string $group
+     * @return int
+     */
+    public function getMaxInstallmentPeriod(float $amount, $group = ''): int
+    {
+        if (!$amount) {
+            return 0;
+        }
+
+        // Important: return max available period even when amount is under threshold.
+        // Under-threshold selection (default installment count) is handled elsewhere.
+        $targetGroup = $group ?: $this->getGroup();
+        $installmentList = $this->resourceModel->getInstallmentList($amount, $targetGroup);
+        $maxPeriod = 0;
+
+        foreach ($installmentList as $item) {
+            if (isset($item[InstallmentInterface::INSTALLMENT_PERIOD])) {
+                $period = (int) $item[InstallmentInterface::INSTALLMENT_PERIOD];
+                $maxPeriod = max($maxPeriod, $period);
+            }
+        }
+
+        return $maxPeriod;
+    }
+
+    /**
+     * Get product price only (without "from" and /mesec) for amounts above threshold
+     *
+     * @param float $amount
+     * @param int $preCalculatedValue
+     * @return Phrase
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getProductPriceOnly(float $amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
+    {
+        if ($preCalculatedValue) {
+            $price = $preCalculatedValue;
+        } else {
+            $price = $this->getLowestInstallmentPrice($amount);
+        }
+
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return
+                __(
+                    '%1 %2 / %3 %4',
+                    $price,
+                    '€',
+                    $this->getTransitionPrice($price, 'HRK'),
+                    'HRK'
+                );
+        }
+
+        return __('%1 %2', $price, $this->getCurrencyCode());
+    }
+
+    /**
+     * Get product price block with /mesec format for amounts above threshold
+     *
+     * @param float $amount
+     * @param int $preCalculatedValue
+     * @return Phrase
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getProductPriceBlockWithMonth(float $amount, $preCalculatedValue = 0): \Magento\Framework\Phrase
+    {
+        if ($preCalculatedValue) {
+            $price = $preCalculatedValue;
+        } else {
+            $price = $this->getLowestInstallmentPrice($amount);
+        }
+
+        if ($this->dataHelper->getApiType() === Data::API_ENDPOINT_CROATIA) {
+            return
+                __(
+                    'from %1 %2 / %3 %4 /mesec',
+                    $price,
+                    '€',
+                    $this->getTransitionPrice($price, 'HRK'),
+                    'HRK'
+                );
+        }
+
+        return __('from %1 %2 /mesec', $price, $this->getCurrencyCode());
     }
 
     /**
@@ -599,7 +952,7 @@ class InstallmentHelper extends AbstractHelper
                 __(
                     '%1 %2 / %3 %4',
                     $price,
-                    'EUR',
+                    '€',
                     $this->getTransitionPrice($price, 'HRK'),
                     'HRK'
                 );

@@ -146,12 +146,12 @@
                 <field id="color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Color</label>
-                    <comment>Leanpay: #F58466</comment>
+                    <comment>Leanpay: #EB5A7A</comment>
                 </field>
                 <field id="background_color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Background color</label>
-                    <comment>Leanpay: #F58466</comment>
+                    <comment>Leanpay: #EB5A7A</comment>
                 </field>
                 <field id="font_size_homepage" translate="label comment" sortOrder="20" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
@@ -193,6 +193,44 @@
                     <label>Refresh</label>
                     <frontend_model>Leanpay\Payment\Block\System\Config\RefreshButton</frontend_model>
                 </field>
+                <group id="advanced" translate="label comment" sortOrder="200" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Advanced</label>
+                    <comment>These settings are for advanced customization. Change only if you know what you're doing.</comment>
+                    <fieldset_css>advanced</fieldset_css>
+                    <field id="amount_threshold" translate="label comment" sortOrder="10" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Amount Threshold</label>
+                        <comment>Amount threshold at which the dynamic behavior changes. For amounts up to and including this value, the default installment count will be used. For amounts above this value, the maximum available installments will be selected. Default: 300</comment>
+                        <frontend_class>validate-number</frontend_class>
+                    </field>
+                    <field id="default_installment_count" translate="label comment" sortOrder="20" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Default Installment Count (≤ Threshold)</label>
+                        <comment>Default number of installments for amounts up to and including the threshold. Default: 3</comment>
+                        <frontend_class>validate-number</frontend_class>
+                    </field>
+                    <field id="under_threshold_text" translate="label comment" sortOrder="30" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Under Threshold Text</label>
+                        <comment>Text to display when amount is below threshold. Use %1 as placeholder for amount. Example: "%1 EUR"</comment>
+                    </field>
+                    <field id="plp_background_color" translate="label comment" sortOrder="40" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>PLP Background Color</label>
+                        <comment>Background color for Product Listing Page (Category page) installment display</comment>
+                    </field>
+                    <field id="pdp_text_color" translate="label comment" sortOrder="50" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>PDP Text Color</label>
+                        <comment>Text color for Product Detail Page installment display</comment>
+                    </field>
+                    <field id="quick_information" translate="label comment" sortOrder="60" type="textarea" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Installment Quick Information</label>
+                        <comment>Shown inside the installment tooltip on PDP.</comment>
+                    </field>
+                </group>
             </group>
         </section>
 

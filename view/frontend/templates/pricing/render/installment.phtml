@@ -23,41 +23,105 @@ $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
 $fontSize = $helper->getFontSize($viewKey);
 $color = $helper->getInstallmentColor();
+
 $amount = intval(round($block->getAmount()));
+$meetsThreshold = $helper->meetsAmountThreshold($amount);
 ?>
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
-    <?php if ($price && $canShow): ?>
-        <div class="installment-price"
+    <?php if ($price && $canShow && $meetsThreshold): ?>
+        <div class="installment-price plp-installment"
              style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
+                 background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
                  font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
             <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($amount, $price)); ?>
+            <img class="installment-logo"
+                 src="<?= /* @noEscape */ $block->getLogo(); ?>"
+                 alt="leanpay-logo"
+                 style="height: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;"/>
+        </div>
+    <?php else: ?>
+        <div class="installment-price plp-installment"
+             style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
+                 background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
+                 font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
+            <span><?= $escaper->escapeHtml($helper->getUnderThresholdText()); ?></span>
+            <img class="installment-logo"
+                 src="<?= /* @noEscape */ $block->getLogo(); ?>"
+                 alt="leanpay-logo"
+                 style="height: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;"/>
         </div>
     <?php endif; ?>
 <?php else: ?>
     <?php if ($price && $canShow): ?>
         <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
-            <span class="installment-wrapper-start"><?= $block->escapeHtml(__('ali')); ?></span>
             <div class="installment-additional-wrapper" style="font-size: <?= /* @noEscape */
             $fontSize ?>px;">
-                <div class="installment-plans">
-                    <div class="installment-block-wrapper">
-                        <?php $list = $helper->getInstallmentList($amount, $vendorProductName); ?>
-                        <span class="installment-block">
-                            <?= $escaper->escapeHtml(__('Hitro in enostavno obročno odplačevanje')); ?>
-                        </span>
-                        <span class="installment-min-price">
-                        <span class="installment-price"
-                              style="background-color:<?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()); ?>;">
-                            <?= $escaper->escapeHtml(__('Že od')); ?>
-                            <strong>
-                                <?= $escaper->escapeHtml($helper->getProductPriceBlock($amount, $price)); ?>
-                            </strong>
-                        </span>
-                        <span class="installment-message"
-                              style="border: 1px solid <?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()) ?>;">
-                            <?= $escaper->escapeHtml(__('Vaš mesečni obrok')); ?>
-                        </span>
-                        </span>
+                <?php
+                $list = $helper->getInstallmentList($amount, $vendorProductName);
+                $maxPeriod = $helper->getMaxInstallmentPeriod($amount, $vendorProductName);
+                $isWithinThreshold = $helper->isWithinThreshold($amount);
+                $currentPeriod = $isWithinThreshold
+                    ? $helper->getEffectiveDefaultInstallmentCount($amount, (string) $vendorProductName)
+                    : $helper->getInstallmentPeriodForPrice($amount, $price, $vendorProductName);
+                ?>
+                <div class="installment-pdp-block"
+                     style="background-color: <?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()) ?>;
+                         color: <?= $escaper->escapeHtmlAttr($helper->getPdpTextColor()) ?>;
+                         font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
+                    <div class="installment-pdp-content">
+                    <div class="installment-pdp-left">
+                        <img class=""
+                             src="<?= /* @noEscape */ $block->getViewFileUrl(
+                                 $isWithinThreshold
+                                     ? 'Leanpay_Payment::images/leanpat_short_logo_0.png'
+                                     : 'Leanpay_Payment::images/leanpay_short_logo.png'
+                             ); ?>"
+                             alt=""
+                             aria-hidden="true"/>
+                    </div>
+                        <div class="installment-pdp-text">
+                            <div class="installment-pdp-price">
+                                <?php if ($isWithinThreshold): ?>
+                                    <span class="installment-price-amount">
+                                        <?= $escaper->escapeHtml($helper->getProductPriceBlock($amount, $price)); ?>
+                                    </span>
+                                    <?php if ($currentPeriod > 0): ?>
+                                        <span class="installment-price-count">
+                                            <?= $escaper->escapeHtml(' x ' . $currentPeriod . ' ' . ($currentPeriod === 1 ? __('obrok') : __('obroki'))); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <span class="installment-price-from">
+                                        <?= $escaper->escapeHtml(__('od ') ); ?>
+                                    </span>
+                                    <span class="installment-price-amount">
+                                        <?= $escaper->escapeHtml($helper->getProductPriceOnly($amount, $price)); ?>
+                                    </span>
+                                    <span class="installment-price-month">
+                                        <?= $escaper->escapeHtml(' ' . __('/mesec')); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if ($maxPeriod > 0): ?>
+                                <div class="installment-pdp-period">
+                                    <?php if (!$isWithinThreshold): ?>
+                                        <?= $escaper->escapeHtml(__('Razdeli na do %1 obrokov', $maxPeriod)); ?>
+                                    <?php else: ?>
+                                        <?= $escaper->escapeHtml(__('0% obresti, 0 stroškov')); ?>
+                                    <?php endif; ?>
+                                    <img class="installment-logo"
+                            src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/leanpay-original.svg'); ?>"
+                            alt="leanpay-logo"
+                            style="color: <?= $escaper->escapeHtmlAttr($helper->getPdpTextColor()) ?>;"/>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Izračun')); ?>">
+                            <img class="installment-calculate-arrow"
+                                 src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/dropdown.svg'); ?>"
+                                 alt=""
+                                 aria-hidden="true"/>
+                        </button>
                     </div>
                 </div>
                 <div class="installment-mouse">
@@ -71,64 +135,41 @@ $amount = intval(round($block->getAmount()));
                             </span>
                             </div>
                         <?php endif; ?>
-                        <div class="installment-logo-wrapper">
-                            <span class="installment-logo-text">
-                                <?= __('Izračun obrokov'); ?>
-                            </span>
-                            <span class="installment-logo-span">
-                                <img class="installment-logo"
-                                     src="<?= /* @noEscape */
-                                     $block->getLogo(); ?>"
-                                     alt="leapay-logo"/>
-                            </span>
-                        </div>
+
                     </div>
                     <div class="installment-tooltip hidden">
+                        <div class="installment-tooltip-header">
+                            <div class="installment-tooltip-title">
+                                <?= $escaper->escapeHtml(__('Izračun obrokov')); ?>
+                            </div>
+                            <button type="button" class="installment-tooltip-close" aria-label="<?= $escaper->escapeHtmlAttr(__('Close')); ?>">
+                                <span>×</span>
+                            </button>
+                        </div>
                         <div class="installment-title">
                             <img class="installment-logo"
                                  src="<?= /* @noEscape */
                                  $block->getLogo(); ?>"
-                                 alt="leapay-logo"/>
+                                 alt="leanpay-logo"/>
+                            <div class="installment-title-price">
+                                <span class="installment-title-price-amount"><?= $escaper->escapeHtml($helper->getProductPriceBlock($amount, $price)); ?></span>
+                                <span><?= $escaper->escapeHtml(__('/mesec')); ?></span>
+                            </div>
                         </div>
                         <div class="installment-plans">
-                            <div class="installment-lowest-amount">
-                                <?php if ($helper->shouldRenderTooltipPriceBlock($amount, true)): ?>
-                                    <span class="installment-lowest-message">
-                                     <?= $escaper->escapeHtml(__('Želim čim nižji obrok')); ?>
-                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($amount, true, $vendorProductName)); ?></strong>
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="installment-lowest-term">
-                                <?php if ($helper->shouldRenderTooltipPriceBlock($amount, false)): ?>
-                                    <span class="installment-lowest-message">
-                                        <?= $escaper->escapeHtml(__('Odplačati želim čim prej')); ?>
-                                    <strong><?= $escaper->escapeHtml($helper->getTooltipPriceBlock($amount, false, $vendorProductName)); ?></strong>
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="installment-slider-term">
-                                <div class="term-text">
-                                    <?= $escaper->escapeHtml(__('Želim si izbrati svoje obroke')); ?>
-                                </div>
-                                <div class="term-html">
-                                    <span class="installment_period">
-                                    </span>
-                                    <span class="installment_amount"></span>
-                                </div>
+                            <div class="installment-slider-term" data-month-label="<?= $escaper->escapeHtmlAttr(__('mes.')); ?>">
                                 <div class="installment-slider"></div>
-                                <div class="total-html">
-                                    <?php if (!$isPreCalculated): ?>
-                                        <span><?= $escaper->escapeHtml(__('Informativni znesek za plačilo')); ?></span>
-                                        <span class="total"></span>
-                                    <?php endif; ?>
-                                </div>
                             </div>
                         </div>
                         <div class="installment-quick-information">
-                            <?= $escaper->escapeHtml(
-                                __('Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta. ') .
-                                    __('Za obročno plačilo v košarici izberi Leanpay. ')); ?>
+                            <?= $escaper->escapeHtml($helper->getQuickInformation()); ?>
+                            <a href="<?= $escaper->escapeUrl($helper->getMoreInfoURL()); ?>"
+                               target="_blank"
+                               class="link"
+                               rel="noopener noreferrer">
+                                <span
+                                    class="link-option"><?= $escaper->escapeHtml(__('Več informacij')); ?></span>
+                            </a>
                         </div>
                         <div class="installment-links">
                             <a href="<?= $escaper->escapeUrl($helper->getCheckYourLimitURL()); ?>"
@@ -136,13 +177,12 @@ $amount = intval(round($block->getAmount()));
                                rel="noopener noreferrer">
                                 <span
                                     class="link-option"><?= $escaper->escapeHtml(__('Preveri svoj limit')); ?></span>
+                                <img class="installment-link-arrow"
+                                     src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/arrow-right.svg'); ?>"
+                                     alt=""
+                                     aria-hidden="true"/>
                             </a>
-                            <a href="<?= $escaper->escapeUrl($helper->getMoreInfoURL()); ?>"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                <span
-                                    class="link-option"><?= $escaper->escapeHtml(__('Več informacij')); ?></span>
-                            </a>
+
                         </div>
                     </div>
                 </div>

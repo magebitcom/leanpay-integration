@@ -22,15 +22,23 @@
             </leanpay>
             <leanpay_installment>
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>
-                <color>#F58466</color>
-                <background_color>#F58466</background_color>
+                <color>#EB5A7A</color>
+                <background_color>#EB5A7A</background_color>
                 <font_size_homepage>15</font_size_homepage>
-                <font_size_product_page>15</font_size_product_page>
-                <font_size_catalog_page>15</font_size_catalog_page>
+                <font_size_product_page>14</font_size_product_page>
+                <font_size_catalog_page>12</font_size_catalog_page>
                 <more_info>https://www.leanpay.si/</more_info>
                 <check_your_limit>https://app.leanpay.si/vendor/pre-qualified</check_your_limit>
                 <use_dark_logo>0</use_dark_logo>
                 <group>SPLET - REDNA PONUDBA</group>
+                <advanced>
+                    <amount_threshold>300</amount_threshold>
+                    <default_installment_count>3</default_installment_count>
+                    <under_threshold_text>0% obresti, 0 stroškov</under_threshold_text>
+                    <plp_background_color>#EB5A7A1A</plp_background_color>
+                    <pdp_text_color>#FFFFFF</pdp_text_color>
+                    <quick_information><![CDATA[Izberi število obrokov, da dobiš mesečni izračun. V košarici izberi Leanpay in v nekaj minutah zaključi obročni nakup.]]></quick_information>
+                </advanced>
             </leanpay_installment>
         </payment>
         <leanpay_promos>
