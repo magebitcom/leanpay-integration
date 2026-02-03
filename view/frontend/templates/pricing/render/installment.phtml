@@ -39,7 +39,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                  alt="leanpay-logo"
                  style="height: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;"/>
         </div>
-    <?php else: ?>
+    <?php elseif ($price && $canShow && !$meetsThreshold): ?>
         <div class="installment-price plp-installment"
              style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
                  background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
