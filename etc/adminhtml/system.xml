@@ -188,6 +188,12 @@
                     <label>Group</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\GroupOptions</source_model>
                 </field>
+                <field id="enable_product_rounding" translate="label comment" sortOrder="60" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Enable Product Rounding</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When enabled, product prices will be rounded up to the nearest value divisible by 5 before retrieving installment estimates. This applies only to Romanian (RON) plugin.</comment>
+                </field>
                 <field id="refresh" translate="label" type="button" sortOrder="100" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Refresh</label>

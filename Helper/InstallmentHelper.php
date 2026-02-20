@@ -71,6 +71,11 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
+     * Leanpay Installment enable product rounding
+     */
+    public const LEANPAY_INSTALLMENT_ENABLE_PRODUCT_ROUNDING = 'payment/leanpay_installment/enable_product_rounding';
+
+    /**
      * Leanpay MIN order allowed price
      */
     public const LEANPAY_INSTALLMENT_MIN = 'payment/leanpay/min_order_total';
@@ -282,6 +287,39 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Round price up to nearest value divisible by 5
+     *
+     * @param float $price
+     * @return float
+     */
+    private function roundUpToNearestFive(float $price): float
+    {
+        return ceil($price / 5) * 5;
+    }
+
+    /**
+     * Apply product rounding if enabled and for Romanian plugin
+     *
+     * @param float $price
+     * @return float
+     */
+    private function applyProductRounding(float $price): float
+    {
+        $scopeId = $this->storeManager->getStore()->getId();
+        $isRoundingEnabled = (bool) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_ENABLE_PRODUCT_ROUNDING,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+
+        if ($isRoundingEnabled && $this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
+            return $this->roundUpToNearestFive($price);
+        }
+
+        return $price;
+    }
+
+    /**
      * Get lowest installment price
      *
      * @param float $price
@@ -314,7 +352,9 @@ class InstallmentHelper extends AbstractHelper
             $group = $this->getGroup();
         }
 
-        return $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
+        $roundedPrice = $this->applyProductRounding($price);
+        
+        return $this->resourceModel->getLowestInstallment($roundedPrice, $group, $this->dataHelper->getApiType());
     }
 
     /**
@@ -325,11 +365,13 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getInstallmentList(float $price, $group = '')
     {
+        $roundedPrice = $this->applyProductRounding($price);
+
         if ($group) {
-            return $this->resourceModel->getInstallmentList($price, $group);
+            return $this->resourceModel->getInstallmentList($roundedPrice, $group);
         }
 
-        return $this->resourceModel->getInstallmentList($price, $this->getGroup());
+        return $this->resourceModel->getInstallmentList($roundedPrice, $this->getGroup());
     }
 
     /**
@@ -345,11 +387,13 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
+        $roundedPrice = $this->applyProductRounding($price);
+
         if ($group) {
-            return $this->resourceModel->getToolTipData($price, $group, $useTerm);
+            return $this->resourceModel->getToolTipData($roundedPrice, $group, $useTerm);
         }
 
-        return $this->resourceModel->getToolTipData($price, $this->getGroup(), $useTerm);
+        return $this->resourceModel->getToolTipData($roundedPrice, $this->getGroup(), $useTerm);
     }
 
     /**
