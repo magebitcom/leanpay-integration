@@ -31,6 +31,7 @@
                 <check_your_limit>https://app.leanpay.si/vendor/pre-qualified</check_your_limit>
                 <use_dark_logo>0</use_dark_logo>
                 <group>SPLET - REDNA PONUDBA</group>
+                <enable_product_rounding>1</enable_product_rounding>
             </leanpay_installment>
         </payment>
         <leanpay_promos>

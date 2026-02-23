@@ -10,6 +10,7 @@
                 <value id="leanpay_ro_dev" type="host">https://stage-app.leanpay.ro</value>
                 <value id="leanpay_ro" type="host">https://vendor.leanpay.ro</value>
                 <value id="leanpay_si_checkout_redirect" type="host">https://stage-checkout.leanpay.si</value>
+                <value id="leanpay_ro_checkout_redirect" type="host">https://stage-checkout.leanpay.ro</value>
             </values>
         </policy>
     </policies>
