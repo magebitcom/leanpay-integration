@@ -196,10 +196,6 @@
     display: block;
 }
 
-.installment-additional-wrapper .installment-tooltip.hidden {
-    display: none;
-}
-
 .installment-min-price .installment-price {
     color: #ffffff;
 }
@@ -327,6 +323,10 @@
 
 .installment-wrapper.tooltip-opened .installment-tooltip .installment-links a:hover {
     opacity: 0.9;
+}
+
+.installment-additional-wrapper .installment-tooltip.hidden {
+    display: none;
 }
 
 .installment-link-arrow {
