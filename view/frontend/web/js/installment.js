@@ -340,26 +340,6 @@ define(
 
         function handleToolTip()
         {
-            $('.price-installment_price').on(
-                'mouseenter',
-                '.installment-mouse',
-                function () {
-                    $('.installment-tooltip').removeClass('hidden');
-                }
-            ).on(
-                'mouseleave',
-                '.installment-mouse',
-                function (e) {
-                    if (
-                        !e.target.classList.contains('ui-slider-handle') &&
-                        !e.target.classList.contains('installment-slider') &&
-                        !e.target.classList.contains('ui-slider-range')
-                    ) {
-                        $('.installment-tooltip').addClass('hidden');
-                    }
-                }
-            );
-
             // Handle Calculate button click
             $('.price-installment_price').on(
                 'click',
