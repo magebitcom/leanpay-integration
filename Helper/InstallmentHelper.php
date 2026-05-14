@@ -497,16 +497,6 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Check if theme logo is dark
-     *
-     * @return bool
-     */
-    public function isDarkThemeLogo(): bool
-    {
-        return (bool) ($this->getColorTheme()['dark_logo'] ?? false);
-    }
-
-    /**
      * Down payment is calculated manually and rules are as follow:
      *
      * 0 EUR for purchases up to 999.99

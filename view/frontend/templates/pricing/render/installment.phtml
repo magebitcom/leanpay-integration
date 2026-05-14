@@ -24,6 +24,8 @@ $canShow = $helper->canShowInstallment($viewKey);
 
 $amount = intval(round($block->getAmount()));
 $meetsThreshold = $helper->meetsAmountThreshold($amount);
+
+$iconPath = 'Leanpay_Payment::images/' . $helper->getColorTheme()['icons'] . '/';
 ?>
 <?= /* @noEscape */ $block->fetchView($block->getTemplateFile('Leanpay_Payment::pricing/render/installment_theme.phtml')); ?>
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
@@ -63,8 +65,8 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                         <img class=""
                              src="<?= /* @noEscape */ $block->getViewFileUrl(
                                  $isWithinThreshold
-                                     ? 'Leanpay_Payment::images/leanpat_short_logo_0.png'
-                                     : 'Leanpay_Payment::images/leanpay_short_logo.png'
+                                     ? $iconPath . 'leanpat_short_logo_0.png'
+                                     : $iconPath . 'leanpay_short_logo.png'
                              ); ?>"
                              alt=""
                              aria-hidden="true"/>
@@ -100,7 +102,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                         <?= $escaper->escapeHtml(__('0% obresti, 0 stroškov')); ?>
                                     <?php endif; ?>
                                     <img class="installment-logo"
-                            src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/leanpay-original.svg'); ?>"
+                            src="<?= /* @noEscape */ $block->getViewFileUrl($iconPath . 'leanpay-original.svg'); ?>"
                             alt="leanpay-logo"
                             style="color: var(--lp-text-primary);"/>
                                 </div>
@@ -108,7 +110,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                         </div>
                         <button type="button" class="installment-calculate-btn" aria-label="<?= $escaper->escapeHtmlAttr(__('Izračun')); ?>">
                             <img class="installment-calculate-arrow"
-                                 src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/dropdown.svg'); ?>"
+                                 src="<?= /* @noEscape */ $block->getViewFileUrl($iconPath . 'dropdown.svg'); ?>"
                                  alt=""
                                  aria-hidden="true"/>
                         </button>
@@ -168,7 +170,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                 <span
                                     class="link-option"><?= $escaper->escapeHtml(__('Preveri svoj limit')); ?></span>
                                 <img class="installment-link-arrow"
-                                     src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/arrow-right.svg'); ?>"
+                                     src="<?= /* @noEscape */ $block->getViewFileUrl($iconPath . 'arrow-right.svg'); ?>"
                                      alt=""
                                      aria-hidden="true"/>
                             </a>

@@ -175,7 +175,7 @@ class Data extends AbstractHelper
             'bg_secondary' => '#EB5A7A',
             'bg_dropdown' => '#FFFFFF',
             'bg_soft' => '#F8ACB6',
-            'dark_logo' => false,
+            'icons' => 'default',
         ],
         'orange' => [
             'text_primary' => '#FFFFFF',
@@ -187,7 +187,7 @@ class Data extends AbstractHelper
             'bg_secondary' => '#F58466',
             'bg_dropdown' => '#FFFFFF',
             'bg_soft' => '#FAC1B2',
-            'dark_logo' => false,
+            'icons' => 'orange',
         ],
         'light' => [
             'text_primary' => '#383838',
@@ -199,7 +199,7 @@ class Data extends AbstractHelper
             'bg_secondary' => '#383838',
             'bg_dropdown' => '#FFFFFF',
             'bg_soft' => '#DDDDDD',
-            'dark_logo' => true,
+            'icons' => 'light',
         ],
         'dark' => [
             'text_primary' => '#FFFFFF',
@@ -211,7 +211,7 @@ class Data extends AbstractHelper
             'bg_secondary' => '#FFFFFF',
             'bg_dropdown' => '#111111',
             'bg_soft' => '#404040',
-            'dark_logo' => false,
+            'icons' => 'dark',
         ],
     ];
 
