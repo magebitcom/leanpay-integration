@@ -31,7 +31,7 @@ $iconPath = 'Leanpay_Payment::images/' . $helper->getColorTheme()['icons'] . '/'
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
     <?php if ($price && $canShow && $meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: var(--lp-bg-primary); background-color: var(--lp-bg-soft);">
+             style="color: var(--lp-text-plp); background-color: var(--lp-bg-plp);">
             <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($amount, $price)); ?>
             <img class="installment-logo"
                  src="<?= /* @noEscape */ $block->getLogo(); ?>"
@@ -39,7 +39,7 @@ $iconPath = 'Leanpay_Payment::images/' . $helper->getColorTheme()['icons'] . '/'
         </div>
     <?php elseif ($price && $canShow && !$meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: var(--lp-bg-primary); background-color: var(--lp-bg-soft);">
+             style="color: var(--lp-text-plp); background-color: var(--lp-bg-plp);">
             <span><?= $escaper->escapeHtml($helper->getUnderThresholdText()); ?></span>
             <img class="installment-logo"
                  src="<?= /* @noEscape */ $block->getLogo(); ?>"

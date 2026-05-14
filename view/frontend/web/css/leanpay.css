@@ -20,13 +20,14 @@
     align-items: center;
     gap: 8px;
     font-size: 12px;
+    font-weight: 600;
 }
 
 .installment-price.plp-installment .installment-logo {
     width: auto;
     display: inline-block;
     flex-shrink: 0;
-    height: 12px;
+    height: 16px;
 }
 
 /** PDP Installment Block **/
@@ -410,7 +411,7 @@
 
 /* Slider track */
 .installment-wrapper.tooltip-opened .installment-slider.ui-slider-horizontal {
-    background: var(--lp-bg-soft);
+    background: var(--lp-bg-light);
     height: 6px;
     border: none;
     border-radius: 3px;
@@ -472,7 +473,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--lp-bg-soft);
+    background: var(--lp-bg-light);
     box-shadow: 0 0 0 2px var(--lp-bg-dropdown);
 }
 
@@ -765,7 +766,6 @@
 
     .installment-wrapper.tooltip-opened .installment-tooltip .installment-links a {
         text-align: center;
-        background-color: var(--lp-bg-primary);
         padding: 12px 0;
         border-radius: 6px;
         text-decoration: none;
