@@ -19,15 +19,21 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    font-size: 12px;
 }
 
 .installment-price.plp-installment .installment-logo {
     width: auto;
     display: inline-block;
     flex-shrink: 0;
+    height: 12px;
 }
 
 /** PDP Installment Block **/
+.installment-additional-wrapper {
+    font-size: 14px;
+}
+
 .installment-pdp-block {
     border-radius: 8px;
     padding: 12px 16px;

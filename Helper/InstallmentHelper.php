@@ -21,31 +21,6 @@ use function GuzzleHttp\Psr7\str;
 class InstallmentHelper extends AbstractHelper
 {
     /**
-     * Leanpay Installment Color
-     */
-    public const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
-
-    /**
-     * Leanpay Installment Backgroundcolor
-     */
-    public const LEANPAY_INSTALLMENT_BACKGROUND_COLOR = 'payment/leanpay_installment/background_color';
-
-    /**
-     * Leanpay Installment homepage
-     */
-    public const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
-
-    /**
-     * Leanpay Installment product page
-     */
-    public const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
-
-    /**
-     * Leanpay Installment font category page
-     */
-    public const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
-
-    /**
      * Leanpay Installment more info
      */
     public const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
@@ -64,11 +39,6 @@ class InstallmentHelper extends AbstractHelper
      * Leanpay Installment group
      */
     public const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
-
-    /**
-     * Leanpay Installment allowed views
-     */
-    public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
 
     /**
      * Leanpay Installment enable product rounding
@@ -99,16 +69,6 @@ class InstallmentHelper extends AbstractHelper
      * Leanpay Installment under threshold text
      */
     public const LEANPAY_INSTALLMENT_UNDER_THRESHOLD_TEXT = 'payment/leanpay_installment/advanced/under_threshold_text';
-
-    /**
-     * Leanpay Installment PLP background color
-     */
-    public const LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR = 'payment/leanpay_installment/advanced/plp_background_color';
-
-    /**
-     * Leanpay Installment PDP text color
-     */
-    public const LEANPAY_INSTALLMENT_PDP_TEXT_COLOR = 'payment/leanpay_installment/advanced/pdp_text_color';
 
     /**
      * Leanpay Installment tooltip quick information text (PDP)
@@ -203,36 +163,6 @@ class InstallmentHelper extends AbstractHelper
     public function getGroup(): string
     {
         return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_GROUP, ScopeInterface::SCOPE_STORE);
-    }
-
-    /**
-     * Get homepage font size
-     *
-     * @return string
-     */
-    public function getHomepageFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_HOMEPAGE);
-    }
-
-    /**
-     * Get catalog font size
-     *
-     * @return string
-     */
-    public function getCatalogFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE);
-    }
-
-    /**
-     * Get product font size
-     *
-     * @return string
-     */
-    public function getProductFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE);
     }
 
     /**
@@ -390,32 +320,6 @@ class InstallmentHelper extends AbstractHelper
         );
 
         return (string) preg_replace('/\bEUR\b/u', '€', $text);
-    }
-
-    /**
-     * Get PLP background color
-     *
-     * @return string
-     */
-    public function getPlpBackgroundColor(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR,
-            ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
-     * Get PDP text color
-     *
-     * @return string
-     */
-    public function getPdpTextColor(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_INSTALLMENT_PDP_TEXT_COLOR,
-            ScopeInterface::SCOPE_STORE
-        );
     }
 
     /**
@@ -595,36 +499,11 @@ class InstallmentHelper extends AbstractHelper
     /**
      * Check if theme logo is dark
      *
-     * @return mixed
+     * @return bool
      */
-    public function isDarkThemeLogo()
+    public function isDarkThemeLogo(): bool
     {
-        return $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH);
-    }
-
-    /**
-     * Get font size
-     *
-     * @param string $view
-     * @return string
-     */
-    public function getFontSize($view): string
-    {
-        $result = 20;
-
-        switch ($view) {
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE:
-                $result = $this->getHomepageFontSize();
-                break;
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE:
-                $result = $this->getProductFontSize();
-                break;
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE:
-                $result = $this->getCatalogFontSize();
-                break;
-        }
-
-        return (string) $result;
+        return (bool) ($this->getColorTheme()['dark_logo'] ?? false);
     }
 
     /**

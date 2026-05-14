@@ -21,7 +21,6 @@ if ($vendorProductName) {
 $viewKey = $block->getData('view_key') ?? InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
 $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
-$fontSize = $helper->getFontSize($viewKey);
 
 $amount = intval(round($block->getAmount()));
 $meetsThreshold = $helper->meetsAmountThreshold($amount);
@@ -30,32 +29,25 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
     <?php if ($price && $canShow && $meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: var(--lp-bg-primary);
-                 background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
-                 font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
+             style="color: var(--lp-bg-primary); background-color: var(--lp-bg-soft);">
             <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($amount, $price)); ?>
             <img class="installment-logo"
                  src="<?= /* @noEscape */ $block->getLogo(); ?>"
-                 alt="leanpay-logo"
-                 style="height: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;"/>
+                 alt="leanpay-logo"/>
         </div>
     <?php elseif ($price && $canShow && !$meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: var(--lp-bg-primary);
-                 background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
-                 font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
+             style="color: var(--lp-bg-primary); background-color: var(--lp-bg-soft);">
             <span><?= $escaper->escapeHtml($helper->getUnderThresholdText()); ?></span>
             <img class="installment-logo"
                  src="<?= /* @noEscape */ $block->getLogo(); ?>"
-                 alt="leanpay-logo"
-                 style="height: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;"/>
+                 alt="leanpay-logo"/>
         </div>
     <?php endif; ?>
 <?php else: ?>
     <?php if ($price && $canShow): ?>
         <div class="installment-wrapper" data-mage-init='{"Leanpay_Payment/js/installment":""}'>
-            <div class="installment-additional-wrapper" style="font-size: <?= /* @noEscape */
-            $fontSize ?>px;">
+            <div class="installment-additional-wrapper">
                 <?php
                 $list = $helper->getInstallmentList($amount, $vendorProductName);
                 $maxPeriod = $helper->getMaxInstallmentPeriod($amount, $vendorProductName);
@@ -65,9 +57,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                     : $helper->getInstallmentPeriodForPrice($amount, $price, $vendorProductName);
                 ?>
                 <div class="installment-pdp-block"
-                     style="background-color: var(--lp-bg-primary);
-                         color: var(--lp-text-primary);
-                         font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
+                     style="background-color: var(--lp-bg-primary); color: var(--lp-text-primary);">
                     <div class="installment-pdp-content">
                     <div class="installment-pdp-left">
                         <img class=""

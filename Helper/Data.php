@@ -162,7 +162,7 @@ class Data extends AbstractHelper
     /**
      * Leanpay color theme path
      */
-    public const LEANPAY_COLOR_THEME_PATH = 'payment/leanpay/color_theme';
+    public const LEANPAY_COLOR_THEME_PATH = 'payment/leanpay_installment/color_theme';
 
     public const LEANPAY_COLOR_THEME = [
         'default' => [
@@ -174,7 +174,8 @@ class Data extends AbstractHelper
             'bg_primary' => '#EB5A7A',
             'bg_secondary' => '#EB5A7A',
             'bg_dropdown' => '#FFFFFF',
-            'bg_soft' => '#F8ACB6'
+            'bg_soft' => '#F8ACB6',
+            'dark_logo' => false,
         ],
         'orange' => [
             'text_primary' => '#FFFFFF',
@@ -185,7 +186,8 @@ class Data extends AbstractHelper
             'bg_primary' => '#F58466',
             'bg_secondary' => '#F58466',
             'bg_dropdown' => '#FFFFFF',
-            'bg_soft' => '#FAC1B2'
+            'bg_soft' => '#FAC1B2',
+            'dark_logo' => false,
         ],
         'light' => [
             'text_primary' => '#383838',
@@ -196,7 +198,8 @@ class Data extends AbstractHelper
             'bg_primary' => '#F5F5F5',
             'bg_secondary' => '#383838',
             'bg_dropdown' => '#FFFFFF',
-            'bg_soft' => '#DDDDDD'
+            'bg_soft' => '#DDDDDD',
+            'dark_logo' => true,
         ],
         'dark' => [
             'text_primary' => '#FFFFFF',
@@ -207,8 +210,9 @@ class Data extends AbstractHelper
             'bg_primary' => '#404040',
             'bg_secondary' => '#FFFFFF',
             'bg_dropdown' => '#111111',
-            'bg_soft' => '#404040'
-        ]
+            'bg_soft' => '#404040',
+            'dark_logo' => false,
+        ],
     ];
 
     /**
