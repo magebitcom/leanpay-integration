@@ -206,16 +206,6 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Get installment color
-     *
-     * @return string
-     */
-    public function getInstallmentColor()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_COLOR);
-    }
-
-    /**
      * Get homepage font size
      *
      * @return string
@@ -276,13 +266,18 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Get background color
+     * Resolve color theme palette from configured theme key
      *
-     * @return string
+     * @return array
      */
-    public function getBackgroundColor()
+    public function getColorTheme(): array
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
+        $themeKey = (string) $this->scopeConfig->getValue(
+            Data::LEANPAY_COLOR_THEME_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return Data::LEANPAY_COLOR_THEME[$themeKey] ?? Data::LEANPAY_COLOR_THEME['default'];
     }
 
     /**

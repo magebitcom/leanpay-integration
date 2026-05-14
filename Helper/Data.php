@@ -159,6 +159,57 @@ class Data extends AbstractHelper
     public const LEANPAY_PROMOS_MFP_CART_SIZE = 'leanpay_promos/mfp/cart_size';
     public const LEANPAY_PROMOS_MFP_COUNTRY = 'leanpay_promos/mfp/product_country';
 
+    /**
+     * Leanpay color theme path
+     */
+    public const LEANPAY_COLOR_THEME_PATH = 'payment/leanpay/color_theme';
+
+    public const LEANPAY_COLOR_THEME = [
+        'default' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'bg_primary' => '#EB5A7A',
+            'bg_secondary' => '#EB5A7A',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_soft' => '#F8ACB6'
+        ],
+        'orange' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'bg_primary' => '#F58466',
+            'bg_secondary' => '#F58466',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_soft' => '#FAC1B2'
+        ],
+        'light' => [
+            'text_primary' => '#383838',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'bg_primary' => '#F5F5F5',
+            'bg_secondary' => '#383838',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_soft' => '#DDDDDD'
+        ],
+        'dark' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#000000',
+            'text_dropdown' => '#C3C3C3',
+            'text_price' => '#FFFFFF',
+            'text_link' => '#FFFFFF',
+            'bg_primary' => '#404040',
+            'bg_secondary' => '#FFFFFF',
+            'bg_dropdown' => '#111111',
+            'bg_soft' => '#404040'
+        ]
+    ];
 
     /**
      * Leanpay responses from api

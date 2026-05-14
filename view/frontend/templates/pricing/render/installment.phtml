@@ -22,15 +22,15 @@ $viewKey = $block->getData('view_key') ?? InstallmentHelper::LEANPAY_INSTALLMENT
 $helper = $block->getInstallmentHelper();
 $canShow = $helper->canShowInstallment($viewKey);
 $fontSize = $helper->getFontSize($viewKey);
-$color = $helper->getInstallmentColor();
 
 $amount = intval(round($block->getAmount()));
 $meetsThreshold = $helper->meetsAmountThreshold($amount);
 ?>
+<?= /* @noEscape */ $block->fetchView($block->getTemplateFile('Leanpay_Payment::pricing/render/installment_theme.phtml')); ?>
 <?php if ($viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE): ?>
     <?php if ($price && $canShow && $meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
+             style="color: var(--lp-bg-primary);
                  background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
                  font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
             <?= $escaper->escapeHtml($helper->getCategoryPriceBlock($amount, $price)); ?>
@@ -41,7 +41,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
         </div>
     <?php elseif ($price && $canShow && !$meetsThreshold): ?>
         <div class="installment-price plp-installment"
-             style="color: <?= $escaper->escapeHtmlAttr($color) ?>;
+             style="color: var(--lp-bg-primary);
                  background-color: <?= $escaper->escapeHtmlAttr($helper->getPlpBackgroundColor()) ?>;
                  font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
             <span><?= $escaper->escapeHtml($helper->getUnderThresholdText()); ?></span>
@@ -65,8 +65,8 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                     : $helper->getInstallmentPeriodForPrice($amount, $price, $vendorProductName);
                 ?>
                 <div class="installment-pdp-block"
-                     style="background-color: <?= $escaper->escapeHtmlAttr($helper->getBackgroundColor()) ?>;
-                         color: <?= $escaper->escapeHtmlAttr($helper->getPdpTextColor()) ?>;
+                     style="background-color: var(--lp-bg-primary);
+                         color: var(--lp-text-primary);
                          font-size: <?= $escaper->escapeHtmlAttr($fontSize) ?>px;">
                     <div class="installment-pdp-content">
                     <div class="installment-pdp-left">
@@ -112,7 +112,7 @@ $meetsThreshold = $helper->meetsAmountThreshold($amount);
                                     <img class="installment-logo"
                             src="<?= /* @noEscape */ $block->getViewFileUrl('Leanpay_Payment::images/leanpay-original.svg'); ?>"
                             alt="leanpay-logo"
-                            style="color: <?= $escaper->escapeHtmlAttr($helper->getPdpTextColor()) ?>;"/>
+                            style="color: var(--lp-text-primary);"/>
                                 </div>
                             <?php endif; ?>
                         </div>

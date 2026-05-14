@@ -19,6 +19,7 @@
                 <checkout_url>checkout/index/index</checkout_url>
                 <instructions><![CDATA[Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta.]]></instructions>
                 <api_endpoint_type>SLO</api_endpoint_type>
+                <color_theme>default</color_theme>
             </leanpay>
             <leanpay_installment>
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>

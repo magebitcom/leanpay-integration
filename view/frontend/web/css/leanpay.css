@@ -95,7 +95,6 @@
 .installment-pdp-period {
     display: flex;
     gap: 8px;
-    opacity: 0.9;
 }
 
 .installment-pdp-period .installment-logo {
@@ -113,15 +112,15 @@
 }
 
 .installment-calculate-btn {
-    background-color: #ffffff;
-    opacity: 0.9;
+    background-color: #FFFFFF;
+    opacity: 1;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
     padding: 4px 8px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    color: #EB5A7A;
+    color: var(--lp-text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,9 +133,9 @@
 .installment-calculate-btn:hover,
 .installment-calculate-btn:active,
 .installment-calculate-btn:focus {
-    opacity: 1;
-    color: #EB5A7A;
-    background-color: #fff;
+    opacity: 0.9;
+    color: var(--lp-text-secondary);
+    background-color: #FFFFFF;
 }
 
 .installment-calculate-btn:active {
@@ -147,7 +146,7 @@
     width: 30px;
     height: 30px;
     display: block;
-    color: #EB5A7A;
+    color: var(--lp-text-secondary);
     transition: transform 0.2s ease;
     flex-shrink: 0;
     transform: rotate(90deg);
@@ -269,7 +268,7 @@
     padding: 20px;
     max-width: 100%;
     display: block;
-    background: #ffffff;
+    background: var(--lp-bg-dropdown);
 }
 
 .installment-wrapper.tooltip-opened .installment-tooltip .installment-title {
@@ -286,7 +285,7 @@
 .installment-wrapper.tooltip-opened .installment-tooltip .installment-title-price {
     font-weight: 600;
     font-size: 1.1em;
-    color: #333;
+    color: var(--lp-text-price);
 }
 
 
@@ -297,7 +296,7 @@
 .installment-wrapper.tooltip-opened .installment-tooltip .installment-quick-information {
     margin: 15px 0;
     font-size: 14px;
-    color: #767676;
+    color: var(--lp-text-dropdown);
 }
 
 .installment-wrapper.tooltip-opened .installment-tooltip .installment-links {
@@ -313,8 +312,8 @@
     gap: 8px;
     width: fit-content;
     text-align: center;
-    background-color: #EB5A7A;
-    color: #ffffff;
+    background-color: var(--lp-bg-secondary);
+    color: var(--lp-text-secondary);
     padding: 12px 20px;
     border-radius: 6px;
     text-decoration: none;
@@ -365,7 +364,7 @@
 
 .installment-additional-wrapper .installment-quick-information .link  {
     text-decoration: underline;
-    color: #333333;
+    color: var(--lp-text-link);
     font-weight: 600;
 }
 
@@ -405,7 +404,7 @@
 
 /* Slider track */
 .installment-wrapper.tooltip-opened .installment-slider.ui-slider-horizontal {
-    background: #F8ACB6;
+    background: var(--lp-bg-soft);
     height: 6px;
     border: none;
     border-radius: 3px;
@@ -417,7 +416,7 @@
 /* Slider filled range */
 .installment-wrapper.tooltip-opened .installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
     height: 6px;
-    background: #EB5A7A;
+    background: var(--lp-bg-secondary);
     border-radius: 3px;
 }
 
@@ -426,7 +425,7 @@
     height: 16px;
     width: 16px;
     top: -6px;
-    background: #EB5A7A;
+    background: var(--lp-bg-secondary);
     margin-left: -10px;
     border: 2px solid #ffffff;
     border-radius: 50%;
@@ -459,7 +458,7 @@
 
 .installment-wrapper.tooltip-opened .installment-slider-tick-label {
     font-size: 14px;
-    color: #777;
+    color: var(--lp-text-dropdown);
     line-height: 1;
 }
 
@@ -467,9 +466,8 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #F8ACB6;
-    /* white ring so dots don't visually connect with the track */
-    box-shadow: 0 0 0 2px #ffffff;
+    background: var(--lp-bg-soft);
+    box-shadow: 0 0 0 2px var(--lp-bg-dropdown);
 }
 
 
@@ -482,8 +480,8 @@
 /* Only highlight the "last active" label (the one under the handle) */
 .installment-wrapper.tooltip-opened .installment-slider-tick.active:has(+ .installment-slider-tick:not(.active)) .installment-slider-tick-label,
 .installment-wrapper.tooltip-opened .installment-slider-tick.active:last-child .installment-slider-tick-label {
-    color: #ffffff;
-    background: #EB5A7A;
+    color: var(--lp-text-secondary);
+    background: var(--lp-bg-secondary);
     padding: 2px 4px;
     margin-top: -4px;
     border-radius: 4px;
@@ -491,7 +489,7 @@
 }
 
 .installment-wrapper.tooltip-opened .installment-slider-tick.active .installment-slider-tick-dot {
-    background: #EB5A7A;
+    background: var(--lp-bg-secondary);
 }
 
 
@@ -500,10 +498,10 @@
     top: 50px;
     transform: translateX(-50%);
     font-size: 12px;
-    color: #777;
+    color: var(--lp-text-dropdown);
     pointer-events: none;
     white-space: nowrap;
-    margin-left: 4px;
+    margin-left: 2px;
 }
 
 .installment-slider-term .total-html {
@@ -527,13 +525,13 @@
     height: 20px;
     width: 20px;
     top: -5px;
-    background: #EB5A7A;
+    background: var(--lp-bg-secondary);
     cursor: pointer;
 }
 
 .installment-slider .ui-widget-header.ui-corner-all.ui-slider-range-min {
     height: 10px;
-    background: #EB5A7A;
+    background: var(--lp-bg-secondary);
 }
 
 /** Checkout **/
@@ -761,7 +759,7 @@
 
     .installment-wrapper.tooltip-opened .installment-tooltip .installment-links a {
         text-align: center;
-        background-color: #EB5A7A;
+        background-color: var(--lp-bg-primary);
         padding: 12px 0;
         border-radius: 6px;
         text-decoration: none;
