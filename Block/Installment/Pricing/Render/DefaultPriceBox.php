@@ -61,6 +61,8 @@ class DefaultPriceBox extends FinalPriceBox
      * @param Data $helper
      * @param InstallmentHelper $installmentHelper
      * @param SerializerInterface $serializer
+     * @param InstallmentProductRepositoryInterface $productRepository
+     * @param SearchCriteriaBuilderFactory $criteriaBuilderFactory
      * @param array $data
      * @param SalableResolverInterface|null $salableResolver
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
@@ -202,11 +204,8 @@ class DefaultPriceBox extends FinalPriceBox
      */
     public function getLogo(): string
     {
-        if (!$this->installmentHelper->isDarkThemeLogo()) {
-            return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
-        }
-
-        return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
+        $iconPath = 'Leanpay_Payment::images/' . $this->installmentHelper->getColorTheme()['icons'] . '/';
+        return $this->getViewFileUrl($iconPath . 'leanpay.svg');
     }
 
     /**

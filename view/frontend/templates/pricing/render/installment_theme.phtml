@@ -1,0 +1,52 @@
+<?php
+
+use Leanpay\Payment\Block\Installment\Pricing\Render\DefaultPriceBox;
+use Magento\Framework\Escaper;
+
+/** @var DefaultPriceBox $block */
+/** @var Escaper $escaper */
+
+$helper = $block->getInstallmentHelper();
+$theme = $helper->getColorTheme();
+$useLeanpayFont = $helper->useLeanpayFont();
+?>
+
+<style>
+    <?php if ($useLeanpayFont): ?>
+        <?php
+            $regularFont = $block->getViewFileUrl('Leanpay_Payment::fonts/Roboto-Regular.ttf');
+            $semiBoldFont = $block->getViewFileUrl('Leanpay_Payment::fonts/Roboto-SemiBold.ttf');
+        ?>
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('<?= /* @noEscape */ $regularFont ?>') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('<?= /* @noEscape */ $semiBoldFont ?>') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+    <?php endif; ?>
+
+    .installment-wrapper,
+    .installment-price.plp-installment {
+        --lp-text-primary: <?= $escaper->escapeHtml($theme['text_primary']) ?>;
+        --lp-text-secondary: <?= $escaper->escapeHtml($theme['text_secondary']) ?>;
+        --lp-text-dropdown: <?= $escaper->escapeHtml($theme['text_dropdown']) ?>;
+        --lp-text-price: <?= $escaper->escapeHtml($theme['text_price']) ?>;
+        --lp-text-link: <?= $escaper->escapeHtml($theme['text_link']) ?>;
+        --lp-text-plp: <?= $escaper->escapeHtml($theme['text_plp']) ?>;
+        --lp-bg-primary: <?= $escaper->escapeHtml($theme['bg_primary']) ?>;
+        --lp-bg-secondary: <?= $escaper->escapeHtml($theme['bg_secondary']) ?>;
+        --lp-bg-dropdown: <?= $escaper->escapeHtml($theme['bg_dropdown']) ?>;
+        --lp-bg-light: <?= $escaper->escapeHtml($theme['bg_light']) ?>;
+        --lp-bg-plp: <?= $escaper->escapeHtml($theme['bg_plp']) ?>;
+        font-family: <?= $useLeanpayFont ? "'Roboto', sans-serif" : 'inherit' ?>;
+    }
+</style>
