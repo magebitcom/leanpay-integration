@@ -215,8 +215,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getColorTheme(): array
     {
-        $themeKey = (string) ($this->_request->getParam('theme')
-            ?: $this->scopeConfig->getValue(Data::LEANPAY_COLOR_THEME_PATH, ScopeInterface::SCOPE_STORE));
+        $themeKey = (string) $this->scopeConfig->getValue(
+            Data::LEANPAY_COLOR_THEME_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
 
         return Data::LEANPAY_COLOR_THEME[$themeKey] ?? Data::LEANPAY_COLOR_THEME['default'];
     }
