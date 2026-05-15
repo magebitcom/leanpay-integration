@@ -22,6 +22,7 @@
             </leanpay>
             <leanpay_installment>
                 <color_theme>default</color_theme>
+                <use_leanpay_font>0</use_leanpay_font>
                 <model>Leanpay\Payment\Model\Method\LeanpayInstallment</model>
                 <more_info>https://www.leanpay.si/</more_info>
                 <check_your_limit>https://app.leanpay.si/vendor/pre-qualified</check_your_limit>

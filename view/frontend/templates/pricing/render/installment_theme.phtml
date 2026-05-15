@@ -6,9 +6,34 @@ use Magento\Framework\Escaper;
 /** @var DefaultPriceBox $block */
 /** @var Escaper $escaper */
 
-$theme = $block->getInstallmentHelper()->getColorTheme();
+$helper = $block->getInstallmentHelper();
+$theme = $helper->getColorTheme();
+$useLeanpayFont = $helper->useLeanpayFont();
 ?>
+
 <style>
+    <?php if ($useLeanpayFont): ?>
+        <?php
+            $regularFont = $block->getViewFileUrl('Leanpay_Payment::fonts/Roboto-Regular.ttf');
+            $semiBoldFont = $block->getViewFileUrl('Leanpay_Payment::fonts/Roboto-SemiBold.ttf');
+        ?>
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('<?= /* @noEscape */ $regularFont ?>') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('<?= /* @noEscape */ $semiBoldFont ?>') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+    <?php endif; ?>
+
     .installment-wrapper,
     .installment-price.plp-installment {
         --lp-text-primary: <?= $escaper->escapeHtml($theme['text_primary']) ?>;
@@ -22,5 +47,6 @@ $theme = $block->getInstallmentHelper()->getColorTheme();
         --lp-bg-dropdown: <?= $escaper->escapeHtml($theme['bg_dropdown']) ?>;
         --lp-bg-light: <?= $escaper->escapeHtml($theme['bg_light']) ?>;
         --lp-bg-plp: <?= $escaper->escapeHtml($theme['bg_plp']) ?>;
+        font-family: <?= $useLeanpayFont ? "'Roboto', sans-serif" : 'inherit' ?>;
     }
 </style>

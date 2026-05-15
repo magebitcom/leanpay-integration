@@ -148,6 +148,12 @@
                     <label>Color Theme</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\ColorTheme</source_model>
                 </field>
+                <field id="use_leanpay_font" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use Leanpay Font</label>
+                    <comment>Use Leanpay font (Roboto) or inherit the store font.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="more_info" translate="label comment" sortOrder="40" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>More information</label>

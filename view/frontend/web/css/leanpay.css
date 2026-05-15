@@ -357,13 +357,6 @@
     border-top: none;
 }
 
-
-.installment-additional-wrapper .installment-title,
-.installment-slider-term .term-html,
-.installment-slider-term .total {
-    font-weight: bold;
-}
-
 .installment-additional-wrapper .installment-title .title-block,
 .installment-additional-wrapper .installment-quick-information {
     margin: 5px 0;

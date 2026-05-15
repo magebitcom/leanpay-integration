@@ -164,6 +164,11 @@ class Data extends AbstractHelper
      */
     public const LEANPAY_COLOR_THEME_PATH = 'payment/leanpay_installment/color_theme';
 
+    /**
+     * Leanpay font override config path
+     */
+    public const LEANPAY_USE_FONT_PATH = 'payment/leanpay_installment/use_leanpay_font';
+
     public const LEANPAY_COLOR_THEME = [
         'default' => [
             'text_primary' => '#FFFFFF',

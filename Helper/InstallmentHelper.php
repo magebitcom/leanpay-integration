@@ -196,16 +196,27 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Check whether the Leanpay font (Roboto) should be applied
+     *
+     * @return bool
+     */
+    public function useLeanpayFont(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            Data::LEANPAY_USE_FONT_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
      * Resolve color theme palette from configured theme key
      *
      * @return array
      */
     public function getColorTheme(): array
     {
-        $themeKey = (string) $this->scopeConfig->getValue(
-            Data::LEANPAY_COLOR_THEME_PATH,
-            ScopeInterface::SCOPE_STORE
-        );
+        $themeKey = (string) ($this->_request->getParam('theme')
+            ?: $this->scopeConfig->getValue(Data::LEANPAY_COLOR_THEME_PATH, ScopeInterface::SCOPE_STORE));
 
         return Data::LEANPAY_COLOR_THEME[$themeKey] ?? Data::LEANPAY_COLOR_THEME['default'];
     }
