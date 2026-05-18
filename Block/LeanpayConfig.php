@@ -81,10 +81,6 @@ class LeanpayConfig extends Template
      */
     public function getLogo(): string
     {
-        if (!$this->installmentHelper->isDarkThemeLogo()) {
-            return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
-        }
-
-        return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
+        return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
     }
 }

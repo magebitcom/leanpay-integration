@@ -159,6 +159,74 @@ class Data extends AbstractHelper
     public const LEANPAY_PROMOS_MFP_CART_SIZE = 'leanpay_promos/mfp/cart_size';
     public const LEANPAY_PROMOS_MFP_COUNTRY = 'leanpay_promos/mfp/product_country';
 
+    /**
+     * Leanpay color theme path
+     */
+    public const LEANPAY_COLOR_THEME_PATH = 'payment/leanpay_installment/color_theme';
+
+    /**
+     * Leanpay font override config path
+     */
+    public const LEANPAY_USE_FONT_PATH = 'payment/leanpay_installment/use_leanpay_font';
+
+    public const LEANPAY_COLOR_THEME = [
+        'default' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'text_plp' => '#EB5A7A',
+            'bg_primary' => '#EB5A7A',
+            'bg_secondary' => '#EB5A7A',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_light' => '#F8ACB6',
+            'bg_plp' => '#EB5A7A1A',
+            'icons' => 'default',
+        ],
+        'orange' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'text_plp' => '#F58466',
+            'bg_primary' => '#F58466',
+            'bg_secondary' => '#F58466',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_light' => '#FAC1B2',
+            'bg_plp' => '#F584661A',
+            'icons' => 'orange',
+        ],
+        'light' => [
+            'text_primary' => '#383838',
+            'text_secondary' => '#FFFFFF',
+            'text_dropdown' => '#767676',
+            'text_price' => '#333333',
+            'text_link' => '#333333',
+            'text_plp' => '#383838',
+            'bg_primary' => '#F5F5F5',
+            'bg_secondary' => '#383838',
+            'bg_dropdown' => '#FFFFFF',
+            'bg_light' => '#DDDDDD',
+            'bg_plp' => '#F5F5F5',
+            'icons' => 'light',
+        ],
+        'dark' => [
+            'text_primary' => '#FFFFFF',
+            'text_secondary' => '#000000',
+            'text_dropdown' => '#C3C3C3',
+            'text_price' => '#FFFFFF',
+            'text_link' => '#FFFFFF',
+            'text_plp' => '#DDDDDD',
+            'bg_primary' => '#404040',
+            'bg_secondary' => '#FFFFFF',
+            'bg_dropdown' => '#111111',
+            'bg_light' => '#404040',
+            'bg_plp' => '#FFFFFF2B',
+            'icons' => 'dark',
+        ],
+    ];
 
     /**
      * Leanpay responses from api

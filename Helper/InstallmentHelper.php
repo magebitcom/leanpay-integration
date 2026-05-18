@@ -21,31 +21,6 @@ use function GuzzleHttp\Psr7\str;
 class InstallmentHelper extends AbstractHelper
 {
     /**
-     * Leanpay Installment Color
-     */
-    public const LEANPAY_INSTALLMENT_COLOR = 'payment/leanpay_installment/color';
-
-    /**
-     * Leanpay Installment Backgroundcolor
-     */
-    public const LEANPAY_INSTALLMENT_BACKGROUND_COLOR = 'payment/leanpay_installment/background_color';
-
-    /**
-     * Leanpay Installment homepage
-     */
-    public const LEANPAY_INSTALLMENT_FONT_HOMEPAGE = 'payment/leanpay_installment/font_size_homepage';
-
-    /**
-     * Leanpay Installment product page
-     */
-    public const LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE = 'payment/leanpay_installment/font_size_product_page';
-
-    /**
-     * Leanpay Installment font category page
-     */
-    public const LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE = 'payment/leanpay_installment/font_size_catalog_page';
-
-    /**
      * Leanpay Installment more info
      */
     public const LEANPAY_INSTALLMENT_MORE_INFO = 'payment/leanpay_installment/more_info';
@@ -66,9 +41,9 @@ class InstallmentHelper extends AbstractHelper
     public const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
 
     /**
-     * Leanpay Installment allowed views
+     * Leanpay Installment enable product rounding
      */
-    public const LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH = 'payment/leanpay_installment/use_dark_logo';
+    public const LEANPAY_INSTALLMENT_ENABLE_PRODUCT_ROUNDING = 'payment/leanpay_installment/enable_product_rounding';
 
     /**
      * Leanpay MIN order allowed price
@@ -94,16 +69,6 @@ class InstallmentHelper extends AbstractHelper
      * Leanpay Installment under threshold text
      */
     public const LEANPAY_INSTALLMENT_UNDER_THRESHOLD_TEXT = 'payment/leanpay_installment/advanced/under_threshold_text';
-
-    /**
-     * Leanpay Installment PLP background color
-     */
-    public const LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR = 'payment/leanpay_installment/advanced/plp_background_color';
-
-    /**
-     * Leanpay Installment PDP text color
-     */
-    public const LEANPAY_INSTALLMENT_PDP_TEXT_COLOR = 'payment/leanpay_installment/advanced/pdp_text_color';
 
     /**
      * Leanpay Installment tooltip quick information text (PDP)
@@ -201,46 +166,6 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Get installment color
-     *
-     * @return string
-     */
-    public function getInstallmentColor()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_COLOR);
-    }
-
-    /**
-     * Get homepage font size
-     *
-     * @return string
-     */
-    public function getHomepageFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_HOMEPAGE);
-    }
-
-    /**
-     * Get catalog font size
-     *
-     * @return string
-     */
-    public function getCatalogFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_CATEGORY_PAGE);
-    }
-
-    /**
-     * Get product font size
-     *
-     * @return string
-     */
-    public function getProductFontSize()
-    {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_FONT_PRODUCT_PAGE);
-    }
-
-    /**
      * Get more info url
      *
      * @return string
@@ -271,13 +196,31 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Get background color
+     * Check whether the Leanpay font (Roboto) should be applied
      *
-     * @return string
+     * @return bool
      */
-    public function getBackgroundColor()
+    public function useLeanpayFont(): bool
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_BACKGROUND_COLOR);
+        return (bool) $this->scopeConfig->getValue(
+            Data::LEANPAY_USE_FONT_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Resolve color theme palette from configured theme key
+     *
+     * @return array
+     */
+    public function getColorTheme(): array
+    {
+        $themeKey = (string) $this->scopeConfig->getValue(
+            Data::LEANPAY_COLOR_THEME_PATH,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return Data::LEANPAY_COLOR_THEME[$themeKey] ?? Data::LEANPAY_COLOR_THEME['default'];
     }
 
     /**
@@ -393,32 +336,6 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
-     * Get PLP background color
-     *
-     * @return string
-     */
-    public function getPlpBackgroundColor(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_INSTALLMENT_PLP_BACKGROUND_COLOR,
-            ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
-     * Get PDP text color
-     *
-     * @return string
-     */
-    public function getPdpTextColor(): string
-    {
-        return (string) $this->scopeConfig->getValue(
-            self::LEANPAY_INSTALLMENT_PDP_TEXT_COLOR,
-            ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
      * Get tooltip quick information (PDP)
      */
     public function getQuickInformation(): string
@@ -463,6 +380,39 @@ class InstallmentHelper extends AbstractHelper
     }
 
     /**
+     * Round price up to nearest value divisible by 5
+     *
+     * @param float $price
+     * @return float
+     */
+    private function roundUpToNearestFive(float $price): float
+    {
+        return ceil($price / 5) * 5;
+    }
+
+    /**
+     * Apply product rounding if enabled and for Romanian plugin
+     *
+     * @param float $price
+     * @return float
+     */
+    private function applyProductRounding(float $price): float
+    {
+        $scopeId = $this->storeManager->getStore()->getId();
+        $isRoundingEnabled = (bool) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_ENABLE_PRODUCT_ROUNDING,
+            ScopeInterface::SCOPE_STORE,
+            $scopeId
+        );
+
+        if ($isRoundingEnabled && $this->dataHelper->getApiType() === Data::API_ENDPOINT_ROMANIA) {
+            return $this->roundUpToNearestFive($price);
+        }
+
+        return $price;
+    }
+
+    /**
      * Get lowest installment price
      *
      * @param float $price
@@ -495,6 +445,8 @@ class InstallmentHelper extends AbstractHelper
             $group = $this->getGroup();
         }
 
+        $roundedPrice = $this->applyProductRounding($price);
+
         // If amount is within threshold, return installment amount for configured default count
         if ($this->isWithinThreshold($price)) {
             $defaultCount = $this->getEffectiveDefaultInstallmentCount($price, (string) $group);
@@ -514,7 +466,7 @@ class InstallmentHelper extends AbstractHelper
             }
         }
 
-        return (string) $this->resourceModel->getLowestInstallment($price, $group, $this->dataHelper->getApiType());
+        return (string) $this->resourceModel->getLowestInstallment($roundedPrice, $group, $this->dataHelper->getApiType());
     }
 
     /**
@@ -526,11 +478,13 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getInstallmentList(float $price, $group = '')
     {
+        $roundedPrice = $this->applyProductRounding($price);
+
         if ($group) {
-            return $this->resourceModel->getInstallmentList($price, $group);
+            return $this->resourceModel->getInstallmentList($roundedPrice, $group);
         }
 
-        return $this->resourceModel->getInstallmentList($price, $this->getGroup());
+        return $this->resourceModel->getInstallmentList($roundedPrice, $this->getGroup());
     }
 
     /**
@@ -546,46 +500,13 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
+        $roundedPrice = $this->applyProductRounding($price);
+
         if ($group) {
-            return $this->resourceModel->getToolTipData($price, $group, $useTerm);
+            return $this->resourceModel->getToolTipData($roundedPrice, $group, $useTerm);
         }
 
-        return $this->resourceModel->getToolTipData($price, $this->getGroup(), $useTerm);
-    }
-
-    /**
-     * Check if theme logo is dark
-     *
-     * @return mixed
-     */
-    public function isDarkThemeLogo()
-    {
-        return $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_USE_DARK_LOGO_PATH);
-    }
-
-    /**
-     * Get font size
-     *
-     * @param string $view
-     * @return string
-     */
-    public function getFontSize($view): string
-    {
-        $result = 20;
-
-        switch ($view) {
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_HOMEPAGE:
-                $result = $this->getHomepageFontSize();
-                break;
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE:
-                $result = $this->getProductFontSize();
-                break;
-            case self::LEANPAY_INSTALLMENT_VIEW_OPTION_CATEGORY_PAGE:
-                $result = $this->getCatalogFontSize();
-                break;
-        }
-
-        return (string) $result;
+        return $this->resourceModel->getToolTipData($roundedPrice, $this->getGroup(), $useTerm);
     }
 
     /**
