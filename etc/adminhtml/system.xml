@@ -90,7 +90,7 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
 
-                <field id="installment_cron" translate="label comment" sortOrder="1000" type="text" showInDefault="1"
+                <field id="installment_cron" translate="label comment" sortOrder="110" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="0">
                     <label>Installment Cron</label>
                     <comment>Please follow cron schema * * * * *</comment>
@@ -129,12 +129,12 @@
                        showInWebsite="1" showInStore="1">
                     <label>Maximum Order Total</label>
                 </field>
-                <field id="installment_allowed_views" translate="label" type="multiselect" sortOrder="1010"
+                <field id="installment_allowed_views" translate="label" type="multiselect" sortOrder="90"
                        showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Show installment price in following pages</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\ViewBlockConfig</source_model>
                 </field>
-                <field id="sort_order" translate="label" type="text" sortOrder="1020" showInDefault="1"
+                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1"
                        showInWebsite="1">
                     <label>Sort Order</label>
                     <frontend_class>validate-number</frontend_class>
@@ -143,32 +143,16 @@
             <group id="leanpay_installment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1"
                    showInStore="1">
                 <label>Leanpay Installment price</label>
-                <field id="color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Color</label>
-                    <comment>Leanpay: #F58466</comment>
+                <field id="color_theme" translate="label" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Color Theme</label>
+                    <source_model>Leanpay\Payment\Model\Config\Source\ColorTheme</source_model>
                 </field>
-                <field id="background_color" translate="label comment" sortOrder="10" type="text" showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Background color</label>
-                    <comment>Leanpay: #F58466</comment>
-                </field>
-                <field id="font_size_homepage" translate="label comment" sortOrder="20" type="text" showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Homepage fontsize</label>
-                    <comment>Value is in px</comment>
-                </field>
-                <field id="font_size_product_page" translate="label comment" sortOrder="30" type="text"
-                       showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Product page fontsize</label>
-                    <comment>Value is in px</comment>
-                </field>
-                <field id="font_size_catalog_page" translate="label comment" sortOrder="40" type="text"
-                       showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Catalog page fontsize</label>
-                    <comment>Value is in px</comment>
+                <field id="use_leanpay_font" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use Leanpay Font</label>
+                    <comment>Use Leanpay font (Roboto) or inherit the store font.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="more_info" translate="label comment" sortOrder="40" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
@@ -177,11 +161,6 @@
                 <field id="check_your_limit" translate="label comment" sortOrder="40" type="text" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Check your limit</label>
-                </field>
-                <field id="use_dark_logo" translate="label comment" sortOrder="50" type="select" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
-                    <label>Use dark theme logo</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="group" translate="label comment" sortOrder="50" type="select" showInDefault="1"
                        showInWebsite="1" showInStore="1">
@@ -199,6 +178,34 @@
                     <label>Refresh</label>
                     <frontend_model>Leanpay\Payment\Block\System\Config\RefreshButton</frontend_model>
                 </field>
+                <group id="advanced" translate="label comment" sortOrder="200" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Advanced</label>
+                    <comment>These settings are for advanced customization. Change only if you know what you're doing.</comment>
+                    <fieldset_css>advanced</fieldset_css>
+                    <field id="amount_threshold" translate="label comment" sortOrder="10" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Amount Threshold</label>
+                        <comment>Amount threshold at which the dynamic behavior changes. For amounts up to and including this value, the default installment count will be used. For amounts above this value, the maximum available installments will be selected. Default: 300</comment>
+                        <frontend_class>validate-number</frontend_class>
+                    </field>
+                    <field id="default_installment_count" translate="label comment" sortOrder="20" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Default Installment Count (≤ Threshold)</label>
+                        <comment>Default number of installments for amounts up to and including the threshold. Default: 3</comment>
+                        <frontend_class>validate-number</frontend_class>
+                    </field>
+                    <field id="under_threshold_text" translate="label comment" sortOrder="30" type="text" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Under Threshold Text</label>
+                        <comment>Text to display when amount is below threshold. Use %1 as placeholder for amount. Example: "%1 EUR"</comment>
+                    </field>
+                    <field id="quick_information" translate="label comment" sortOrder="60" type="textarea" showInDefault="1"
+                           showInWebsite="1" showInStore="1">
+                        <label>Installment Quick Information</label>
+                        <comment>Shown inside the installment tooltip on PDP.</comment>
+                    </field>
+                </group>
             </group>
         </section>
 

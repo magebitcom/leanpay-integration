@@ -186,14 +186,12 @@ class TemplatePriceBox extends Template
      */
     public function getLogo()
     {
+        $iconPath = 'Leanpay_Payment::images/' . $this->installmentHelper->getColorTheme()['icons'] . '/';
+
         if ($this->getData('is_checkout')) {
-            return $this->getViewFileUrl('Leanpay_Payment::images/checkout.svg');
+            return $this->getViewFileUrl($iconPath . 'checkout.svg');
         }
 
-        if (!$this->installmentHelper->isDarkThemeLogo()) {
-            return $this->getViewFileUrl('Leanpay_Payment::images/leanpay.svg');
-        }
-
-        return $this->getViewFileUrl('Leanpay_Payment::images/dark-leanpay.svg');
+        return $this->getViewFileUrl($iconPath . 'leanpay.svg');
     }
 }
