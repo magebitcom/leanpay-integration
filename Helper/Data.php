@@ -31,6 +31,7 @@ class Data extends AbstractHelper
 
     public const LEANPAY_CONFIG_CURRENCY = 'payment/leanpay/leanpay_currency';
     public const LEANPAY_CONFIG_API_ENDPOINT_TYPE = 'payment/leanpay/api_endpoint_type';
+    public const LEANPAY_CONFIG_RON_ONLY_MODE = 'payment/leanpay/ron_only_mode';
 
     public const API_ENDPOINT_SLOVENIA = 'SLO';
     public const API_ENDPOINT_ROMANIA = 'RON';
@@ -369,6 +370,25 @@ class Data extends AbstractHelper
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
         );
+    }
+
+    /**
+     * Check if RON-only mode is enabled
+     *
+     * Active only for the Romanian (RON) plugin. When enabled, amounts are used
+     * directly in RON without conversion through EUR, so no EUR allowed currency
+     * or RON to EUR currency rate is required.
+     *
+     * @return bool
+     */
+    public function isRonOnlyMode(): bool
+    {
+        return $this->getApiType() === self::API_ENDPOINT_ROMANIA
+            && $this->scopeConfig->isSetFlag(
+                self::LEANPAY_CONFIG_RON_ONLY_MODE,
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreId()
+            );
     }
 
     /**
@@ -966,10 +986,14 @@ class Data extends AbstractHelper
             $amount = 0.00;
 
             if ($handler instanceof OrderInterface || $handler instanceof CartInterface) {
-                $amount = (float) $handler->getStore()->getBaseCurrency()->convert(
-                    $handler->getBaseGrandTotal(),
-                    'EUR'
-                );
+                if ($this->isRonOnlyMode()) {
+                    $amount = (float) $handler->getBaseGrandTotal();
+                } else {
+                    $amount = (float) $handler->getStore()->getBaseCurrency()->convert(
+                        $handler->getBaseGrandTotal(),
+                        'EUR'
+                    );
+                }
             }
 
             if ($amount < $requiredSize) {
