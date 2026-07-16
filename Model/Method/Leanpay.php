@@ -239,7 +239,17 @@ class Leanpay extends AbstractMethod
         $paymentInfo = $this->getInfoInstance();
         $order = $paymentInfo->getOrder();
         $address = $order->getBillingAddress();
-        $amount = $order->getStore()->getBaseCurrency()->convert($order->getBaseGrandTotal(), $order->_data["order_currency_code"]);
+        $isRonOnlyMode = $this->leanHelper->isRonOnlyMode();
+
+        if ($isRonOnlyMode) {
+            $amount = (float) $order->getBaseGrandTotal();
+        } else {
+            $amount = $order->getStore()->getBaseCurrency()->convert(
+                $order->getBaseGrandTotal(),
+                $order->getOrderCurrencyCode()
+            );
+        }
+
         $orderItems = $order->getAllVisibleItems();
 
         // Development testing value
@@ -266,7 +276,9 @@ class Leanpay extends AbstractMethod
                     $additionData['cartItems'][] = [
                         'name' => $item->getName(),
                         'sku' => $item->getSku(),
-                        'price' => $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
+                        'price' => $isRonOnlyMode
+                            ? $price
+                            : $order->getStore()->getBaseCurrency()->convert($price, 'EUR'),
                         'qty' => $item->getQtyOrdered()
                     ];
                 }
