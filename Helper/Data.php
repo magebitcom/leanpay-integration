@@ -6,17 +6,24 @@ namespace Leanpay\Payment\Helper;
 
 use Exception;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Leanpay\Payment\Model\InstallmentProductRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Data extends AbstractHelper
 {
@@ -252,23 +259,28 @@ class Data extends AbstractHelper
     private $dateTime;
 
     /**
-     * @var \Magento\Framework\App\ResourceConnection
+     * @var ResourceConnection
      */
     private $connection;
 
     private $catalogCategoryFactory;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
     private InstallmentProductRepository $installmentProductRepository;
     private SearchCriteriaBuilder $searchCriteriaBuilder;
+
+    /**
+     * @var TimezoneInterface
+     */
+    private $localeDate;
 
     /**
      * Data constructor.
@@ -277,16 +289,18 @@ class Data extends AbstractHelper
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        Context $context,
-        EncryptorInterface $encryptor,
-        DateTime $dateTime,
-        \Magento\Framework\App\ResourceConnection $connection,
-        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        Context                      $context,
+        EncryptorInterface           $encryptor,
+        DateTime                     $dateTime,
+        ResourceConnection           $connection,
+        CollectionFactory            $categoryCollectionFactory,
+        StoreManagerInterface        $storeManager,
+        ScopeConfigInterface         $scopeConfig,
         InstallmentProductRepository $installmentProductRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder
-    ) {
+        SearchCriteriaBuilder        $searchCriteriaBuilder,
+        TimezoneInterface            $localeDate
+    )
+    {
         $this->connection = $connection;
         $this->dateTime = $dateTime;
         $this->encryptor = $encryptor;
@@ -295,19 +309,20 @@ class Data extends AbstractHelper
         $this->scopeConfig = $scopeConfig;
         $this->installmentProductRepository = $installmentProductRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->localeDate = $localeDate;
         parent::__construct($context);
     }
 
     public function getStoreId(): int
     {
-        return (int) $this->storeManager->getStore()->getId();
+        return (int)$this->storeManager->getStore()->getId();
     }
 
     public function getCurrencyType(): string
     {
         $currencyType = $this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_CURRENCY,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
         );
 
@@ -315,7 +330,7 @@ class Data extends AbstractHelper
             $currencyType = 'EUR';
         }
 
-        return (string) $currencyType;
+        return (string)$currencyType;
     }
 
     /**
@@ -326,10 +341,10 @@ class Data extends AbstractHelper
         $currencyType = $this->getApiType();
 
         if ($this->getEnvironmentMode() == self::LEANPAY_API_MODE_LIVE) {
-            return (string) self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
+            return (string)self::LEANPAY_ALLOWED_BASE_URL[$currencyType];
         }
 
-        return (string) self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
+        return (string)self::LEANPAY_ALLOWED_BASE_URL_DEV[$currencyType];
     }
 
     /**
@@ -339,7 +354,7 @@ class Data extends AbstractHelper
      */
     public function isActive(): bool
     {
-        return (bool) $this->scopeConfig->getValue(self::LEANPAY_IS_ACTIVE_PATH);
+        return (bool)$this->scopeConfig->getValue(self::LEANPAY_IS_ACTIVE_PATH);
     }
 
     /**
@@ -349,10 +364,10 @@ class Data extends AbstractHelper
      */
     public function getLeanpayApiKey(): string
     {
-        return (string) $this->encryptor->decrypt(
+        return (string)$this->encryptor->decrypt(
             $this->scopeConfig->getValue(
                 self::LEANPAY_API_CONFIG_API_KEY_PATH,
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                ScopeInterface::SCOPE_STORE,
                 $this->getStoreId()
             )
         );
@@ -365,9 +380,9 @@ class Data extends AbstractHelper
      */
     public function getApiType(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
         );
     }
@@ -398,9 +413,9 @@ class Data extends AbstractHelper
      */
     public function getInstructions(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_INSTRUCTIONS_PATH,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
         );
     }
@@ -470,7 +485,7 @@ class Data extends AbstractHelper
      */
     private function getSecretWord(): string
     {
-        return (string) $this->encryptor->decrypt(
+        return (string)$this->encryptor->decrypt(
             $this->scopeConfig->getValue(
                 self::LEANPAY_API_CONFIG_SECRET_WORD_PATH,
                 ScopeInterface::SCOPE_STORE,
@@ -486,7 +501,7 @@ class Data extends AbstractHelper
      */
     private function getEnvironmentMode(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_CONFIG_MODE_PATH,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -498,7 +513,7 @@ class Data extends AbstractHelper
      */
     public function getCountryCode(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_PROMOS_MFP_COUNTRY,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -512,7 +527,7 @@ class Data extends AbstractHelper
      */
     public function getMagentoCheckoutUrl(): string
     {
-        return (string) $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::LEANPAY_MAGENTO_CHECKOUT_URL,
             ScopeInterface::SCOPE_STORE,
             $this->getStoreId()
@@ -587,23 +602,26 @@ class Data extends AbstractHelper
     {
         $apiKeys = [];
         $stores = $this->storeManager->getStores();
+
         foreach ($stores as $store) {
-            $apiKey = (string) $this->encryptor->decrypt(
+            $apiKey = (string)$this->encryptor->decrypt(
                 $this->scopeConfig->getValue(
                     self::LEANPAY_API_CONFIG_API_KEY_PATH,
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 )
             );
+
             if (!in_array($apiKey, $apiKeys)) {
                 $endpointType = $this->scopeConfig->getValue(
                     self::LEANPAY_CONFIG_API_ENDPOINT_TYPE,
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    ScopeInterface::SCOPE_STORE,
                     $store->getId()
                 );
                 $apiKeys[$endpointType] = ['key' => $apiKey, 'store_id' => $store->getId()];
             }
         }
+
         return $apiKeys;
     }
 
@@ -615,14 +633,14 @@ class Data extends AbstractHelper
     public function getLeanpayPromosMFPName(int $storeId = 0): string
     {
         if ($storeId) {
-            return (string) $this->scopeConfig->getValue(
+            return (string)$this->scopeConfig->getValue(
                 self::LEANPAY_PROMOS_MFP_PRODUCT_NAME,
                 ScopeInterface::SCOPE_STORE,
                 $storeId
             );
         }
 
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_PRODUCT_NAME);
     }
 
     /**
@@ -632,7 +650,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosMFPStartDate(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_START_DATE);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_START_DATE);
     }
 
     /**
@@ -642,7 +660,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosMFPEndDate(): string
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_END_DATE);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_END_DATE);
     }
 
     /**
@@ -653,14 +671,14 @@ class Data extends AbstractHelper
     public function getLeanpayPromosMFPCartSize(int $storeId = 0): string
     {
         if ($storeId) {
-            return (string) $this->scopeConfig->getValue(
+            return (string)$this->scopeConfig->getValue(
                 self::LEANPAY_PROMOS_MFP_CART_SIZE,
                 ScopeInterface::SCOPE_STORE,
                 $storeId
             );
         }
 
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
+        return (string)$this->scopeConfig->getValue(self::LEANPAY_PROMOS_MFP_CART_SIZE);
     }
 
     /**
@@ -670,7 +688,7 @@ class Data extends AbstractHelper
      */
     public function getLeanpayPromosVendorCode(): string
     {
-        $storeId = (int) $this->storeManager->getStore()->getId();
+        $storeId = (int)$this->storeManager->getStore()->getId();
 
         return $this->getLeanpayPromosMFPName($storeId);
     }
@@ -680,6 +698,7 @@ class Data extends AbstractHelper
         if (!$product) {
             return '';
         }
+
         $data = [];
         $data[] = $product;
 
@@ -722,6 +741,8 @@ class Data extends AbstractHelper
         $validOption = [];
         $result = '';
         $productCount = 0;
+        $allSame = true;
+        $incluse = 0;
 
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
             if (is_array($handler)) {
@@ -730,23 +751,25 @@ class Data extends AbstractHelper
                 $items = $handler->getItems();
             }
 
-            $cache = [];
             foreach ($items as $item) {
                 if (is_array($handler)) {
                     $product = $item;
                 } else {
-                    if ($item->getProductType() == 'simple') {
-                        if ($item->getParentItem()) {
-                            continue;
-                        }
-                        $product = $item->getProduct();
-                    } else {
-                        $product = $item->getProduct();
+                    if ($item->getParentItem()) {
+                        continue;
                     }
+
+                    $product = $this->resolvePromotionProduct($item, $items);
                 }
+
                 $productCount++;
 
+                if (!$product instanceof ProductInterface) {
+                    continue;
+                }
+
                 $vendorCode = $product->getData('leanpay_product_vendor_code');
+
                 if (!$vendorCode) {
                     continue;
                 }
@@ -754,7 +777,7 @@ class Data extends AbstractHelper
                 # Check if current product promo code is assigned to the current store api type
                 if ($productInstalmments = $this->getProductInstallmentByVendorCode($vendorCode)) {
                     foreach ($productInstalmments as $productInstalmment) {
-                        if ($productInstalmment->getData('country') != $this->getApiType()){
+                        if ($productInstalmment->getData('country') != $this->getApiType()) {
                             continue 2;
                         }
                     }
@@ -762,22 +785,12 @@ class Data extends AbstractHelper
 
                 $incluse = $product->getData('leanpay_product_exclusive_inclusive') == 'inclusive' ? 1 : 0;
                 $priority = $product->getData('leanpay_product_priority');
-                $cache[$item->getProductId()] = $incluse;
-
-                $end = strtotime($product->getData('leanpay_product_end_date') ?? '');
-                $start = strtotime($product->getData('leanpay_product_start_date') ?? '');
                 $isTime = $product->getData('leanpay_product_time_based');
 
-                if ($isTime) {
-                    $currentTime = strtotime($this->dateTime->gmtDate());
-                    if ($start < $currentTime && $currentTime < $end) {
-                        $validOption[$product->getId()] = [
-                            'priority' => $priority,
-                            'inclusive' => $incluse,
-                            'code' => $vendorCode
-                        ];
-                    }
-                } else {
+                if (!$isTime || $this->isPromotionActive(
+                        $product->getData('leanpay_product_start_date'),
+                        $product->getData('leanpay_product_end_date')
+                    )) {
                     $validOption[$product->getId()] = [
                         'priority' => $priority,
                         'inclusive' => $incluse,
@@ -787,8 +800,9 @@ class Data extends AbstractHelper
 
                 if (sizeof($validOption) > 0) {
                     $allSame = true;
+
                     foreach ($validOption as $option) {
-                        if (!reset($validOption)['code'] == $option['code']) {
+                        if (reset($validOption)['code'] != $option['code']) {
                             $allSame = false;
                             break;
                         }
@@ -844,6 +858,63 @@ class Data extends AbstractHelper
         return $result;
     }
 
+    /***
+     * For composite purchases (e.g. configurable products) the promotion may be
+     * configured on the purchased variant instead of the parent product, so the
+     * variant takes precedence when it has its own vendor code assigned.
+     *
+     * @param OrderItemInterface|QuoteItem $item
+     * @param array $items
+     * @return ProductInterface|null
+     */
+    private function resolvePromotionProduct($item, array $items): ?ProductInterface
+    {
+        $childProducts = [];
+
+        if ($item instanceof QuoteItem) {
+            foreach ($item->getChildren() as $child) {
+                $childProducts[] = $child->getProduct();
+            }
+        } else {
+            foreach ($items as $candidate) {
+                if ($candidate->getParentItem() === $item) {
+                    $childProducts[] = $candidate->getProduct();
+                }
+            }
+        }
+
+        foreach ($childProducts as $childProduct) {
+            if ($childProduct && $childProduct->getData('leanpay_product_vendor_code')) {
+                return $childProduct;
+            }
+        }
+
+        return $item->getProduct();
+    }
+
+    /**
+     * Promotion dates are entered as plain dates in the admin, so they are
+     * compared against the current date in the store timezone and the end date
+     * day itself is included ("Date If Time-based To (same day included)").
+     *
+     * @param string|null $startDate
+     * @param string|null $endDate
+     * @return bool
+     */
+    private function isPromotionActive(?string $startDate, ?string $endDate): bool
+    {
+        $end = strtotime((string)$endDate);
+
+        if ($end === false) {
+            return false;
+        }
+
+        $start = strtotime((string)$startDate);
+        $now = strtotime($this->localeDate->date()->format('Y-m-d H:i:s'));
+
+        return ($start === false || $start <= $now) && $now < strtotime('+1 day', $end);
+    }
+
     /**
      * @param $handler
      * @return string
@@ -852,6 +923,7 @@ class Data extends AbstractHelper
     {
         $validOption = [];
         $ids = [];
+
         if (($handler instanceof OrderInterface || $handler instanceof CartInterface) xor is_array($handler)) {
             if (is_array($handler)) {
                 $items = $handler;
@@ -890,35 +962,31 @@ class Data extends AbstractHelper
                         ->addAttributeToSelect($requiredAttributes)
                         ->setStoreId($this->getStoreId())
                         ->getItems();
-                    if(empty($categories)) {
+
+                    if (empty($categories)) {
                         $categories = $collection->addIdFilter($categoriesToCompare)
                             ->addAttributeToSelect($requiredAttributes)
                             ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
                             ->getItems();
                     }
+
                     if (!empty($categories)) {
                         foreach ($categories as $category) {
                             if (empty($category->getData('leanpay_category_vendor_code'))) {
                                 continue;
                             }
-                            $categoryStart = strtotime($category->getData('leanpay_category_start_date') ?? '');
-                            $categoryEnd = strtotime($category->getData('leanpay_category_end_date') ?? '');
+
                             $categoryIsTime = $category->getData('leanpay_category_time_based');
                             $categoryPriority = $category->getData('leanpay_category_priority');
                             $categoryIsExclusive = $category->getData(
                                 'leanpay_category_exclusive_inclusive'
                             ) == 'inclusive' ? true : false;
                             $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
-                            $currentTime = strtotime($this->dateTime->gmtDate() ?? '');
-                            if ($categoryIsTime) {
-                                if ($categoryStart < $currentTime && $categoryEnd > $currentTime) {
-                                    $validOption[] = [
-                                        'priority' => $categoryPriority,
-                                        'inclusive' => $categoryIsExclusive,
-                                        'code' => $categoryVendorProduct
-                                    ];
-                                }
-                            } else {
+
+                            if (!$categoryIsTime || $this->isPromotionActive(
+                                    $category->getData('leanpay_category_start_date'),
+                                    $category->getData('leanpay_category_end_date')
+                                )) {
                                 $validOption[] = [
                                     'priority' => $categoryPriority,
                                     'inclusive' => $categoryIsExclusive,
@@ -948,9 +1016,9 @@ class Data extends AbstractHelper
                                 return $item["inclusive"] === false;
                             });
 
-                           if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
-                               return '';
-                           }
+                            if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
+                                return '';
+                            }
 
                             //if there is an item from exclusive category and item without financing plan
                             if ($validOption[0]['inclusive'] === false && sizeof($items) !== sizeof($validOption)) {
@@ -972,7 +1040,7 @@ class Data extends AbstractHelper
     private function validateGlobal($handler)
     {
         try {
-            $storeId = (int) $this->storeManager->getStore()->getId();
+            $storeId = (int)$this->storeManager->getStore()->getId();
             $requiredSize = $this->getLeanpayPromosMFPCartSize($storeId) ?? 0;
             $requiredDateStart = strtotime($this->getLeanpayPromosMFPStartDate());
             $requiredDateEnd = strtotime($this->getLeanpayPromosMFPEndDate());
@@ -1005,7 +1073,9 @@ class Data extends AbstractHelper
             return false;
         }
     }
-    function getProductInstallmentByVendorCode(string $vendorCode) {
+
+    function getProductInstallmentByVendorCode(string $vendorCode)
+    {
         $searchCriteriaBuilder = $this->searchCriteriaBuilder;
         $searchCriteria = $searchCriteriaBuilder->addFilter(
             'group_id',
@@ -1015,7 +1085,7 @@ class Data extends AbstractHelper
 
         $result = $this->installmentProductRepository->getList($searchCriteria)->getItems();
 
-        if (empty($result)){
+        if (empty($result)) {
             return null;
         }
 
