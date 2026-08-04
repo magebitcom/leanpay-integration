@@ -15,6 +15,8 @@
                 <leanpay_base_url>https://app.leanpay.si</leanpay_base_url>
                 <leanpay_base_url_dev>https://stage-app.leanpay.si</leanpay_base_url_dev>
                 <installment_cron>0 2 * * *</installment_cron>
+                <min_order_total>50</min_order_total>
+                <max_order_total>12000</max_order_total>
                 <installment_allowed_views>HOMEPAGE,PRODUCT_PAGE,CATEGORY_PAGE</installment_allowed_views>
                 <checkout_url>checkout/index/index</checkout_url>
                 <instructions><![CDATA[Leanpay omogoča hitro in enostavno obročno odplačevanje preko spleta.]]></instructions>
