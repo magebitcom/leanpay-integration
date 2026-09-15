@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Block\Adminhtml\Form\Field;
 
+use Leanpay\Payment\Helper\Data;
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Directory\Model\Currency as CurrencyModel;
@@ -24,21 +25,29 @@ class Currency extends Field
     protected $translator;
 
     /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
      * Currency constructor.
      *
      * @param Adapter $translator
      * @param Context $context
      * @param CurrencyModel $currencyModel
+     * @param Data $helper
      * @param array $data
      */
     public function __construct(
         Adapter $translator,
         Context $context,
         CurrencyModel $currencyModel,
+        Data $helper,
         array $data = []
     ) {
         $this->translator = $translator;
         $this->currencyModel = $currencyModel;
+        $this->helper = $helper;
 
         parent::__construct($context, $data);
     }
@@ -53,6 +62,12 @@ class Currency extends Field
      */
     protected function _getElementHtml(AbstractElement $element): string
     {
+        if ($this->helper->isRonOnlyMode()) {
+            return $this->translator->translate(
+                'RON-Only Mode is enabled - no EUR currency rate is required'
+            );
+        }
+
         $baseCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
         $allowedCurrencies = $this->currencyModel->getConfigAllowCurrencies();
         $rates = $this->currencyModel->getCurrencyRates($baseCode, array_values($allowedCurrencies));

@@ -33,6 +33,22 @@
                     <source_model>Leanpay\Payment\Model\Config\Source\ApiEndpointType</source_model>
                 </field>
 
+                <field id="ron_only_mode"
+                       translate="label comment"
+                       sortOrder="1"
+                       type="select"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1"
+                       canRestore="1">
+                    <label>RON-Only Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When enabled, the module operates entirely in RON without requiring EUR as an allowed currency or maintaining a RON to EUR currency rate. Applies only to the Romanian (RON) plugin.</comment>
+                    <depends>
+                        <field id="api_endpoint_type">RON</field>
+                    </depends>
+                </field>
+
                 <field id="currency"
                        translate="label comment"
                        sortOrder="1"
