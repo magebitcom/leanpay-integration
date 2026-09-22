@@ -10,6 +10,16 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 class Installment extends AbstractDb
 {
     /**
+     * Distinct currency codes present in the installment table.
+     *
+     * Cached for the request because the lookup is a full scan of a table with
+     * hundreds of thousands of rows and is called once per rendered price box.
+     *
+     * @var array|null
+     */
+    private $installmentCurrencies;
+
+    /**
      * Resource initialization
      *
      * @inheridoc
@@ -132,6 +142,10 @@ class Installment extends AbstractDb
      */
     public function getInstallmentCurrencies(): array
     {
+        if ($this->installmentCurrencies !== null) {
+            return $this->installmentCurrencies;
+        }
+
         $connection = $this->getConnection();
         $table = $connection->getTableName(InstallmentInterface::TABLE_NAME);
 
@@ -144,6 +158,9 @@ class Installment extends AbstractDb
                     InstallmentInterface::CURRENCY_CODE,
                 ]
             );
-        return $this->getConnection()->fetchAssoc($select);
+
+        $this->installmentCurrencies = $this->getConnection()->fetchAssoc($select);
+
+        return $this->installmentCurrencies;
     }
 }
