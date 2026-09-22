@@ -283,6 +283,33 @@ class Data extends AbstractHelper
     private $localeDate;
 
     /**
+     * Category attributes needed to resolve a category-level promotion
+     */
+    private const CATEGORY_PROMOTION_ATTRIBUTES = [
+        'leanpay_category_financing_product_value',
+        'leanpay_category_priority',
+        'leanpay_category_time_based',
+        'leanpay_category_start_date',
+        'leanpay_category_end_date',
+        'leanpay_category_vendor_code',
+        'leanpay_category_exclusive_inclusive'
+    ];
+
+    /**
+     * Per-request cache: product ID => category IDs
+     *
+     * @var array
+     */
+    private $productCategoryIds = [];
+
+    /**
+     * Per-request cache: store ID => category ID => loaded category (or null when not found)
+     *
+     * @var array
+     */
+    private $promotionCategories = [];
+
+    /**
      * Data constructor.
      *
      * @param Context $context
@@ -916,6 +943,72 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Preload category promotion data for a set of products with a constant
+     * number of queries (one product-to-category lookup and one category load),
+     * so product listings do not run a lookup per product card (LMM-146).
+     *
+     * @param array $productIds
+     * @return void
+     */
+    public function preloadCategoryPromotions(array $productIds): void
+    {
+        $productIds = array_unique(array_map('intval', array_filter($productIds)));
+        $missing = array_diff($productIds, array_keys($this->productCategoryIds));
+
+        if (empty($missing)) {
+            return;
+        }
+
+        foreach ($missing as $productId) {
+            $this->productCategoryIds[$productId] = [];
+        }
+
+        $connection = $this->connection->getConnection();
+        $select = $connection->select()
+            ->from($this->connection->getTableName('catalog_category_product'), ['product_id', 'category_id'])
+            ->where('product_id IN (?)', $missing);
+
+        $categoryIds = [];
+
+        foreach ($connection->fetchAll($select) as $row) {
+            $this->productCategoryIds[(int)$row['product_id']][] = (int)$row['category_id'];
+            $categoryIds[] = (int)$row['category_id'];
+        }
+
+        $this->loadPromotionCategories(array_unique($categoryIds));
+    }
+
+    /**
+     * Load categories (with Leanpay promotion attributes) that are not cached yet for the current store
+     *
+     * @param array $categoryIds
+     * @return void
+     */
+    private function loadPromotionCategories(array $categoryIds): void
+    {
+        $storeId = $this->getStoreId();
+        $missing = array_diff($categoryIds, array_keys($this->promotionCategories[$storeId] ?? []));
+
+        if (empty($missing)) {
+            return;
+        }
+
+        foreach ($missing as $categoryId) {
+            $this->promotionCategories[$storeId][$categoryId] = null;
+        }
+
+        $categories = $this->catalogCategoryFactory->create()
+            ->addIdFilter(array_values($missing))
+            ->addAttributeToSelect(self::CATEGORY_PROMOTION_ATTRIBUTES)
+            ->setStoreId($storeId)
+            ->getItems();
+
+        foreach ($categories as $category) {
+            $this->promotionCategories[$storeId][(int)$category->getId()] = $category;
+        }
+    }
+
+    /**
      * @param $handler
      * @return string
      */
@@ -936,97 +1029,79 @@ class Data extends AbstractHelper
             }
 
             if (!empty($ids)) {
-                // To improve scaling of the program calculating all required cateogries to compare
-                $ids = implode(',', array_unique($ids));
-                $table = $this->connection->getTableName('catalog_category_product');
-                $string = sprintf(
-                    'select category_id from %s where product_id in (%s) group by category_id',
-                    $table,
-                    $ids
-                );
-                $categoriesToCompare = $this->connection->getConnection()->fetchCol($string);
+                // Served from the per-request cache when a listing preloaded it, otherwise loaded in one batch
+                $this->preloadCategoryPromotions($ids);
 
-                if (!empty($categoriesToCompare)) {
-                    $collection = $this->catalogCategoryFactory->create();
-                    $requiredAttributes = [
-                        'leanpay_category_financing_product_value',
-                        'leanpay_category_priority',
-                        'leanpay_category_time_based',
-                        'leanpay_category_start_date',
-                        'leanpay_category_end_date',
-                        'leanpay_category_vendor_code',
-                        'leanpay_category_exclusive_inclusive'
-                    ];
-                    $categories = $collection
-                        ->addIdFilter($categoriesToCompare)
-                        ->addAttributeToSelect($requiredAttributes)
-                        ->setStoreId($this->getStoreId())
-                        ->getItems();
+                $categoriesToCompare = [];
+                foreach (array_unique(array_map('intval', $ids)) as $productId) {
+                    $categoriesToCompare[] = $this->productCategoryIds[$productId] ?? [];
+                }
+                $categoriesToCompare = array_unique(array_merge([], ...$categoriesToCompare));
+                sort($categoriesToCompare);
 
-                    if (empty($categories)) {
-                        $categories = $collection->addIdFilter($categoriesToCompare)
-                            ->addAttributeToSelect($requiredAttributes)
-                            ->addAttributeToFilter('leanpay_category_vendor_code', ['neq' => 'NULL'])
-                            ->getItems();
+                $categories = [];
+                foreach ($categoriesToCompare as $categoryId) {
+                    if ($category = $this->promotionCategories[$this->getStoreId()][$categoryId] ?? null) {
+                        $categories[] = $category;
                     }
+                }
 
-                    if (!empty($categories)) {
-                        foreach ($categories as $category) {
-                            if (empty($category->getData('leanpay_category_vendor_code'))) {
-                                continue;
-                            }
-
-                            $categoryIsTime = $category->getData('leanpay_category_time_based');
-                            $categoryPriority = $category->getData('leanpay_category_priority');
-                            $categoryIsExclusive = $category->getData(
-                                'leanpay_category_exclusive_inclusive'
-                            ) == 'inclusive' ? true : false;
-                            $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
-
-                            if (!$categoryIsTime || $this->isPromotionActive(
-                                    $category->getData('leanpay_category_start_date'),
-                                    $category->getData('leanpay_category_end_date')
-                                )) {
-                                $validOption[] = [
-                                    'priority' => $categoryPriority,
-                                    'inclusive' => $categoryIsExclusive,
-                                    'code' => $categoryVendorProduct
-                                ];
-                            }
+                if (!empty($categories)) {
+                    foreach ($categories as $category) {
+                        if (empty($category->getData('leanpay_category_vendor_code'))) {
+                            continue;
                         }
-                        if (!empty($validOption) && is_array($validOption)) {
-                            usort($validOption, function ($a, $b) {
-                                // First, sort by [inclusive], descending order (true first)
-                                $inclusiveComparison = ($a['inclusive'] === $b['inclusive']) ? 0 : ($a['inclusive'] ? -1 : 1);
 
-                                // If [inclusive] values are the same, sort by [priority], descending order
-                                if ($inclusiveComparison === 0) {
-                                    return ($a['priority'] > $b['priority']) ? -1 : 1;
-                                }
+                        $categoryIsTime = $category->getData('leanpay_category_time_based');
+                        $categoryPriority = $category->getData('leanpay_category_priority');
+                        $categoryIsExclusive = $category->getData(
+                            'leanpay_category_exclusive_inclusive'
+                        ) == 'inclusive' ? true : false;
+                        $categoryVendorProduct = $category->getData('leanpay_category_vendor_code');
 
-                                return $inclusiveComparison;
-                            });
+                        if (!$categoryIsTime || $this->isPromotionActive(
+                            $category->getData('leanpay_category_start_date'),
+                            $category->getData('leanpay_category_end_date')
+                        )) {
+                            $validOption[] = [
+                                'priority' => $categoryPriority,
+                                'inclusive' => $categoryIsExclusive,
+                                'code' => $categoryVendorProduct
+                            ];
+                        }
+                    }
+                    if (!empty($validOption) && is_array($validOption)) {
+                        usort($validOption, function ($a, $b) {
+                            // First, sort by [inclusive], descending order (true first)
+                            $inclusiveComparison = ($a['inclusive'] === $b['inclusive']) ? 0 : ($a['inclusive'] ? -1 : 1);
 
-                            if ($validOption[0]['inclusive'] === true) {
-                                return $validOption[0]['code'];
+                            // If [inclusive] values are the same, sort by [priority], descending order
+                            if ($inclusiveComparison === 0) {
+                                return ($a['priority'] > $b['priority']) ? -1 : 1;
                             }
 
-                            // check if there is more than 1 category with different exclusive program
-                            $exclusiveItems = array_filter($validOption, function ($item) {
-                                return $item["inclusive"] === false;
-                            });
+                            return $inclusiveComparison;
+                        });
 
-                            if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
-                                return '';
-                            }
-
-                            //if there is an item from exclusive category and item without financing plan
-                            if ($validOption[0]['inclusive'] === false && sizeof($items) !== sizeof($validOption)) {
-                                return '';
-                            }
-
+                        if ($validOption[0]['inclusive'] === true) {
                             return $validOption[0]['code'];
                         }
+
+                        // check if there is more than 1 category with different exclusive program
+                        $exclusiveItems = array_filter($validOption, function ($item) {
+                            return $item["inclusive"] === false;
+                        });
+
+                        if (count(array_unique(array_column($exclusiveItems, 'code'))) > 1) {
+                            return '';
+                        }
+
+                        //if there is an item from exclusive category and item without financing plan
+                        if ($validOption[0]['inclusive'] === false && sizeof($items) !== sizeof($validOption)) {
+                            return '';
+                        }
+
+                        return $validOption[0]['code'];
                     }
                 }
             }
@@ -1057,7 +1132,7 @@ class Data extends AbstractHelper
                 if ($this->isRonOnlyMode()) {
                     $amount = (float) $handler->getBaseGrandTotal();
                 } else {
-                    $amount = (float) $handler->getStore()->getBaseCurrency()->convert(
+                    $amount = (float)$handler->getStore()->getBaseCurrency()->convert(
                         $handler->getBaseGrandTotal(),
                         'EUR'
                     );
