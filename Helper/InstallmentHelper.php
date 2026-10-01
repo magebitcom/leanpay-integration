@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Leanpay\Payment\Helper;
 
 use Leanpay\Payment\Api\Data\InstallmentInterface;
+use Leanpay\Payment\Model\Config\Source\InstallmentDesign;
 use Leanpay\Payment\Model\Config\Source\ViewBlockConfig;
 use Leanpay\Payment\Model\ResourceModel\Installment;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -39,6 +40,11 @@ class InstallmentHelper extends AbstractHelper
      * Leanpay Installment group
      */
     public const LEANPAY_INSTALLMENT_GROUP = 'payment/leanpay_installment/group';
+
+    /**
+     * Leanpay Installment widget design
+     */
+    public const LEANPAY_INSTALLMENT_DESIGN = 'payment/leanpay_installment/design';
 
     /**
      * Leanpay Installment enable product rounding
@@ -172,7 +178,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getMoreInfoURL()
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_MORE_INFO);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_MORE_INFO,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -182,7 +191,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getCheckYourLimitURL()
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_CHECK_YOUR_LIMIT,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -192,7 +204,10 @@ class InstallmentHelper extends AbstractHelper
      */
     public function getAllowedViews()
     {
-        return (string) $this->scopeConfig->getValue(self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS);
+        return (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_ALLOWED_VIEWS,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -206,6 +221,21 @@ class InstallmentHelper extends AbstractHelper
             Data::LEANPAY_USE_FONT_PATH,
             ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * Get installment widget design (Hyvä only)
+     *
+     * @return string
+     */
+    public function getInstallmentDesign(): string
+    {
+        $design = (string) $this->scopeConfig->getValue(
+            self::LEANPAY_INSTALLMENT_DESIGN,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return $design === InstallmentDesign::NARROW ? InstallmentDesign::NARROW : InstallmentDesign::DEFAULT;
     }
 
     /**
@@ -360,7 +390,7 @@ class InstallmentHelper extends AbstractHelper
 
         $installmentCurrencies = $this->resourceModel->getInstallmentCurrencies();
         $currentStoreCurrency = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
-        if ($this->scopeConfig->getValue(Data::LEANPAY_CONFIG_CURRENCY) === $currentStoreCurrency &&
+        if ($this->getCurrency() === $currentStoreCurrency &&
             !in_array($currentStoreCurrency, array_keys($installmentCurrencies))
         ) {
             return $result;
@@ -437,7 +467,10 @@ class InstallmentHelper extends AbstractHelper
             return '';
         }
 
-        if ($price > $max || $price < $min) {
+        // Empty min/max means no limit, matching Magento's payment method availability check
+        if (($max !== null && $max !== '' && $price > (float) $max)
+            || ($min !== null && $min !== '' && $price < (float) $min)
+        ) {
             return '';
         }
 
