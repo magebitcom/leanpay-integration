@@ -3,15 +3,30 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin\Block\Product;
 
+use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Leanpay\Payment\Pricing\Price\Installment;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\CatalogWidget\Block\Product\ProductsList;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Render;
 
 class ProductsListPlugin
 {
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Add installment price to plugin
      *
@@ -33,6 +48,11 @@ class ProductsListPlugin
         array $arguments = []
     ) {
         $result = $proceed($product, $priceType, $renderZone, $arguments);
+
+        $collection = $subject->getProductCollection();
+        if ($collection instanceof Collection && $collection->isLoaded()) {
+            $this->helper->preloadCategoryPromotions($collection->getLoadedIds());
+        }
 
         $priceRender = $subject->getLayout()->getBlock('product.price.render.default');
         if (!$priceRender) {

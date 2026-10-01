@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Leanpay\Payment\Plugin\Block\Product;
 
+use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
 use Leanpay\Payment\Pricing\Price\Installment;
 use Magento\Catalog\Block\Product\ListProduct;
@@ -10,6 +11,19 @@ use Magento\Catalog\Model\Product;
 
 class ListProductPlugin
 {
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Add installment price
      *
@@ -23,6 +37,11 @@ class ListProductPlugin
     {
         $result = $proceed($product);
         $priceRender = $this->getPriceRender($subject);
+
+        $collection = $subject->getLoadedProductCollection();
+        if ($collection->isLoaded()) {
+            $this->helper->preloadCategoryPromotions($collection->getLoadedIds());
+        }
 
         $price = '';
 
