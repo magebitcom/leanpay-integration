@@ -164,6 +164,12 @@
                     <label>Color Theme</label>
                     <source_model>Leanpay\Payment\Model\Config\Source\ColorTheme</source_model>
                 </field>
+                <field id="design" translate="label comment" type="select" sortOrder="15" showInDefault="1"
+                       showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Installment Widget Design</label>
+                    <comment>Hyvä themes only. Default: full widget, the calculator opens as a dropdown below it. Narrow: compact widget, the calculator opens as a centred modal.</comment>
+                    <source_model>Leanpay\Payment\Model\Config\Source\InstallmentDesign</source_model>
+                </field>
                 <field id="use_leanpay_font" translate="label comment" type="select" sortOrder="20"
                        showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Use Leanpay Font</label>
