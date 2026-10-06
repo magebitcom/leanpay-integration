@@ -6,7 +6,12 @@ namespace Leanpay\Payment\Helper;
 
 use Exception;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\CatalogInventory\Helper\Stock;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Quote\Api\Data\CartInterface;
@@ -296,6 +301,40 @@ class Data extends AbstractHelper
     ];
 
     /**
+     * Product attributes needed to resolve a product-level promotion
+     */
+    private const PRODUCT_PROMOTION_ATTRIBUTES = [
+        'leanpay_product_vendor_code',
+        'leanpay_product_exclusive_inclusive',
+        'leanpay_product_priority',
+        'leanpay_product_time_based',
+        'leanpay_product_start_date',
+        'leanpay_product_end_date'
+    ];
+
+    /**
+     * Per-request cache: configurable product ID => its lowest-priced variants
+     *
+     * @var array
+     */
+    private $listingVariants = [];
+
+    /**
+     * @var ProductCollectionFactory
+     */
+    private $productCollectionFactory;
+
+    /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
+     * @var Stock
+     */
+    private $stockHelper;
+
+    /**
      * Per-request cache: product ID => category IDs
      *
      * @var array
@@ -325,7 +364,10 @@ class Data extends AbstractHelper
         ScopeConfigInterface         $scopeConfig,
         InstallmentProductRepository $installmentProductRepository,
         SearchCriteriaBuilder        $searchCriteriaBuilder,
-        TimezoneInterface            $localeDate
+        TimezoneInterface            $localeDate,
+        ProductCollectionFactory     $productCollectionFactory,
+        MetadataPool                 $metadataPool,
+        Stock                        $stockHelper
     )
     {
         $this->connection = $connection;
@@ -337,6 +379,9 @@ class Data extends AbstractHelper
         $this->installmentProductRepository = $installmentProductRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->localeDate = $localeDate;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->metadataPool = $metadataPool;
+        $this->stockHelper = $stockHelper;
         parent::__construct($context);
     }
 
@@ -976,6 +1021,98 @@ class Data extends AbstractHelper
         }
 
         $this->loadPromotionCategories(array_unique($categoryIds));
+    }
+
+    /**
+     * Resolve the promotion for a listing badge (LMM-151): a configurable product has no selected
+     * variant there, so it shows the promotion of its lowest-priced variant and falls back to the parent
+     *
+     * @param ProductInterface $product
+     * @return string
+     */
+    public function getListingPromoCode(ProductInterface $product): string
+    {
+        if ($product->getTypeId() === Configurable::TYPE_CODE) {
+            // Resolve the variants of every product the listing preloaded at once, not per product card
+            $this->preloadListingVariants(
+                array_merge(array_keys($this->productCategoryIds), [(int)$product->getId()])
+            );
+
+            foreach ($this->listingVariants[(int)$product->getId()] ?? [] as $variant) {
+                if ($variantMatch = $this->validateProduct([$variant])) {
+                    return $variantMatch;
+                }
+            }
+        }
+
+        return $this->getProductPromoCode($product);
+    }
+
+    /**
+     * Load the lowest-priced salable variants of a set of products with a constant number of
+     * queries (one parent-to-variant lookup and one variant load with prices)
+     *
+     * @param array $productIds
+     * @return void
+     */
+    private function preloadListingVariants(array $productIds): void
+    {
+        $productIds = array_unique(array_map('intval', array_filter($productIds)));
+        $missing = array_diff($productIds, array_keys($this->listingVariants));
+
+        if (empty($missing)) {
+            return;
+        }
+
+        foreach ($missing as $productId) {
+            $this->listingVariants[$productId] = [];
+        }
+
+        $connection = $this->connection->getConnection();
+        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+        $select = $connection->select()
+            ->from(['link' => $this->connection->getTableName('catalog_product_super_link')], ['product_id'])
+            ->join(
+                ['parent' => $this->connection->getTableName('catalog_product_entity')],
+                'parent.' . $linkField . ' = link.parent_id',
+                ['parent_id' => 'entity_id']
+            )
+            ->where('parent.entity_id IN (?)', $missing);
+
+        $variantParents = [];
+
+        foreach ($connection->fetchAll($select) as $row) {
+            $variantParents[(int)$row['product_id']][] = (int)$row['parent_id'];
+        }
+
+        if (empty($variantParents)) {
+            return;
+        }
+
+        $variants = $this->productCollectionFactory->create()
+            ->addIdFilter(array_keys($variantParents))
+            ->addAttributeToSelect(self::PRODUCT_PROMOTION_ATTRIBUTES)
+            ->addAttributeToFilter('status', Status::STATUS_ENABLED)
+            ->addPriceData();
+        $this->stockHelper->addIsInStockFilterToCollection($variants);
+
+        $lowestPrices = [];
+
+        foreach ($variants as $variant) {
+            $price = round((float)$variant->getData('final_price'), 2);
+
+            foreach (array_unique($variantParents[(int)$variant->getId()] ?? []) as $parentId) {
+                if (!isset($lowestPrices[$parentId]) || $price < $lowestPrices[$parentId]) {
+                    $lowestPrices[$parentId] = $price;
+                    $this->listingVariants[$parentId] = [];
+                }
+
+                // Variants sharing the lowest price are all candidates, the first with a promotion wins
+                if ($price === $lowestPrices[$parentId]) {
+                    $this->listingVariants[$parentId][] = $variant;
+                }
+            }
+        }
     }
 
     /**
