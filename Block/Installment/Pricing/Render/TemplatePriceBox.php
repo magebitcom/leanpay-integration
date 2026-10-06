@@ -123,7 +123,10 @@ class TemplatePriceBox extends Template
     public function getFinancialProduct(): string
     {
         try {
-            return $this->helper->getProductPromoCode($this->registry->registry('current_product'));
+            return $this->helper->getVariantPromoCode(
+                $this->getData('product') ?: $this->registry->registry('current_product'),
+                $this->getData('variant')
+            );
         } catch (LocalizedException $exception) {
             return '';
         }
