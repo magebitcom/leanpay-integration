@@ -16,19 +16,19 @@ define(['jquery'], function ($) {
                     result = $widget._getNewPrices(),
                     tierPriceHtml,
                     isShow,
-                    installmentPrice = $('.price-installment_price .installment-wrapper'),
-                    optionId = $widget._CalcProducts()[$widget._CalcProducts().length - 1];
+                    products = $widget._CalcProducts(),
+                    // Only a full selection points at a single variant
+                    optionPrice = products.length === 1 ? $widget.options.jsonConfig.optionPrices[products[0]] : null;
 
-                if (
-                    typeof $widget.options.jsonConfig.optionPrices[optionId].instalment_html !== 'undefined'
-                ) {
-                    var newHtml = $widget.options.jsonConfig.optionPrices[optionId].instalment_html;
-                    if (installmentPrice !== newHtml) {
-                        $('.price-installment_price').html(newHtml);
-                        $('.price-installment_price').trigger('contentUpdated');
-                        $(document).trigger('installmentSlider');
-                    }
-                }
+                // Hand the selected variant's badge to the price box, which renders it with the new price (LMM-144)
+                $productPrice.data(
+                    'leanpayVariantInstallment',
+                    optionPrice && typeof optionPrice.instalment_html !== 'undefined' ? {
+                        id: products[0],
+                        amount: Math.round(optionPrice.finalPrice.amount),
+                        html: optionPrice.instalment_html
+                    } : null
+                );
 
                 $productPrice.trigger(
                     'updatePrice',

@@ -6,6 +6,8 @@ namespace Leanpay\Payment\Controller\Installment;
 use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
 use Leanpay\Payment\Helper\Data;
 use Leanpay\Payment\Helper\InstallmentHelper;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -14,6 +16,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -65,6 +68,11 @@ class Index implements ActionInterface
     private $installmentHelper;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
+
+    /**
      * Index constructor.
      * @param InstallmentHelper $installmentHelper
      * @param StoreManagerInterface $storeManager
@@ -74,6 +82,7 @@ class Index implements ActionInterface
      * @param SerializerInterface $serializer
      * @param ResultRedirectFactory $resultRedirectFactory
      * @param RequestInterface $request
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         InstallmentHelper $installmentHelper,
@@ -83,7 +92,8 @@ class Index implements ActionInterface
         TemplatePriceBox $template,
         SerializerInterface $serializer,
         ResultRedirectFactory $resultRedirectFactory,
-        RequestInterface $request
+        RequestInterface $request,
+        ProductRepositoryInterface $productRepository
     ) {
         $this->installmentHelper = $installmentHelper;
         $this->storeManager = $storeManager;
@@ -93,6 +103,7 @@ class Index implements ActionInterface
         $this->serializer = $serializer;
         $this->resultRedirectFactory = $resultRedirectFactory;
         $this->request = $request;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -108,6 +119,10 @@ class Index implements ActionInterface
 
         $amount = $this->request->getParam('amount');
         $isCheckout = (bool)$this->request->getParam('checkout');
+        // There is no current product on AJAX, so the product page sends its own context (LMM-144)
+        $this->template
+            ->setData('product', $this->getProduct($this->request->getParam('product_id')))
+            ->setData('variant', $this->getProduct($this->request->getParam('variant_id')));
         $enabled = $this->helper->isActive();
         $response = $this->jsonFactory->create();
         if ($amount && $enabled) {
@@ -138,5 +153,28 @@ class Index implements ActionInterface
         }
 
         return $this->templateCache[$amount];
+    }
+
+    /**
+     * Load a product passed by the product page, the badge falls back to default terms without it
+     *
+     * @param mixed $productId
+     * @return ProductInterface|null
+     */
+    private function getProduct($productId): ?ProductInterface
+    {
+        if (!(int)$productId) {
+            return null;
+        }
+
+        try {
+            return $this->productRepository->getById(
+                (int)$productId,
+                false,
+                (int)$this->storeManager->getStore()->getId()
+            );
+        } catch (NoSuchEntityException $exception) {
+            return null;
+        }
     }
 }

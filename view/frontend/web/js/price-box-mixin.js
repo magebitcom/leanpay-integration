@@ -41,10 +41,25 @@ define([
                     return;
                 }
 
-                var intAmount = Math.round(amount);
+                var intAmount = Math.round(amount),
+                    variant = self.element.data('leanpayVariantInstallment') || null,
+                    cacheKey = variant ? intAmount + '-' + variant.id : intAmount;
 
-                // Prefer pre-rendered map from priceConfig when available
-                if (self.options.priceConfig && self.options.priceConfig.installmentHtmlMap) {
+                // A selected variant can carry its own promotion, so prefer its badge while its price is shown (LMM-144)
+                if (variant && variant.amount === intAmount) {
+                    if (typeof self.options.ajax !== 'undefined') {
+                        self.options.ajax.abort();
+                    }
+
+                    var variantWrapper = $('.price-installment_price');
+                    variantWrapper.html(variant.html);
+                    variantWrapper.trigger('contentUpdated');
+                    $(document).trigger('installmentSlider');
+                    return;
+                }
+
+                // Prefer pre-rendered map from priceConfig when available, it holds the parent product's badges
+                if (!variant && self.options.priceConfig && self.options.priceConfig.installmentHtmlMap) {
                     var map = self.options.priceConfig.installmentHtmlMap;
                     if (typeof map[intAmount] !== 'undefined') {
                         var wrapper = $('.price-installment_price');
@@ -56,8 +71,8 @@ define([
                     }
                 }
 
-                if (self.installmentCache[intAmount]) {
-                    var cachedHtml = self.installmentCache[intAmount];
+                if (self.installmentCache[cacheKey]) {
+                    var cachedHtml = self.installmentCache[cacheKey];
                     var wrapper = $('.price-installment_price');
                     wrapper.html(cachedHtml);
                     wrapper.trigger('contentUpdated');
@@ -68,7 +83,11 @@ define([
                 self.options.ajax = $.ajax({
                     type: 'get',
                     url: url.build('/leanpay/installment/index/'),
-                    data: {"amount": amount},
+                    data: {
+                        "amount": amount,
+                        "product_id": self.options.priceConfig ? self.options.priceConfig.productId : '',
+                        "variant_id": variant ? variant.id : ''
+                    },
                     beforeSend: function () {
                         if (typeof self.options.ajax !== 'undefined') {
                             self.options.ajax.abort();
@@ -87,7 +106,7 @@ define([
                                 $(document).trigger('installmentSlider');
                             }
 
-                            self.installmentCache[intAmount] = newHtml;
+                            self.installmentCache[cacheKey] = newHtml;
                         }
                     },
                     cache: true,

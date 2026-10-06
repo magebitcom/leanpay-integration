@@ -45,7 +45,6 @@ class TemplatePriceBox extends Template
      * @var \Magento\Framework\Api\SearchCriteriaBuilder
      */
     private $searchCriteria;
-    private \Magento\Framework\Registry $registry;
     private Cart $cart;
 
     /**
@@ -64,7 +63,6 @@ class TemplatePriceBox extends Template
         SerializerInterface $serializer,
         InstallmentProductRepositoryInterface $productRepository,
         SearchCriteriaBuilderFactory $criteriaBuilderFactory,
-        \Magento\Framework\Registry $registry,
         Cart $cart,
         array $data = []
     ) {
@@ -75,7 +73,6 @@ class TemplatePriceBox extends Template
         $this->serializer = $serializer;
         $data['view_key'] = InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE;
         parent::__construct($context, $data);
-        $this->registry = $registry;
         $this->cart = $cart;
     }
 
@@ -123,7 +120,10 @@ class TemplatePriceBox extends Template
     public function getFinancialProduct(): string
     {
         try {
-            return $this->helper->getProductPromoCode($this->registry->registry('current_product'));
+            return $this->helper->getVariantPromoCode(
+                $this->getData('product'),
+                $this->getData('variant')
+            );
         } catch (LocalizedException $exception) {
             return '';
         }

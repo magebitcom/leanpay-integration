@@ -4,6 +4,9 @@ var config = {
             'Magento_Swatches/js/swatch-renderer': {
                 'Leanpay_Payment/js/swatch-renderer-mixin': true
             },
+            'Magento_ConfigurableProduct/js/configurable': {
+                'Leanpay_Payment/js/configurable-mixin': true
+            },
             'Magento_Bundle/js/price-bundle': {
                 'Leanpay_Payment/js/price-bundle-mixin': true
             },

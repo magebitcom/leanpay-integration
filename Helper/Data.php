@@ -777,6 +777,23 @@ class Data extends AbstractHelper
         return $this->getPromoCode($data);
     }
 
+    /**
+     * Resolve the promotion for a selected variant of a composite product the same way
+     * checkout does: the variant's own promotion wins, the parent product is the fallback
+     *
+     * @param ProductInterface|null $product
+     * @param ProductInterface|null $variant
+     * @return string
+     */
+    public function getVariantPromoCode(?ProductInterface $product, ?ProductInterface $variant = null): string
+    {
+        if ($variant && $variantMatch = $this->validateProduct([$variant])) {
+            return $variantMatch;
+        }
+
+        return $this->getProductPromoCode($product);
+    }
+
 
     /**
      * Need to be able to validate and undestand correct rule
