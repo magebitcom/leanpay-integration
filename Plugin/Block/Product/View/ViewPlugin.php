@@ -105,9 +105,12 @@ class ViewPlugin
             }, $amounts));
 
             $installmentMap = [];
+            $this->template->setData('product', $subject->getProduct());
             foreach ($amounts as $intAmount) {
                 $installmentMap[$intAmount] = $this->getHtmlFromCache($intAmount);
             }
+            // The template block is shared, so do not leak the product context into other renders
+            $this->template->unsetData('product');
 
             $json['installmentHtmlMap'] = $installmentMap;
 

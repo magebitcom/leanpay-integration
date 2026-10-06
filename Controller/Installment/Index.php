@@ -119,7 +119,7 @@ class Index implements ActionInterface
 
         $amount = $this->request->getParam('amount');
         $isCheckout = (bool)$this->request->getParam('checkout');
-        // The registry has no current product on AJAX, so the product page sends its own context (LMM-144)
+        // There is no current product on AJAX, so the product page sends its own context (LMM-144)
         $this->template
             ->setData('product', $this->getProduct($this->request->getParam('product_id')))
             ->setData('variant', $this->getProduct($this->request->getParam('variant_id')));
