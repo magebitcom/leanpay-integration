@@ -109,6 +109,13 @@ class DefaultPriceBox extends FinalPriceBox
     public function getFinancialProduct(): string
     {
         try {
+            $viewKey = $this->getData('view_key');
+
+            // Listings have no selected variant, so they show the lowest-priced variant's promotion (LMM-151)
+            if ($viewKey && $viewKey !== InstallmentHelper::LEANPAY_INSTALLMENT_VIEW_OPTION_PRODUCT_PAGE) {
+                return $this->helper->getListingPromoCode($this->getSaleableItem());
+            }
+
             return $this->helper->getProductPromoCode($this->getSaleableItem());
         } catch (LocalizedException $exception) {
             return '';

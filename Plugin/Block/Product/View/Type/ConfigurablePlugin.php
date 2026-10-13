@@ -11,6 +11,7 @@
 namespace Leanpay\Payment\Plugin\Block\Product\View\Type;
 
 use Leanpay\Payment\Block\Installment\Pricing\Render\TemplatePriceBox;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
 use Magento\Framework\Serialize\SerializerInterface;
 
@@ -60,13 +61,24 @@ class ConfigurablePlugin
             $subject->getRequest()->getControllerName() === 'product'
         ) {
             $prices = $json['optionPrices'];
+            $variants = [];
+
+            foreach ($subject->getAllowProducts() as $variant) {
+                $variants[$variant->getId()] = $variant;
+            }
+
+            // A promotion can be set on the variant itself, so render each variant's badge with it (LMM-144)
+            $this->template->setData('product', $subject->getProduct());
 
             foreach ($prices as $key => $price) {
                 if (isset($price['finalPrice'], $price['finalPrice']['amount'])) {
                     $amount = $price['finalPrice']['amount'];
-                    $prices[$key]['instalment_html'] = $this->getHtmlFromCache($amount);
+                    $prices[$key]['instalment_html'] = $this->getHtmlFromCache($amount, $variants[$key] ?? null);
                 }
             }
+
+            // The template block is shared, so do not leak the product context into other renders
+            $this->template->unsetData(['product', 'variant']);
             $json['optionPrices'] = $prices;
         }
 
@@ -77,15 +89,22 @@ class ConfigurablePlugin
      * Get installment html amount from cache
      *
      * @param float $amount
+     * @param ProductInterface|null $variant
      * @return mixed|string
      */
-    private function getHtmlFromCache($amount): string
+    private function getHtmlFromCache($amount, ?ProductInterface $variant = null): string
     {
         $int = intval(round($amount));
-        if (!isset($this->templateCache[$int])) {
-            $this->templateCache[$int] = $this->template->setData('amount', $amount)->toHtml();
+        // Variants without their own promotion render the same badge as the parent, so share it
+        $key = $variant && $variant->getData('leanpay_product_vendor_code') ? $int . '-' . $variant->getId() : $int;
+
+        if (!isset($this->templateCache[$key])) {
+            $this->templateCache[$key] = $this->template
+                ->setData('amount', $amount)
+                ->setData('variant', $variant)
+                ->toHtml();
         }
 
-        return $this->templateCache[$int];
+        return $this->templateCache[$key];
     }
 }
