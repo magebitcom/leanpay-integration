@@ -8,11 +8,14 @@ Release notes are organized chronologically with the most recent releases at the
 
 ## Format
 
-Each release note file follows the naming convention: `YYYY-MM-DD-feature-name.md`
+Each release note file is named after the released version: `<version>.md` (for example `0.18.0.md`).
 
 ---
 
 ## Recent Releases
+
+### [2026-10-13 - 0.18.0: Variant promotions in installment badges](./0.18.0.md)
+The installment badge now shows a configurable product's variant-level Leanpay promotion instead of always the parent's: on the product page the selected variant's promotion, on category, search and widget listings the lowest-priced salable variant's promotion, with the parent's promotion as fallback in both cases. Variants on a listing are loaded in one batch. The product page badge no longer reads the deprecated registry.
 
 ### [2026-10-01 - 0.17.0: Category page performance, installment widget fixes](./0.17.0.md)
 Removed three query patterns that made the installment box expensive on product listings: the category promotion is now preloaded once per listing instead of once per product card, the installment currency lookup is cached per request instead of scanning the table for every box, and a missing index was added on the columns the installment lookups filter by. Module database time on a category page is down by roughly 98% and no longer scales with the number of products. An empty Minimum or Maximum Order Total no longer hides the installment widget, the allowed views, more information URL, check your limit URL and Leanpay currency settings are now read per store view, and a new admin setting chooses the Hyvä widget design (Default or Narrow).
@@ -20,5 +23,5 @@ Removed three query patterns that made the installment box expensive on product 
 ### [2026-09-15 - 0.16.0: RON-Only Mode, promotion fixes](./0.16.0.md)
 Added RON-only mode configuration for the Romanian plugin so it operates entirely in RON without requiring EUR as an allowed currency or a RON to EUR exchange rate. Fixed checkout promotions being ignored for configurable product variants, and time-based promotions now include the full end day and use the store timezone.
 
-### [2026-02-20 - Product Rounding Feature](./2026-02-20-product-rounding.md)
+### [2026-02-20 - Product Rounding Feature](./0.13.0.md)
 Added product price rounding configuration for Romanian plugin to ensure installment calculator displays for all eligible products.
