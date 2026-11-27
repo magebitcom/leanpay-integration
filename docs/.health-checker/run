@@ -1,0 +1,83 @@
+#!/bin/sh
+# @author    Magebit <info@magebit.com>
+# @copyright Copyright (c) Magebit, Ltd. (https://magebit.com)
+# @license   https://magebit.com/code-license
+#
+# Runs the docs-health checker on Node 12 or newer: the host's node, else the one in the container d/cli-php runs.
+# Exit codes are the checker's: 0 no errors, 1 an error, 2 could not run.
+
+set -f
+
+case $0 in
+    */*) here=${0%/*} ;;
+    *) here=. ;;
+esac
+root=$(cd "$here/../.." && pwd -P) || exit 2
+cd "$root" || exit 2
+
+cr=$(printf '\r')
+
+# Prints the version a node command reports, such as v22.11.0; the container may add a carriage return.
+node_version() {
+    out=$("$@" -v 2>/dev/null) || return 1
+    for word in $out; do
+        word=${word%"$cr"}
+        case $word in
+            v[0-9]*)
+                printf '%s\n' "$word"
+                return 0
+                ;;
+        esac
+    done
+    return 1
+}
+
+supported() {
+    major=${1#v}
+    major=${major%%.*}
+    case $major in
+        '' | *[!0-9]*) return 1 ;;
+    esac
+    [ "$major" -ge 12 ]
+}
+
+found=none
+use=
+
+if command -v node > /dev/null 2>&1 && version=$(node_version node); then
+    found=$version
+    supported "$version" && use=host
+fi
+
+if [ -z "$use" ] && [ -x d/cli-php ] && version=$(node_version d/cli-php node); then
+    found=$version
+    supported "$version" && use=container
+fi
+
+if [ -z "$use" ]; then
+    echo "docs-health needs Node 12 or newer; found $found. Install a newer Node on this machine, or in the container d/cli-php runs." >&2
+    exit 2
+fi
+
+# The same arguments must hold inside the container, so paths go in relative to the repository root.
+count=$#
+while [ "$count" -gt 0 ]; do
+    arg=$1
+    shift
+    case $arg in
+        -*) ;;
+        "$root"/*) arg=${arg#"$root"/} ;;
+        /*)
+            case ${arg##*/} in
+                COMMIT_EDITMSG) arg=.git/COMMIT_EDITMSG ;;
+            esac
+            ;;
+    esac
+    set -- "$@" "$arg"
+    count=$((count - 1))
+done
+
+if [ "$use" = container ]; then
+    exec d/cli-php node docs/.health-checker/docs-health.js "$@"
+fi
+exec node docs/.health-checker/docs-health.js "$@"
