@@ -27,7 +27,7 @@ tags:
 
 # Promotions
 
-Leanpay offers merchants special installment programs, such as zero interest, called financing products. A merchant uses promotions to say which products, categories or carts get which program. The plugin sends the chosen program's code to Leanpay when the order is placed and shows the same terms on the installment badge, so a buyer sees what Leanpay will offer. Without a promotion the order and the badge use the default financing product, set by Group in [Installment display](installment-display.md).
+Leanpay offers merchants special installment programs, such as zero interest, called financing products. A merchant uses promotions to say which products, categories or carts get which program. The plugin sends the chosen program's code to Leanpay when the order is placed and shows the same terms on the installment badge, so a buyer sees what Leanpay will offer. Without a promotion the badge shows the plans of the financing product set by Group in [Installment display](installment-display.md), but the order sends no financing product code and Leanpay applies its own default. Changing Group does not change the financing product requested at checkout.
 
 ## What it does
 
