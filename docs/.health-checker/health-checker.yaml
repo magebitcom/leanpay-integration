@@ -1,0 +1,22 @@
+version: 1.3.0
+base: [origin/staging, origin/master]
+exclude:
+  - docs/archive/
+  - docs/superpowers/
+  - docs/releases/
+require:
+  - Api/*
+  - Block/*
+  - Console/*
+  - Controller/*
+  - Cron/*
+  - Helper/*
+  - Logger/*
+  - Model/*
+  - Plugin/*
+  - Pricing/*
+  - Setup/*
+  - etc/*
+  - view/*
+  - registration.php
+ignore: []
